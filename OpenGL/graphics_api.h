@@ -1,7 +1,7 @@
 #ifndef KASUMI_GRAPHICS_API_H
 #define KASUMI_GRAPHICS_API_H
 
-#include <glad/glad.h>
+#include "deps/glad/glad.h"
 
 namespace Kasumi
 {

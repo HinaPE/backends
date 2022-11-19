@@ -23,14 +23,14 @@ file(GLOB UNIVERSE_FILES
 
 if (OpenGL)
     file(GLOB OPENGL_IMPL
-            backends/OpenGL/shader.cpp
-            backends/OpenGL/platform.cpp
-            backends/OpenGL/mesh.cpp
-            backends/OpenGL/texture.cpp
-            backends/OpenGL/framebuffer.cpp
-            backends/OpenGL/model.cpp
-            backends/OpenGL/camera.cpp
-            backends/OpenGL/instance.cpp
+            OpenGL/shader.cpp
+            OpenGL/platform.cpp
+            OpenGL/mesh.cpp
+            OpenGL/texture.cpp
+            OpenGL/framebuffer.cpp
+            OpenGL/model.cpp
+            OpenGL/camera.cpp
+            OpenGL/instance.cpp
             )
     set(Imgui_OpenGL
             "deps/imgui/imgui.h"

@@ -1,6 +1,6 @@
-#include "../../texture.h"
+#include "../texture.h"
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 #include <utility>
 

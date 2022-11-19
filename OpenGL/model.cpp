@@ -1,4 +1,4 @@
-#include "../../model.h"
+#include "../model.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"

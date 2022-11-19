@@ -1,5 +1,5 @@
 #include "glad/glad.h" // include glad before glfw
-#include "../../platform.h"
+#include "../platform.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
