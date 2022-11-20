@@ -1,7 +1,43 @@
 #include "../mesh.h"
 
 #include "glad/glad.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
+Kasumi::TexturedMesh::TexturedMesh(const std::string &primitive_name, const std::string &texture_name)
+{
+    std::vector<Vertex> vertices;
+    std::vector<Index> indices;
+    std::map<std::string, TexturePtr> diffuse_textures;
+
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
+        return;
+
+    auto *mesh = scene->mMeshes[0];
+    for (int i = 0; i < mesh->mNumVertices; ++i)
+    {
+        Vertex v;
+        v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
+        if (mesh->HasNormals())
+            v.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
+        if (mesh->HasTangentsAndBitangents())
+        {
+            v.tangent = {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z};
+            v.bi_tangent = {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z};
+        }
+        v.id = i; // TODO: auto id
+        vertices.emplace_back(std::move(v));
+    }
+    for (int i = 0; i < mesh->mNumFaces; ++i)
+        for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
+            indices.emplace_back(mesh->mFaces[i].mIndices[j]);
+    diffuse_textures.emplace(texture_name, std::make_shared<Texture>(std::string(BuiltinTextureDir) + texture_name));
+
+    init(std::move(vertices), std::move(indices), std::move(diffuse_textures));
+}
 Kasumi::TexturedMesh::TexturedMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures, std::map<std::string, TexturePtr> &&specular_textures, std::map<std::string, TexturePtr> &&normal_textures,
                                    std::map<std::string, TexturePtr> &&height_textures) : _shader(nullptr)
 {
@@ -153,16 +189,13 @@ void Kasumi::TexturedMesh::print_info() const
     }
 }
 
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
 Kasumi::ColoredMesh::ColoredMesh(const std::string &primitive_name, const std::string &color_name) : _shader(nullptr)
 {
     std::vector<Vertex> vertices;
     std::vector<Index> indices;
 
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(std::string(ModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
         return;
 

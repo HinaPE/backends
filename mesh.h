@@ -26,6 +26,7 @@ public:
 
 public:
     TexturedMesh() = default;
+    TexturedMesh(const std::string& primitive_name, const std::string& texture_name);
     TexturedMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures = {}, std::map<std::string, TexturePtr> &&specular_textures = {}, std::map<std::string, TexturePtr> &&normal_textures = {},
                  std::map<std::string, TexturePtr> &&height_textures = {});
     TexturedMesh(const TexturedMesh &src) = delete;

@@ -85,8 +85,9 @@ if (OpenGL)
     target_compile_definitions(
             Kasumi_backend
             PUBLIC
-            -DShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBuiltinSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBuiltinModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBuiltinShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
