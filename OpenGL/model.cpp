@@ -6,6 +6,7 @@
 
 #include <map>
 #include <utility>
+#include <algorithm>
 
 Kasumi::Model::Model(const std::string &path, ShaderPtr shader) : _path(path), _shader(std::move(shader)) { load(path); }
 
@@ -47,10 +48,12 @@ static auto process_mesh(aiMesh *mesh, const aiScene *scene, const std::string &
         std::map<std::string, Kasumi::TexturePtr> res;
         for (int i = 0; i < materials->GetTextureCount(type); ++i)
         {
-            aiString path;
-            materials->GetTexture(type, i, &path);
+            aiString aiPath;
+            materials->GetTexture(type, i, &aiPath);
+            std::string path(aiPath.C_Str());
+            std::replace(path.begin(), path.end(), '\\', '/');
             std::string cpp_path, cpp_name;
-            cpp_path = directory + "/" + std::string(path.C_Str());
+            cpp_path = directory + "/" + path;
             res.emplace(std::move(cpp_name), std::move(std::make_shared<Kasumi::Texture>(cpp_path)));
         }
         return res;
