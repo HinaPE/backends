@@ -82,4 +82,11 @@ if (OpenGL)
     target_link_libraries(Kasumi_backend PUBLIC glfw)
     target_link_libraries(Kasumi_backend PUBLIC nfd)
     target_link_libraries(Kasumi_backend PUBLIC HinaPE_Common)
+    target_compile_definitions(
+            Kasumi_backend
+            PUBLIC
+            -DShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+    )
 endif ()

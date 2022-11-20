@@ -41,6 +41,8 @@ public:
     auto get_center_point() const -> mVector3;
 
 private:
+    void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures = {}, std::map<std::string, TexturePtr> &&specular_textures = {}, std::map<std::string, TexturePtr> &&normal_textures = {},
+              std::map<std::string, TexturePtr> &&height_textures = {});
     void update();
 
 private:
@@ -75,21 +77,35 @@ public:
     using Index = unsigned int;
 
 public:
-    void render();
-    void use_shader(const ShaderPtr &shader);
-    auto get_shader() -> ShaderPtr &;
-    auto get_center_point() const -> mVector3;
-
-public:
     ColoredMesh() = default;
-    ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
+    ColoredMesh(const std::string& primitive_name, const std::string& color_name);
+    ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string& color_name);
     ColoredMesh(const ColoredMesh &src) = delete;
     ColoredMesh(ColoredMesh &&src) noexcept = default;
     ~ColoredMesh();
     void operator=(const ColoredMesh &src) = delete;
     auto operator=(ColoredMesh &&src) noexcept -> ColoredMesh & = default;
 
+public:
+    void render();
+    void use_shader(const ShaderPtr &shader);
+    auto get_shader() -> ShaderPtr &;
+    auto get_center_point() const -> mVector3;
+
 private:
+    void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string& color_name);
+    void update();
+
+private:
+    bool is_inited;
+    bool dirty;
+    unsigned int VAO, VBO, EBO;
+    size_t n_elem;
+
+    std::vector<Vertex> _verts;
+    std::vector<Index> _idxs;
+    mVector3 _center_point;
+    mBBox _bbox;
     ShaderPtr _shader;
 };
 using ColoredMeshPtr = std::shared_ptr<ColoredMesh>;
