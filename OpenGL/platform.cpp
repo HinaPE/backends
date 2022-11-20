@@ -5,19 +5,19 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 
-Kasumi::Platform::Platform(int width, int height) : _inited(false), _current_window(nullptr)
+Kasumi::Platform::Platform(int width, int height) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
-    add_new_window(width, height, "Kasumi: illumine the endless night", {1.f, 1.f, 1.f});
-    add_key_callback([&](int key, int scancode, int action, int mods) // key call back
-                     {
-                         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-                             glfwSetWindowShouldClose(_current_window, true);
-                     });
+    add_new_window(_width, _height, "Kasumi: illumine the endless night", {1.f, 1.f, 1.f});
 }
 
 void Kasumi::Platform::launch(const std::shared_ptr<App> &app)
 {
     app->prepare();
+    add_key_callback([&](int key, int scancode, int action, int mods) // key call back
+                     {
+                         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+                             glfwSetWindowShouldClose(_current_window, true);
+                     });
     add_key_callback([&](int key, int scancode, int action, int mods)
                      {
                          app->key(key, scancode, action, mods);

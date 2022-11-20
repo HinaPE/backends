@@ -59,6 +59,7 @@ private:
 
 private:
     bool _inited;
+    int _width, _height;
     std::string _current_window_name;
     GLFWwindow *_current_window;
     std::map<std::string, GLFWwindow *> _windows;
