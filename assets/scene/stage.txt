@@ -1,1 +1,0 @@
-model cube BLACK position 0 -10.5 0 scale 20 0.5 20

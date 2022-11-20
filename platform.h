@@ -4,6 +4,7 @@
 #include "GLFW/glfw3.h"
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <map>
 #include <functional>
@@ -23,6 +24,10 @@ public:
     virtual void mouse_button(int button, int action, int mods) = 0;
     virtual void mouse_scroll(double x_offset, double y_offset) = 0;
     virtual void mouse_cursor(double x_pos, double y_pos) = 0;
+
+public:
+    App(std::string scene) : _scene_name(std::move(scene)) {}
+    std::string _scene_name;
 };
 class Platform
 {
@@ -64,10 +69,10 @@ private:
     GLFWwindow *_current_window;
     std::map<std::string, GLFWwindow *> _windows;
     std::map<std::string, std::tuple<float, float, float>> _clear_colors;
-    std::vector<std::function<void(int key, int scancode, int action, int mods)>> _key_callbacks;
-    std::vector<std::function<void(int button, int action, int mods)>> _mouse_callbacks;
-    std::vector<std::function<void(double xoffset, double yoffset)>> _scroll_callbacks;
-    std::vector<std::function<void(double xpos, double ypos)>> _cursor_callbacks;
+    std::vector<std::function<void(int, int, int, int)>> _key_callbacks;
+    std::vector<std::function<void(int, int, int)>> _mouse_callbacks;
+    std::vector<std::function<void(double, double)>> _scroll_callbacks;
+    std::vector<std::function<void(double, double)>> _cursor_callbacks;
 };
 using PlatformPtr = std::shared_ptr<Platform>;
 }

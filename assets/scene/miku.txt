@@ -1,1 +1,2 @@
 model Hatsune_Miku_V4X shader default_shader position 0 -10 0 rotation 0 0 0 scale 1 1 1
+model cube BLACK position 0 -10.5 0 scale 20 0.5 20
