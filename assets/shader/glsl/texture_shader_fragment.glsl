@@ -13,10 +13,12 @@ uniform sampler2D texture_height;
 
 void main()
 {
-    vec4 color = vec4(57.f / 255.9f, 197.f / 255.9f, 187.f / 255.9f, 1.0f);
     if (has_diffuse_texture)
     {
-        color = texture(texture_diffuse, TexCoords);
+        FragColor = texture(texture_diffuse, TexCoords);
     }
-    FragColor = color;
+    else
+    {
+        FragColor = vec4(57.f / 255.9f, 197.f / 255.9f, 187.f / 255.9f, 1.0f); // if texture load failed, use this color
+    }
 }

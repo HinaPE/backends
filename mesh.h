@@ -9,13 +9,9 @@
 
 namespace Kasumi
 {
-class ColoredMesh final {}; // TODO:
-using ColoredMeshPtr = std::shared_ptr<ColoredMesh>;
-
 class TexturedMesh final
 {
 public:
-    using Index = unsigned int;
     struct Vertex
     {
         mVector3 position;
@@ -25,6 +21,7 @@ public:
         mVector3 bi_tangent;
         unsigned int id;
     };
+    using Index = unsigned int;
     void print_info() const;
 
 public:
@@ -39,10 +36,12 @@ public:
 
 public:
     void render();
-    void update();
     void use_shader(const ShaderPtr &shader);
     auto get_shader() -> ShaderPtr &;
     auto get_center_point() const -> mVector3;
+
+private:
+    void update();
 
 private:
     bool is_inited;
@@ -61,6 +60,39 @@ private:
     ShaderPtr _shader;
 };
 using TexturedMeshPtr = std::shared_ptr<TexturedMesh>;
+
+class ColoredMesh final {
+public:
+    struct Vertex
+    {
+        mVector3 position;
+        mVector3 normal;
+        mVector3 color;
+        mVector3 tangent;
+        mVector3 bi_tangent;
+        unsigned int id;
+    };
+    using Index = unsigned int;
+
+public:
+    void render();
+    void use_shader(const ShaderPtr &shader);
+    auto get_shader() -> ShaderPtr &;
+    auto get_center_point() const -> mVector3;
+
+public:
+    ColoredMesh() = default;
+    ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
+    ColoredMesh(const ColoredMesh &src) = delete;
+    ColoredMesh(ColoredMesh &&src) noexcept = default;
+    ~ColoredMesh();
+    void operator=(const ColoredMesh &src) = delete;
+    auto operator=(ColoredMesh &&src) noexcept -> ColoredMesh & = default;
+
+private:
+    ShaderPtr _shader;
+};
+using ColoredMeshPtr = std::shared_ptr<ColoredMesh>;
 }
 
 #endif //KASUMI_MESH_H

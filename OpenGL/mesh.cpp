@@ -61,6 +61,7 @@ void Kasumi::TexturedMesh::render()
         update();
 
     _shader->use();
+    _shader->uniform("has_color", false);
     if (!_diffuse_textures.empty())
     {
         _diffuse_textures.begin()->second->bind(0);
@@ -94,7 +95,6 @@ void Kasumi::TexturedMesh::render()
     glDrawElements(GL_TRIANGLES, (GLuint) n_elem, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
-
 void Kasumi::TexturedMesh::update()
 {
     glBindVertexArray(VAO);
@@ -109,16 +109,9 @@ void Kasumi::TexturedMesh::update()
 
     dirty = false;
 }
-
-void Kasumi::TexturedMesh::use_shader(const Kasumi::ShaderPtr &shader)
-{
-    _shader = shader;
-}
-
-auto Kasumi::TexturedMesh::get_shader() -> Kasumi::ShaderPtr &
-{
-    return _shader;
-}
+void Kasumi::TexturedMesh::use_shader(const Kasumi::ShaderPtr &shader) { _shader = shader; }
+auto Kasumi::TexturedMesh::get_shader() -> Kasumi::ShaderPtr & { return _shader; }
+auto Kasumi::TexturedMesh::get_center_point() const -> Kasumi::mVector3 { return _center_point; }
 
 void Kasumi::TexturedMesh::print_info() const
 {
@@ -150,4 +143,10 @@ void Kasumi::TexturedMesh::print_info() const
     }
 }
 
-auto Kasumi::TexturedMesh::get_center_point() const -> Kasumi::mVector3 { return _center_point; }
+
+Kasumi::ColoredMesh::ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices) {}
+Kasumi::ColoredMesh::~ColoredMesh() {}
+void Kasumi::ColoredMesh::render() {}
+void Kasumi::ColoredMesh::use_shader(const Kasumi::ShaderPtr &shader) { _shader = shader; }
+auto Kasumi::ColoredMesh::get_shader() -> Kasumi::ShaderPtr & { return _shader; }
+auto Kasumi::ColoredMesh::get_center_point() const -> Kasumi::mVector3 { return Kasumi::mVector3(); }
