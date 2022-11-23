@@ -18,7 +18,7 @@ class App
 {
 public:
     virtual void prepare() = 0;
-    virtual void render() = 0;
+    virtual void update(double dt) = 0;
     virtual auto quit() -> bool = 0;
     virtual void key(int key, int scancode, int action, int mods) = 0;
     virtual void mouse_button(int button, int action, int mods) = 0;
@@ -56,7 +56,7 @@ public:
     auto operator=(Platform &&) -> Platform & = delete;
 
 private:
-    void add_new_window(int width, int height, const std::string &title, const std::tuple<float, float, float> &clear_color);
+    void add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
     void rendering_loop(const std::shared_ptr<App> &app);
     void clear_window();
     void begin_frame();
@@ -68,7 +68,7 @@ private:
     std::string _current_window_name;
     GLFWwindow *_current_window;
     std::map<std::string, GLFWwindow *> _windows;
-    std::map<std::string, std::tuple<float, float, float>> _clear_colors;
+    std::map<std::string, std::tuple<double, double, double>> _clear_colors;
     std::vector<std::function<void(int, int, int, int)>> _key_callbacks;
     std::vector<std::function<void(int, int, int)>> _mouse_callbacks;
     std::vector<std::function<void(double, double)>> _scroll_callbacks;

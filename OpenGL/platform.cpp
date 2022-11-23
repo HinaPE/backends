@@ -41,7 +41,7 @@ void Kasumi::Platform::add_mouse_callback(std::function<void(int, int, int)> &&c
 void Kasumi::Platform::add_scroll_callback(std::function<void(double, double)> &&callback) { _scroll_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_cursor_callback(std::function<void(double, double)> &&callback) { _cursor_callbacks.emplace_back(std::move(callback)); }
 
-void Kasumi::Platform::add_new_window(int width, int height, const std::string &title, const std::tuple<float, float, float> &clear_color)
+void Kasumi::Platform::add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
 {
     if (!_inited)
     {
@@ -108,7 +108,7 @@ void Kasumi::Platform::rendering_loop(const std::shared_ptr<App> &app)
     while (!glfwWindowShouldClose(_current_window) || app->quit())
     {
         begin_frame();
-        app->render();
+        app->update(0.02);
         end_frame();
     }
 }
