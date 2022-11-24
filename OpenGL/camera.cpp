@@ -13,8 +13,8 @@ static double last_mouse_pos_y = 0;
 
 Kasumi::Camera::Camera(Kasumi::Camera::Opt opt) : _opt(std::move(opt)) { update(); }
 
-auto Kasumi::Camera::get_projection() const -> Kasumi::mMatrix4x4 { return _projection; }
-auto Kasumi::Camera::get_view() const -> Kasumi::mMatrix4x4 { return _view; }
+auto Kasumi::Camera::get_projection() const -> mMatrix4x4 { return _projection; }
+auto Kasumi::Camera::get_view() const -> mMatrix4x4 { return _view; }
 
 void Kasumi::Camera::key(int key, int scancode, int action, int mods) {}
 void Kasumi::Camera::mouse_button(int button, int action, int mods)
@@ -111,15 +111,15 @@ void Kasumi::Camera::update()
     _view = Camera::view_matrix(_opt.position, _opt.rotation);
 }
 
-auto Kasumi::Camera::up() const -> Kasumi::mVector3 { return {0, 1, 0}; }
-auto Kasumi::Camera::front() const -> Kasumi::mVector3 { return (_opt.look_at - _opt.position).normalized(); }
-auto Kasumi::Camera::distance() const -> Kasumi::real { return (_opt.look_at - _opt.position).length(); }
+auto Kasumi::Camera::up() const -> mVector3 { return {0, 1, 0}; }
+auto Kasumi::Camera::front() const -> mVector3 { return (_opt.look_at - _opt.position).normalized(); }
+auto Kasumi::Camera::distance() const -> real { return (_opt.look_at - _opt.position).length(); }
 void Kasumi::Camera::loot_at(const mVector3 &focus_point) { _opt.look_at = focus_point; } //TODO: not completed
 
-auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real far) -> Kasumi::mMatrix4x4
+auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real far) -> mMatrix4x4
 {
     // get projection matrix
-    Kasumi::mMatrix4x4 projection;
+    mMatrix4x4 projection;
     float tan_half_fov = std::tan(fov / static_cast<real>(2));
     projection(0, 0) = static_cast<real>(1) / (aspect_ratio * tan_half_fov);
     projection(1, 1) = static_cast<real>(1) / (tan_half_fov);
@@ -129,5 +129,5 @@ auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real
     return projection;
 }
 
-auto Kasumi::Camera::view_matrix(const Kasumi::mVector3 &position, const Kasumi::mQuaternion &rotation) -> Kasumi::mMatrix4x4 { return (mMatrix4x4::makeTranslationMatrix(position) * rotation.matrix4()).inverse(); }
+auto Kasumi::Camera::view_matrix(const mVector3 &position, const mQuaternion &rotation) -> mMatrix4x4 { return (mMatrix4x4::makeTranslationMatrix(position) * rotation.matrix4()).inverse(); }
 

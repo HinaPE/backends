@@ -102,12 +102,11 @@ void Kasumi::Model::render()
         return;
 
     _shader->use();
-    if (_opt.render_wireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    else
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     for (auto &mesh: _meshes)
+    {
+        mesh.second->_opt.render_wireframe = _opt.render_wireframe;
         mesh.second->render();
+    }
 }
 
 void Kasumi::Model::use_shader(const Kasumi::ShaderPtr &shader)
@@ -122,7 +121,7 @@ auto Kasumi::Model::get_shader() -> Kasumi::ShaderPtr &
     return _shader;
 }
 
-auto Kasumi::Model::get_center_point() const -> Kasumi::mVector3
+auto Kasumi::Model::get_center_point() const -> mVector3
 {
     return _center_point;
 }

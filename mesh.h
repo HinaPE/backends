@@ -1,7 +1,7 @@
 #ifndef KASUMI_MESH_H
 #define KASUMI_MESH_H
 
-#include "math_api.h"
+#include "../../math_api.h"
 #include "shader.h"
 #include "texture.h"
 
@@ -32,6 +32,7 @@ public:
 
 public:
     void render();
+    auto vertices() -> std::vector<Vertex>&;
     void use_shader(const ShaderPtr &shader);
     auto get_shader() -> ShaderPtr &;
     auto get_center_point() const -> mVector3;

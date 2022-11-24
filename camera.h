@@ -1,7 +1,7 @@
 #ifndef KASUMI_CAMERA_H
 #define KASUMI_CAMERA_H
 
-#include "math_api.h"
+#include "../../math_api.h"
 
 namespace Kasumi
 {
