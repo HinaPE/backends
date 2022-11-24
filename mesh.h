@@ -12,6 +12,12 @@ namespace Kasumi
 class TexturedMesh final
 {
 public:
+    struct Opt
+    {
+        bool render_wireframe = true;
+    } _opt;
+
+public:
     struct Vertex
     {
         mVector3 position;
@@ -23,17 +29,6 @@ public:
     };
     using Index = unsigned int;
     void print_info() const;
-
-public:
-    TexturedMesh() = default;
-    TexturedMesh(const std::string& primitive_name, const std::string& texture_name);
-    TexturedMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures = {}, std::map<std::string, TexturePtr> &&specular_textures = {}, std::map<std::string, TexturePtr> &&normal_textures = {},
-                 std::map<std::string, TexturePtr> &&height_textures = {});
-    TexturedMesh(const TexturedMesh &src) = delete;
-    TexturedMesh(TexturedMesh &&src) noexcept = default;
-    ~TexturedMesh();
-    void operator=(const TexturedMesh &src) = delete;
-    auto operator=(TexturedMesh &&src) noexcept -> TexturedMesh & = default;
 
 public:
     void render();
@@ -61,10 +56,28 @@ private:
     mVector3 _center_point;
     mBBox _bbox;
     ShaderPtr _shader;
+
+public:
+    TexturedMesh() = default;
+    TexturedMesh(const std::string &primitive_name, const std::string &texture_name);
+    TexturedMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures = {}, std::map<std::string, TexturePtr> &&specular_textures = {}, std::map<std::string, TexturePtr> &&normal_textures = {},
+                 std::map<std::string, TexturePtr> &&height_textures = {});
+    TexturedMesh(const TexturedMesh &src) = delete;
+    TexturedMesh(TexturedMesh &&src) noexcept = default;
+    ~TexturedMesh();
+    void operator=(const TexturedMesh &src) = delete;
+    auto operator=(TexturedMesh &&src) noexcept -> TexturedMesh & = default;
 };
 using TexturedMeshPtr = std::shared_ptr<TexturedMesh>;
 
-class ColoredMesh final {
+class ColoredMesh final
+{
+public:
+    struct Opt
+    {
+        bool render_wireframe = false;
+    } _opt;
+
 public:
     struct Vertex
     {
@@ -78,23 +91,13 @@ public:
     using Index = unsigned int;
 
 public:
-    ColoredMesh() = default;
-    ColoredMesh(const std::string& primitive_name, const std::string& color_name);
-    ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string& color_name);
-    ColoredMesh(const ColoredMesh &src) = delete;
-    ColoredMesh(ColoredMesh &&src) noexcept = default;
-    ~ColoredMesh();
-    void operator=(const ColoredMesh &src) = delete;
-    auto operator=(ColoredMesh &&src) noexcept -> ColoredMesh & = default;
-
-public:
     void render();
     void use_shader(const ShaderPtr &shader);
     auto get_shader() -> ShaderPtr &;
     auto get_center_point() const -> mVector3;
 
 private:
-    void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string& color_name);
+    void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string &color_name);
     void update();
 
 private:
@@ -108,6 +111,16 @@ private:
     mVector3 _center_point;
     mBBox _bbox;
     ShaderPtr _shader;
+
+public:
+    ColoredMesh() = default;
+    ColoredMesh(const std::string &primitive_name, const std::string &color_name);
+    ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string &color_name);
+    ColoredMesh(const ColoredMesh &src) = delete;
+    ColoredMesh(ColoredMesh &&src) noexcept = default;
+    ~ColoredMesh();
+    void operator=(const ColoredMesh &src) = delete;
+    auto operator=(ColoredMesh &&src) noexcept -> ColoredMesh & = default;
 };
 using ColoredMeshPtr = std::shared_ptr<ColoredMesh>;
 }

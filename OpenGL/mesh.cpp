@@ -51,6 +51,11 @@ Kasumi::TexturedMesh::~TexturedMesh()
     glDeleteVertexArrays(1, &EBO);
     VAO = VBO = EBO = 0;
 
+    _diffuse_textures.clear();
+    _specular_textures.clear();
+    _normal_textures.clear();
+    _height_textures.clear();
+
     std::cout << "DELETE TEXTURED MESH" << std::endl;
 }
 
@@ -88,6 +93,11 @@ void Kasumi::TexturedMesh::render()
         _shader->uniform("has_height_texture", true);
     } else
         _shader->uniform("has_height_texture", false);
+
+    if (_opt.render_wireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, (GLuint) n_elem, GL_UNSIGNED_INT, nullptr);
@@ -228,6 +238,11 @@ void Kasumi::ColoredMesh::render()
         update();
 
     _shader->use();
+
+    if (_opt.render_wireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, (GLuint) n_elem, GL_UNSIGNED_INT, nullptr);

@@ -37,6 +37,7 @@ Kasumi::Texture::Texture(const std::string &path) : _path(std::move(path))
 #include <iostream>
 Kasumi::Texture::~Texture()
 {
+    glDeleteTextures(1, &ID);
     std::cout << "delete texture: " << _path << std::endl;
 }
 

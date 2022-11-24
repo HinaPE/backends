@@ -26,7 +26,7 @@ public:
 
         // for projection
         real vertical_fov = 45;
-        real aspect_ratio = 1024.f / 768.f;
+        real aspect_ratio = 1920.f / 768.f;
         real near_plane = 0.01;
         real far_plane = 100;
 

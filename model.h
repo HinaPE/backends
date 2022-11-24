@@ -14,20 +14,17 @@ namespace Kasumi
 class Model
 {
 public:
+    struct Opt
+    {
+        bool render_wireframe = false;
+    } _opt;
+
+public:
     auto load(const std::string &path) -> bool;
     void render();
     void use_shader(const ShaderPtr &shader);
     auto get_shader() -> ShaderPtr &;
     auto get_center_point() const -> mVector3;
-
-public:
-    Model() = default;
-    Model(const std::string &path, ShaderPtr shader);
-    Model(const Model &) = delete;
-    Model(Model &&) = default;
-    ~Model();
-    auto operator=(const Model &) -> Model & = delete;
-    auto operator=(Model &&) -> Model & = default;
 
 public:
     void print_info() const;
@@ -37,6 +34,15 @@ private:
     std::map<std::string, TexturedMeshPtr> _meshes;
     mVector3 _center_point;
     ShaderPtr _shader;
+
+public:
+    Model() = default;
+    Model(const std::string &path, ShaderPtr shader);
+    Model(const Model &) = delete;
+    Model(Model &&) = default;
+    ~Model();
+    auto operator=(const Model &) -> Model & = delete;
+    auto operator=(Model &&) -> Model & = default;
 };
 using ModelPtr = std::shared_ptr<Model>;
 }

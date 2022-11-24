@@ -1,3 +1,4 @@
+#include "glad/glad.h"
 #include "../model.h"
 
 #include "assimp/Importer.hpp"
@@ -101,6 +102,10 @@ void Kasumi::Model::render()
         return;
 
     _shader->use();
+    if (_opt.render_wireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     for (auto &mesh: _meshes)
         mesh.second->render();
 }
