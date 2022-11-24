@@ -33,20 +33,24 @@ if (OpenGL)
             OpenGL/instance.cpp
             )
     set(Imgui_OpenGL
-            "deps/imgui/imgui.h"
-            "deps/imgui/imgui.cpp"
-            "deps/imgui/imgui_draw.cpp"
-            "deps/imgui/imgui_widgets.cpp"
-            "deps/imgui/imgui_tables.cpp"
-            "deps/imgui/imconfig.h"
-            "deps/imgui/imgui_internal.h"
-            "deps/imgui/imstb_rectpack.h"
-            "deps/imgui/imstb_textedit.h"
-            "deps/imgui/imstb_truetype.h"
-            "deps/imgui/backends/imgui_impl_opengl3.cpp"
-            "deps/imgui/backends/imgui_impl_opengl3.h"
-            "deps/imgui/backends/imgui_impl_glfw.cpp"
-            "deps/imgui/backends/imgui_impl_glfw.h"
+            deps/imgui/imgui.h
+            deps/imgui/imgui.cpp
+            deps/imgui/imgui_draw.cpp
+            deps/imgui/imgui_widgets.cpp
+            deps/imgui/imgui_tables.cpp
+            deps/imgui/imconfig.h
+            deps/imgui/imgui_internal.h
+            deps/imgui/imstb_rectpack.h
+            deps/imgui/imstb_textedit.h
+            deps/imgui/imstb_truetype.h
+            deps/imgui/implot.h
+            deps/imgui/implot.cpp
+            deps/imgui/implot_items.cpp
+            deps/imgui/implot_internal.h
+            deps/imgui/backends/imgui_impl_opengl3.cpp
+            deps/imgui/backends/imgui_impl_opengl3.h
+            deps/imgui/backends/imgui_impl_glfw.cpp
+            deps/imgui/backends/imgui_impl_glfw.h
             )
     if (NOT TARGET glad)
         add_subdirectory(deps/glad)
