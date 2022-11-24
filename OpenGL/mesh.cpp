@@ -56,7 +56,7 @@ Kasumi::TexturedMesh::~TexturedMesh()
     _normal_textures.clear();
     _height_textures.clear();
 
-    std::cout << "DELETE TEXTURED MESH" << std::endl;
+    std::cout << "delete textured mesh" << std::endl;
 }
 
 void Kasumi::TexturedMesh::render()

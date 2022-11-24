@@ -14,7 +14,7 @@ class TexturedMesh final
 public:
     struct Opt
     {
-        bool render_wireframe = true;
+        bool render_wireframe = false;
     } _opt;
 
 public:
