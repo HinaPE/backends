@@ -36,6 +36,7 @@ public:
     void use_shader(const ShaderPtr &shader);
     auto get_shader() -> ShaderPtr &;
     auto get_center_point() const -> mVector3;
+    bool dirty;
 
 private:
     void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures = {}, std::map<std::string, TexturePtr> &&specular_textures = {}, std::map<std::string, TexturePtr> &&normal_textures = {},
@@ -44,7 +45,6 @@ private:
 
 private:
     bool is_inited;
-    bool dirty;
     unsigned int VAO, VBO, EBO;
     size_t n_elem;
 
