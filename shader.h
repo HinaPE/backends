@@ -1,7 +1,7 @@
 #ifndef KASUMI_SHADER_H
 #define KASUMI_SHADER_H
 
-#include "../../math_api.h"
+#include "math_api.h"
 
 #include <vector>
 #include <string>

@@ -1,7 +1,7 @@
 #ifndef KASUMI_MESH_H
 #define KASUMI_MESH_H
 
-#include "../../math_api.h"
+#include "math_api.h"
 #include "shader.h"
 #include "texture.h"
 
