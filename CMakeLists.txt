@@ -52,6 +52,9 @@ if (OpenGL)
             deps/imgui/backends/imgui_impl_glfw.cpp
             deps/imgui/backends/imgui_impl_glfw.h
             )
+    if (NOT TARGET igl)
+        add_subdirectory(deps/igl)
+    endif ()
     if (NOT TARGET glad)
         add_subdirectory(deps/glad)
         target_include_directories(glad PUBLIC deps)
