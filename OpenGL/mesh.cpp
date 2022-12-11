@@ -153,7 +153,6 @@ void Kasumi::UniversalMesh::init(std::vector<Vertex> &&vertices, std::vector<Ind
 		_bbox.merge(v.position);
 	_dirty = true;
 }
-
 void Kasumi::UniversalMesh::update()
 {
 	glBindVertexArray(_vao);
@@ -196,7 +195,6 @@ void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, st
 		for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
 			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
 }
-
 void Kasumi::UniversalMesh::Vertex::setup_offset()
 {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) 0); // location = 0, position

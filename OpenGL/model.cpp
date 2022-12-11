@@ -5,16 +5,16 @@
 #include <utility>
 #include <algorithm>
 
-Kasumi::Model::Model(const std::string &model_path) : _path(model_path), _shader(_default_mesh_shader) { load(model_path); }
-Kasumi::Model::Model(const std::string &primitive_name, const std::string &texture_name) { _meshes.emplace_back(std::make_shared<UniversalMesh>(primitive_name, texture_name)); }
-Kasumi::Model::Model(const std::string &primitive_name, const mVector3 &color) { _meshes.emplace_back(std::make_shared<UniversalMesh>(primitive_name, color)); }
-Kasumi::Model::Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) { _meshes.emplace_back(std::make_shared<UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures))); }
+Kasumi::Model::Model(const std::string &model_path) : _path(model_path) { load(model_path); }
+Kasumi::Model::Model(const std::string &primitive_name, const std::string &texture_name) { load(std::make_shared<UniversalMesh>(primitive_name, texture_name)); }
+Kasumi::Model::Model(const std::string &primitive_name, const mVector3 &color) { load(std::make_shared<UniversalMesh>(primitive_name, color)); }
+Kasumi::Model::Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) { load(std::make_shared<UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures))); }
 Kasumi::Model::~Model() { std::cout << "delete model: " << _path << std::endl; }
 
 // ================================================== Public Methods ==================================================
 
-Kasumi::ShaderPtr Kasumi::Model::_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-Kasumi::ShaderPtr Kasumi::Model::_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+Kasumi::ShaderPtr Kasumi::Model::_default_mesh_shader = nullptr;
+Kasumi::ShaderPtr Kasumi::Model::_default_instanced_mesh_shader = nullptr;
 void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection)
 {
 	_shader->use();
@@ -26,8 +26,8 @@ void Kasumi::Model::render()
 {
 	_shader->use();
 
-	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
-					: glDisable(GL_DEPTH_TEST);
+//	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
+//					: glDisable(GL_DEPTH_TEST);
 	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -48,17 +48,29 @@ auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
 
 auto Kasumi::Model::load(const std::string &path) -> bool
 {
+	if (_default_mesh_shader == nullptr)
+		_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	if (_default_instanced_mesh_shader == nullptr)
+		_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	_shader = _default_mesh_shader;
+
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		return false;
 
 	process_node(scene->mRootNode, scene);
+	return true;
+}
+auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
+{
+	if (_default_mesh_shader == nullptr)
+		_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	if (_default_instanced_mesh_shader == nullptr)
+		_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	_shader = _default_mesh_shader;
 
-//	_center_point = {0, 0, 0};
-//	for (auto &mesh: _meshes)
-//		_center_point += mesh->get_center_point();
-//	_center_point /= _meshes.size();
+	_meshes.emplace_back(std::move(mesh));
 	return true;
 }
 void Kasumi::Model::process_node(const struct aiNode *node, const struct aiScene *scene)

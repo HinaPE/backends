@@ -30,7 +30,7 @@ public: //! ==================== Rendering Options ====================
 	{
 		// rendering options
 		bool depth_test = true;
-		bool render_wireframe = false;
+		bool render_wireframe = true;
 
 		// instancing
 		bool instancing = false;
@@ -70,6 +70,7 @@ public:
 
 private:
 	auto load(const std::string &path) -> bool;
+	auto load(UniversalMeshPtr &&mesh) -> bool;
 	void process_node(const aiNode *node, const aiScene *scene);
 	auto process_mesh(const aiMesh *mesh, const aiScene *scene) -> UniversalMeshPtr;
 };

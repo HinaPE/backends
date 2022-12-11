@@ -97,4 +97,6 @@ if (OpenGL)
             -DBuiltinShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
             -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
+    add_executable(test_mesh unit_test/mesh.cpp)
+    target_link_libraries(test_mesh PUBLIC Kasumi_backend)
 endif ()
