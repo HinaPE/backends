@@ -5,340 +5,214 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-Kasumi::TexturedMesh::TexturedMesh(const std::string &primitive_name, const std::string &texture_name)
+Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const std::string &texture_name) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
-    std::vector<Vertex> vertices;
-    std::vector<Index> indices;
-    std::map<std::string, TexturePtr> diffuse_textures;
+	std::vector<Vertex> vertices;
+	std::vector<Index> indices;
+	std::vector<TexturePtr> diffuse_textures;
+	load_primitive(primitive_name, vertices, indices);
 
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
-        return;
-
-    auto *mesh = scene->mMeshes[0];
-    for (int i = 0; i < mesh->mNumVertices; ++i)
-    {
-        Vertex v;
-        v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
-        if (mesh->HasNormals())
-            v.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
-        if (mesh->HasTangentsAndBitangents())
-        {
-            v.tangent = {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z};
-            v.bi_tangent = {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z};
-        }
-        v.id = i; // TODO: auto id
-        vertices.emplace_back(std::move(v));
-    }
-    for (int i = 0; i < mesh->mNumFaces; ++i)
-        for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
-            indices.emplace_back(mesh->mFaces[i].mIndices[j]);
-    diffuse_textures.emplace(texture_name, std::make_shared<Texture>(std::string(BuiltinTextureDir) + texture_name));
-
-    init(std::move(vertices), std::move(indices), std::move(diffuse_textures));
+	diffuse_textures.push_back(std::make_shared<Kasumi::Texture>(std::string(BuiltinTextureDir) + texture_name));
+	_textures["diffuse"] = diffuse_textures;
+	_opt.textured = true;
+	init(std::move(vertices), std::move(indices));
 }
-Kasumi::TexturedMesh::TexturedMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures, std::map<std::string, TexturePtr> &&specular_textures, std::map<std::string, TexturePtr> &&normal_textures,
-                                   std::map<std::string, TexturePtr> &&height_textures) : _shader(nullptr)
+Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
-    init(std::move(vertices), std::move(indices), std::move(diffuse_textures), std::move(specular_textures), std::move(normal_textures), std::move(height_textures));
+	_textures = std::move(textures);
+	_opt.textured = true;
+	init(std::move(vertices), std::move(indices));
+}
+Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const mVector3 &color)
+{
+	std::vector<Vertex> vertices;
+	std::vector<Index> indices;
+	load_primitive(primitive_name, vertices, indices, color);
+	_opt.colored = true;
+	init(std::move(vertices), std::move(indices));
 }
 
-Kasumi::TexturedMesh::~TexturedMesh()
+Kasumi::UniversalMesh::~UniversalMesh()
 {
-    glDeleteBuffers(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteVertexArrays(1, &EBO);
-    VAO = VBO = EBO = 0;
+	glDeleteBuffers(1, &_vao);
+	glDeleteBuffers(1, &_vbo);
+	glDeleteVertexArrays(1, &_ebo);
+	_vao = _vbo = _ebo = 0;
+	_textures.clear();
 
-    _diffuse_textures.clear();
-    _specular_textures.clear();
-    _normal_textures.clear();
-    _height_textures.clear();
-
-    std::cout << "delete textured mesh" << std::endl;
+#ifdef HINAPE_DEBUG
+	std::cout << "delete textured mesh" << std::endl;
+#endif
 }
 
-void Kasumi::TexturedMesh::render()
+// ================================================== Public Methods ==================================================
+
+void Kasumi::UniversalMesh::render(const ShaderPtr &shader)
 {
-    if (dirty)
-        update();
+	if (_dirty)
+		update();
 
-    _shader->use();
-    if (!_diffuse_textures.empty())
-    {
-        _diffuse_textures.begin()->second->bind(0);
-        _shader->uniform("texture_diffuse", 0);
-        _shader->uniform("has_diffuse_texture", true);
-    } else
-        _shader->uniform("has_diffuse_texture", false);
-    if (!_specular_textures.empty())
-    {
-        _specular_textures.begin()->second->bind(1);
-        _shader->uniform("texture_specular", 1);
-        _shader->uniform("has_specular_texture", true);
-    } else
-        _shader->uniform("has_specular_texture", false);
-    if (!_normal_textures.empty())
-    {
-        _normal_textures.begin()->second->bind(2);
-        _shader->uniform("texture_normal", 2);
-        _shader->uniform("has_normal_texture", true);
-    } else
-        _shader->uniform("has_normal_texture", false);
-    if (!_height_textures.empty())
-    {
-        _height_textures.begin()->second->bind(3);
-        _shader->uniform("texture_height", 3);
-        _shader->uniform("has_height_texture", true);
-    } else
-        _shader->uniform("has_height_texture", false);
+	shader->use();
 
-    if (_opt.render_wireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    else
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	int texture_index = 0;
+	auto diffuse_textures = _textures["diffuse"];
+	switch (diffuse_textures.size())
+	{
+		case 1:
+		{
+			diffuse_textures[0]->bind(texture_index);
+			shader->uniform("diffuse_texture_num", 1);
+			shader->uniform("texture_diffuse1", texture_index);
+			++texture_index;
+		}
+			break;
+		case 2:
+		{
+			diffuse_textures[0]->bind(texture_index);
+			diffuse_textures[1]->bind(texture_index + 1);
+			shader->uniform("diffuse_texture_num", 2);
+			shader->uniform("texture_diffuse1", texture_index);
+			shader->uniform("texture_diffuse2", texture_index + 1);
+			++texture_index;
+			++texture_index;
+		}
+			break;
+		default: // NOT SUPPORT FOR MORE DIFFUSE TEXTURES NOW
+			shader->uniform("diffuse_texture_num", 0);
+			break;
+	}
+	auto specular_textures = _textures["specular"];
+	if (!specular_textures.empty())
+	{
+		specular_textures[0]->bind(texture_index);
+		shader->uniform("specular_texture_num", 1);
+		shader->uniform("texture_specular1", texture_index);
+		texture_index++;
+	} else
+		shader->uniform("specular_texture_num", 0);
+	auto normal_textures = _textures["normal"];
+	if (!normal_textures.empty())
+	{
+		normal_textures[0]->bind(texture_index);
+		shader->uniform("normal_texture_num", 1);
+		shader->uniform("texture_normal1", texture_index);
+		texture_index++;
+	} else
+		shader->uniform("normal_texture_num", 0);
+	auto height_textures = _textures["height"];
+	if (!height_textures.empty())
+	{
+		height_textures[0]->bind(texture_index);
+		shader->uniform("height_texture_num", 1);
+		shader->uniform("texture_height1", texture_index);
+		texture_index++;
+	} else
+		shader->uniform("height_texture_num", 0);
 
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, (GLuint) n_elem, GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
+	shader->uniform("is_colored", _opt.colored);
+	shader->uniform("is_textured", _opt.textured);
+
+	glBindVertexArray(_vao);
+	if (_opt.instanced)
+		glDrawElementsInstanced(GL_TRIANGLES, _idxs.size(), GL_UNSIGNED_INT, 0, _opt.instance_count);
+	else
+		glDrawElements(GL_TRIANGLES, (GLuint) _idxs.size(), GL_UNSIGNED_INT, nullptr);
+	glBindVertexArray(0);
+}
+// ================================================== Public Methods ==================================================
+
+
+
+// ================================================== Private Methods ==================================================
+
+void Kasumi::UniversalMesh::init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices)
+{
+	_verts = std::move(vertices);
+	_idxs = std::move(indices);
+
+	glGenVertexArrays(1, &_vao);
+	glGenBuffers(1, &_vbo);
+	glGenBuffers(1, &_ebo);
+
+	glBindVertexArray(_vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	_verts.front().setup_offset();
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+
+	glBindVertexArray(0);
+
+	_center_point = mVector3(0.0f, 0.0f, 0.0f);
+	for (auto &v: _verts)
+		_center_point += v.position;
+	_center_point /= static_cast<float>(_verts.size());
+
+	_bbox.reset();
+	for (auto &v: _verts)
+		_bbox.merge(v.position);
+	_dirty = true;
 }
 
-auto Kasumi::TexturedMesh::vertices() -> std::vector<Kasumi::TexturedMesh::Vertex> & { return _verts; }
-void Kasumi::TexturedMesh::use_shader(const Kasumi::ShaderPtr &shader) { _shader = shader; }
-auto Kasumi::TexturedMesh::get_shader() -> Kasumi::ShaderPtr & { return _shader; }
-auto Kasumi::TexturedMesh::get_center_point() const -> mVector3 { return _center_point; }
-
-void Kasumi::TexturedMesh::init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, TexturePtr> &&diffuse_textures, std::map<std::string, TexturePtr> &&specular_textures, std::map<std::string, TexturePtr> &&normal_textures,
-                                std::map<std::string, TexturePtr> &&height_textures)
+void Kasumi::UniversalMesh::update()
 {
-    _verts = std::move(vertices);
-    _idxs = std::move(indices);
-    _diffuse_textures = std::move(diffuse_textures);
-    _specular_textures = std::move(specular_textures);
-    _normal_textures = std::move(normal_textures);
-    _height_textures = std::move(height_textures);
+	glBindVertexArray(_vao);
 
-    VAO = VBO = EBO = 0;
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _verts.size(), &_verts[0], GL_DYNAMIC_DRAW);
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Index) * _idxs.size(), &_idxs[0], GL_DYNAMIC_DRAW);
 
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) 0); // location = 0, position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) sizeof(mVector3)); // location = 1, normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3))); // location = 2, tex_coord
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3) + sizeof(mVector2))); // location = 3, tangent
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (3 * sizeof(mVector3) + sizeof(mVector2))); // location = 4, bi_tangent
-    glEnableVertexAttribArray(4);
-    glVertexAttribIPointer(5, 1, GL_UNSIGNED_INT, sizeof(Vertex), (GLvoid *) (4 * sizeof(mVector3) + sizeof(mVector2))); // location = 5, id
-    glEnableVertexAttribArray(5);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-    glBindVertexArray(0);
-
-    _center_point = mVector3(0.0f, 0.0f, 0.0f);
-    for (auto &v: _verts)
-        _center_point += v.position;
-    _center_point /= _verts.size();
-
-    n_elem = _idxs.size();
-    _bbox.reset();
-    for (auto &v: _verts)
-        _bbox.merge(v.position);
-    dirty = true;
-    is_inited = true;
+	glBindVertexArray(0);
+	_dirty = false;
 }
-void Kasumi::TexturedMesh::update()
+void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
 {
-    glBindVertexArray(VAO);
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
+		return;
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _verts.size(), &_verts[0], GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Index) * _idxs.size(), &_idxs[0], GL_DYNAMIC_DRAW);
-
-    glBindVertexArray(0);
-
-    dirty = false;
+	auto *mesh = scene->mMeshes[0];
+	for (int i = 0; i < mesh->mNumVertices; ++i)
+	{
+		Kasumi::UniversalMesh::Vertex v;
+		v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
+		v.color = color;
+		if (mesh->HasNormals())
+			v.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
+		if (mesh->HasTextureCoords(0))
+			v.tex_coord = {mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y};
+		if (mesh->HasTangentsAndBitangents())
+		{
+			v.tangent = {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z};
+			v.bi_tangent = {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z};
+		}
+		v.id = i; // TODO: auto id
+		vertices.emplace_back(std::move(v));
+	}
+	for (int i = 0; i < mesh->mNumFaces; ++i)
+		for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
+			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
 }
 
-void Kasumi::TexturedMesh::print_info() const
+void Kasumi::UniversalMesh::Vertex::setup_offset()
 {
-    std::cout << "| Vertices count: " << _verts.size() << " |" << std::endl;
-    std::cout << "| Indices count: " << _idxs.size() << " |" << std::endl;
-    if (!_diffuse_textures.empty())
-    {
-        std::cout << "| Diffuse textures count: " << _diffuse_textures.size() << " |" << std::endl;
-        for (auto &e: _diffuse_textures)
-            e.second->print_info();
-    }
-    if (!_specular_textures.empty())
-    {
-        std::cout << "| Specular textures count: " << _specular_textures.size() << " |" << std::endl;
-        for (auto &e: _specular_textures)
-            e.second->print_info();
-    }
-    if (!_normal_textures.empty())
-    {
-        std::cout << "| Normal textures count: " << _normal_textures.size() << " |" << std::endl;
-        for (auto &e: _normal_textures)
-            e.second->print_info();
-    }
-    if (!_height_textures.empty())
-    {
-        std::cout << "| Height textures count: " << _height_textures.size() << " |" << std::endl;
-        for (auto &e: _height_textures)
-            e.second->print_info();
-    }
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) 0); // location = 0, position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) sizeof(mVector3)); // location = 1, normal
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3))); // location = 2, tex_coord
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3) + sizeof(mVector2))); // location = 3, color
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (3 * sizeof(mVector3) + sizeof(mVector2))); // location = 4, tangent
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (4 * sizeof(mVector3) + sizeof(mVector2))); // location = 5, bi_tangent
+	glEnableVertexAttribArray(5);
+	glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(Vertex), (GLvoid *) (5 * sizeof(mVector3) + sizeof(mVector2))); // location = 6, id
+	glEnableVertexAttribArray(6);
 }
 
-Kasumi::ColoredMesh::ColoredMesh(const std::string &primitive_name, const std::string &color_name) : _shader(nullptr)
-{
-    std::vector<Vertex> vertices;
-    std::vector<Index> indices;
-
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
-        return;
-
-    auto *mesh = scene->mMeshes[0];
-    for (int i = 0; i < mesh->mNumVertices; ++i)
-    {
-        Vertex v;
-        v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
-        if (mesh->HasNormals())
-            v.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
-        if (mesh->HasTangentsAndBitangents())
-        {
-            v.tangent = {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z};
-            v.bi_tangent = {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z};
-        }
-        v.id = i; // TODO: auto id
-        vertices.emplace_back(std::move(v));
-    }
-    for (int i = 0; i < mesh->mNumFaces; ++i)
-        for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
-            indices.emplace_back(mesh->mFaces[i].mIndices[j]);
-
-    init(std::move(vertices), std::move(indices), color_name);
-}
-Kasumi::ColoredMesh::ColoredMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string &color_name) : _shader(nullptr) { init(std::move(vertices), std::move(indices), color_name); }
-Kasumi::ColoredMesh::~ColoredMesh() = default;
-void Kasumi::ColoredMesh::render()
-{
-    if (dirty)
-        update();
-
-    _shader->use();
-
-    if (_opt.render_wireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    else
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, (GLuint) n_elem, GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
-}
-void Kasumi::ColoredMesh::use_shader(const Kasumi::ShaderPtr &shader) { _shader = shader; }
-auto Kasumi::ColoredMesh::get_shader() -> Kasumi::ShaderPtr & { return _shader; }
-auto Kasumi::ColoredMesh::get_center_point() const -> mVector3 { return _center_point; }
-void Kasumi::ColoredMesh::init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, const std::string &color_name)
-{
-    _verts = std::move(vertices);
-    _idxs = std::move(indices);
-
-    VAO = VBO = EBO = 0;
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) 0); // location = 0, position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) sizeof(mVector3)); // location = 1, normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3))); // location = 2, color
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (3 * sizeof(mVector3))); // location = 3, tangent
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (4 * sizeof(mVector3))); // location = 4, bi_tangent
-    glEnableVertexAttribArray(4);
-    glVertexAttribIPointer(5, 1, GL_UNSIGNED_INT, sizeof(Vertex), (GLvoid *) (5 * sizeof(mVector3))); // location = 5, id
-    glEnableVertexAttribArray(5);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-    glBindVertexArray(0);
-
-    if (color_name == "MIKU")
-        for (auto &v: _verts)
-            v.color = {57.f / 255.9f, 197.f / 255.9f, 187.f / 255.9f, 1.0f};
-    else if (color_name == "RED")
-        for (auto &v: _verts)
-            v.color = {1.0f, 0.0f, 0.0f};
-    else if (color_name == "GREEN")
-        for (auto &v: _verts)
-            v.color = {0.0f, 1.0f, 0.0f};
-    else if (color_name == "BLUE")
-        for (auto &v: _verts)
-            v.color = {0.0f, 0.0f, 1.0f};
-    else if (color_name == "YELLOW")
-        for (auto &v: _verts)
-            v.color = {1.0f, 1.0f, 0.0f};
-    else if (color_name == "PURPLE")
-        for (auto &v: _verts)
-            v.color = {1.0f, 0.0f, 1.0f};
-    else if (color_name == "CYAN")
-        for (auto &v: _verts)
-            v.color = {0.0f, 1.0f, 1.0f};
-    else if (color_name == "WHITE")
-        for (auto &v: _verts)
-            v.color = {1.0f, 1.0f, 1.0f};
-    else if (color_name == "BLACK")
-        for (auto &v: _verts)
-            v.color = {0.0f, 0.0f, 0.0f};
-    else
-        for (auto &v: _verts)
-            v.color = {1.0f, 1.0f, 1.0f};
-
-    _center_point = mVector3(0.0f, 0.0f, 0.0f);
-    for (auto &v: _verts)
-        _center_point += v.position;
-    _center_point /= _verts.size();
-
-    n_elem = _idxs.size();
-    _bbox.reset();
-    for (auto &v: _verts)
-        _bbox.merge(v.position);
-    dirty = true;
-    is_inited = true;
-}
-void Kasumi::ColoredMesh::update()
-{
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _verts.size(), &_verts[0], GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Index) * _idxs.size(), &_idxs[0], GL_DYNAMIC_DRAW);
-
-    glBindVertexArray(0);
-
-    dirty = false;
-}
+// ================================================== Private Methods ==================================================

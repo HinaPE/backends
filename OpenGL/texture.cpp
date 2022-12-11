@@ -1,13 +1,13 @@
-#include "../texture.h"
-
 #include "glad/glad.h"
-
-#include <utility>
+#include "../texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Kasumi::Texture::Texture(const std::string &path) : _path(std::move(path))
+#include <iostream>
+#include <utility>
+
+Kasumi::Texture::Texture(const std::string &path) : _path(path)
 {
     ID = _width = _height = _nr_channels = 0;
     unsigned char *data = stbi_load(path.c_str(), &_width, &_height, &_nr_channels, 0);
@@ -34,7 +34,7 @@ Kasumi::Texture::Texture(const std::string &path) : _path(std::move(path))
 
     stbi_image_free(data);
 }
-#include <iostream>
+
 Kasumi::Texture::~Texture()
 {
     glDeleteTextures(1, &ID);
@@ -60,13 +60,11 @@ void Kasumi::Texture::bind(int texture_idx) const
         case 4:
             glActiveTexture(GL_TEXTURE4);
             break;
+		case 5:
+			glActiveTexture(GL_TEXTURE5);
+			break;
         default: // TOO MUCH TEXTURES
             break;
     }
     glBindTexture(GL_TEXTURE_2D, ID);
-}
-
-void Kasumi::Texture::print_info()
-{
-    std::cout << "| - " << _path << " |" << std::endl;
 }

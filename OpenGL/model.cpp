@@ -1,138 +1,171 @@
 #include "glad/glad.h"
 #include "../model.h"
 
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-
 #include <map>
 #include <utility>
 #include <algorithm>
 
-Kasumi::Model::Model(const std::string &path, ShaderPtr shader) : _path(path), _shader(std::move(shader)) { load(path); }
-
+Kasumi::Model::Model(const std::string &model_path) : _path(model_path), _shader(_default_mesh_shader) { load(model_path); }
+Kasumi::Model::Model(const std::string &primitive_name, const std::string &texture_name) { _meshes.emplace_back(std::make_shared<UniversalMesh>(primitive_name, texture_name)); }
+Kasumi::Model::Model(const std::string &primitive_name, const mVector3 &color) { _meshes.emplace_back(std::make_shared<UniversalMesh>(primitive_name, color)); }
+Kasumi::Model::Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) { _meshes.emplace_back(std::make_shared<UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures))); }
 Kasumi::Model::~Model() { std::cout << "delete model: " << _path << std::endl; }
 
-static auto process_mesh(aiMesh *mesh, const aiScene *scene, const std::string &directory) -> Kasumi::TexturedMeshPtr
+// ================================================== Public Methods ==================================================
+
+Kasumi::ShaderPtr Kasumi::Model::_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+Kasumi::ShaderPtr Kasumi::Model::_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection)
 {
-    std::vector<Kasumi::TexturedMesh::Vertex> vertices;
-    std::vector<Kasumi::TexturedMesh::Index> indices;
-    std::vector<std::vector<Kasumi::Texture>> textures;
+	_shader->use();
+	_shader->uniform("model", model);
+	_shader->uniform("view", view);
+	_shader->uniform("projection", projection);
+}
+void Kasumi::Model::render()
+{
+	_shader->use();
 
-    // Load vertices
-    for (int i = 0; i < mesh->mNumVertices; ++i)
-    {
-        Kasumi::TexturedMesh::Vertex v;
-        v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
-        if (mesh->HasNormals())
-            v.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
-        if (mesh->HasTextureCoords(0))
-            v.tex_coord = {mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y};
-        if (mesh->HasTangentsAndBitangents())
-        {
-            v.tangent = {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z};
-            v.bi_tangent = {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z};
-        }
-        v.id = i; // TODO: auto id
-        vertices.emplace_back(std::move(v));
-    }
+	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
+					: glDisable(GL_DEPTH_TEST);
+	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    // Load indices
-    for (int i = 0; i < mesh->mNumFaces; ++i)
-        for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
-            indices.emplace_back(mesh->mFaces[i].mIndices[j]);
-
-    // Load materials
-    auto *materials = scene->mMaterials[mesh->mMaterialIndex];
-    auto load_material = [&](aiTextureType type) -> std::map<std::string, Kasumi::TexturePtr>
-    {
-        std::map<std::string, Kasumi::TexturePtr> res;
-        for (int i = 0; i < materials->GetTextureCount(type); ++i)
-        {
-            aiString aiPath;
-            materials->GetTexture(type, i, &aiPath);
-            std::string path(aiPath.C_Str());
-            std::replace(path.begin(), path.end(), '\\', '/');
-            std::string cpp_path, cpp_name;
-            cpp_path = directory + "/" + path;
-            res.emplace(std::move(cpp_name), std::move(std::make_shared<Kasumi::Texture>(cpp_path)));
-        }
-        return res;
-    };
-
-    return std::make_shared<Kasumi::TexturedMesh>(std::move(vertices), std::move(indices), std::move(load_material(aiTextureType_DIFFUSE)), std::move(load_material(aiTextureType_SPECULAR)), std::move(load_material(aiTextureType_HEIGHT)),
-                                                  std::move(load_material(aiTextureType_AMBIENT)));
+	for (auto &mesh: _meshes)
+		mesh->render(_shader);
+}
+auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
+{
+	_meshes[i]->mark_dirty();
+	return _meshes[i]->_verts;
 }
 
-static void process_node(aiNode *node, const aiScene *scene, std::map<std::string, Kasumi::TexturedMeshPtr> &_meshes, const std::string &directory)
-{
-    for (int i = 0; i < node->mNumMeshes; ++i)
-    {
-        auto *mesh = scene->mMeshes[node->mMeshes[i]];
-        _meshes.emplace(std::string(mesh->mName.C_Str()), std::move(process_mesh(mesh, scene, directory)));
-    }
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-        process_node(node->mChildren[i], scene, _meshes, directory);
-}
+// ================================================== Public Methods ==================================================
+
+
+
+// ================================================== Private Methods ==================================================
 
 auto Kasumi::Model::load(const std::string &path) -> bool
 {
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-        return false;
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+		return false;
 
-    const std::string directory = path.substr(0, path.find_last_of('/'));
-    _path = path;
+	process_node(scene->mRootNode, scene);
 
-    process_node(scene->mRootNode, scene, _meshes, directory);
-
-    _center_point = {0, 0, 0};
-    for (auto &mesh: _meshes)
-        _center_point += mesh.second->get_center_point();
-    _center_point /= _meshes.size();
-
-    print_info();
-    return true;
+//	_center_point = {0, 0, 0};
+//	for (auto &mesh: _meshes)
+//		_center_point += mesh->get_center_point();
+//	_center_point /= _meshes.size();
+	return true;
 }
-
-void Kasumi::Model::render()
+void Kasumi::Model::process_node(const struct aiNode *node, const struct aiScene *scene)
 {
-    if (!_shader)
-        return;
-
-    _shader->use();
-    for (auto &mesh: _meshes)
-    {
-        mesh.second->_opt.render_wireframe = _opt.render_wireframe;
-        mesh.second->render();
-    }
+	for (int i = 0; i < node->mNumMeshes; ++i)
+	{
+		auto *mesh = scene->mMeshes[node->mMeshes[i]];
+		_meshes.emplace_back(std::move(process_mesh(mesh, scene)));
+	}
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
+		process_node(node->mChildren[i], scene);
 }
-
-void Kasumi::Model::use_shader(const Kasumi::ShaderPtr &shader)
+auto Kasumi::Model::process_mesh(const aiMesh *mesh, const aiScene *scene) -> Kasumi::UniversalMeshPtr
 {
-    _shader = shader;
-    for (auto &mesh: _meshes)
-        mesh.second->use_shader(shader);
-}
+	std::vector<Kasumi::Model::Vertex> vertices;
+	std::vector<Kasumi::Model::Index> indices;
 
-auto Kasumi::Model::get_shader() -> Kasumi::ShaderPtr &
+	// Load vertices
+	for (int i = 0; i < mesh->mNumVertices; ++i)
+	{
+		Kasumi::Model::Vertex v;
+		v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
+		if (mesh->HasNormals())
+			v.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
+		if (mesh->HasTextureCoords(0))
+			v.tex_coord = {mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y};
+		if (mesh->HasTangentsAndBitangents())
+		{
+			v.tangent = {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z};
+			v.bi_tangent = {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z};
+		}
+		v.id = i; // TODO: auto id
+		vertices.emplace_back(std::move(v));
+	}
+
+	// Load indices
+	for (int i = 0; i < mesh->mNumFaces; ++i)
+		for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
+			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
+
+	// Load materials
+	auto *materials = scene->mMaterials[mesh->mMaterialIndex];
+	auto load_material = [&](aiTextureType type) -> std::vector<Kasumi::TexturePtr>
+	{
+		std::vector<Kasumi::TexturePtr> res;
+		for (int i = 0; i < materials->GetTextureCount(type); ++i)
+		{
+			aiString aiPath;
+			materials->GetTexture(type, i, &aiPath);
+			std::string tex_path(aiPath.C_Str());
+			std::replace(tex_path.begin(), tex_path.end(), '\\', '/');
+			std::string absolute_path = _path.substr(0, _path.find_last_of('/')) + "/" + tex_path;
+			res.push_back(std::move(std::make_shared<Kasumi::Texture>(absolute_path)));
+		}
+		return res;
+	};
+
+	std::map<std::string, std::vector<Kasumi::TexturePtr>> textures;
+	textures["diffuse"] = load_material(aiTextureType_DIFFUSE);
+	textures["specular"] = load_material(aiTextureType_SPECULAR);
+	textures["normal"] = load_material(aiTextureType_NORMALS);
+	textures["height"] = load_material(aiTextureType_HEIGHT);
+	textures["ambient"] = load_material(aiTextureType_AMBIENT);
+
+	return std::make_shared<Kasumi::UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures));
+}
+void Kasumi::Model::setup_instancing(std::vector<mMatrix4x4> &&instance_matrices)
 {
-    return _shader;
-}
+	_shader = _default_instanced_mesh_shader;
 
-auto Kasumi::Model::get_center_point() const -> mVector3
+	_opt.instancing = true;
+	_opt.instance_count = instance_matrices.size();
+	_opt.instance_matrices = std::move(instance_matrices);
+
+	glGenBuffers(1, &_opt.instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_STATIC_DRAW); // TODO: transpose
+
+	for (auto &&mesh: _meshes)
+	{
+		glBindVertexArray(mesh->_vao);
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
+		glEnableVertexAttribArray(8);
+		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
+		glEnableVertexAttribArray(9);
+		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
+		glEnableVertexAttribArray(10);
+		glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
+
+		glVertexAttribDivisor(7, 1);
+		glVertexAttribDivisor(8, 1);
+		glVertexAttribDivisor(9, 1);
+		glVertexAttribDivisor(10, 1);
+
+		glBindVertexArray(0);
+
+		mesh->_opt.instanced = true;
+		mesh->_opt.instance_count = _opt.instance_count;
+	}
+}
+auto Kasumi::Model::center_of_gravity() const -> mVector3
 {
-    return _center_point;
+	mVector3 res;
+	for (auto &&mesh: _meshes)
+		res += mesh->_center_point;
+	return res / static_cast<float>(_meshes.size());
 }
 
-void Kasumi::Model::print_info() const
-{
-    std::cout << "======================================== Model Info ========================================" << std::endl;
-    std::cout << "| Model path: " << _path << " |" << std::endl;
-
-    std::cout << "| Mesh count: " << _meshes.size() << " |" << std::endl;
-    for (auto &mesh: _meshes)
-        mesh.second->print_info();
-    std::cout << "======================================== Model End ========================================" << std::endl;
-}
+// ================================================== Private Methods ==================================================
