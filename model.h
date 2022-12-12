@@ -24,6 +24,7 @@ public: //! ==================== Model Info ====================
 	auto vertices(size_t i) -> std::vector<Vertex> &;
 private:
 	std::vector<UniversalMeshPtr> _meshes;
+	LinesPtr _lines;
 	std::string _path;
 
 public: //! ==================== Rendering Options ====================
@@ -31,7 +32,9 @@ public: //! ==================== Rendering Options ====================
 	{
 		// rendering options
 		bool depth_test = true;
+		bool render_surface = false;
 		bool render_wireframe = false;
+		bool render_bbox = true;
 
 		// instancing
 		bool instancing = false;
@@ -46,11 +49,13 @@ public: //! ==================== Rendering Options ====================
 private:
 	static ShaderPtr _default_mesh_shader;
 	static ShaderPtr _default_instanced_mesh_shader;
+	static ShaderPtr _default_line_shader;
 	ShaderPtr _shader;
 
 public: //! ==================== Geometry Info ====================
 	auto center_of_gravity() const -> mVector3;
 private:
+	mBBox _bbox;
 	mVector3 _center_point;
 
 //! ==================== Constructors & Destructor ====================

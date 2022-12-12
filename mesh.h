@@ -78,6 +78,35 @@ private:
 	void update();
 };
 using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
+
+class Lines final
+{
+public:
+	struct Opt
+	{
+		bool dirty = true;
+		bool smooth = true;
+		float thickness = 1.0f;
+	} _opt;
+public:
+	struct Vertex
+	{
+		mVector3 position;
+		mVector3 color;
+	};
+	Lines();
+	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = Color::PURPLE);
+	void render(const ShaderPtr &shader);
+
+private:
+	void init();
+	void update();
+
+private:
+	unsigned int _vao, _vbo;
+	std::vector<Vertex> _lines; // start, end
+};
+using LinesPtr = std::shared_ptr<Lines>;
 }
 
 #include "../platform.h"
@@ -85,11 +114,6 @@ using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
 class Kasumi::UniversalMesh::Test : public App
 {
 public:
-	struct myVertex
-	{
-		mVector3 position;
-		unsigned int normal;
-	};
 public:
 	void prepare() final;
 	void update(double dt) final;

@@ -216,6 +216,55 @@ void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, st
 
 // ================================================== Private Methods ==================================================
 
+Kasumi::Lines::Lines() : _vao(0), _vbo(0) { init(); }
+void Kasumi::Lines::add(const mVector3 &start, const mVector3 &end, const mVector3 &color)
+{
+	_lines.emplace_back(Vertex{start, color});
+	_lines.emplace_back(Vertex{end, color});
+	_opt.dirty = true;
+}
+void Kasumi::Lines::render(const Kasumi::ShaderPtr &shader)
+{
+	if (_lines.empty())
+		return;
+
+	if (_opt.dirty)
+		update();
+
+	glLineWidth(_opt.thickness);
+	if (_opt.smooth)
+		glEnable(GL_LINE_SMOOTH);
+	else
+		glDisable(GL_LINE_SMOOTH);
+
+	glBindVertexArray(_vao);
+	glDrawArrays(GL_LINES, 0, (GLsizei) _lines.size());
+	glBindVertexArray(0);
+}
+void Kasumi::Lines::init()
+{
+	glGenVertexArrays(1, &_vao);
+	glGenBuffers(1, &_vbo);
+	glBindVertexArray(_vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 1, color
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+}
+void Kasumi::Lines::update()
+{
+	glBindVertexArray(_vao);
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _lines.size(), &_lines[0], GL_DYNAMIC_DRAW);
+	glBindVertexArray(0);
+
+	_opt.dirty = false;
+}
 
 // ================================================== Testing ==================================================
 #include <array>
@@ -261,17 +310,6 @@ void Kasumi::UniversalMesh::Test::prepare()
 	auto b = sizeof(mVector3);
 	auto c = sizeof(mVector2);
 	auto d = sizeof(unsigned int);
-
-	auto f = offsetof(Vertex, position);
-	auto g = offsetof(Vertex, normal);
-	auto h = offsetof(Vertex, tex_coord);
-	auto i = offsetof(Vertex, color);
-	auto j = offsetof(Vertex, tangent);
-	auto k = offsetof(Vertex, bi_tangent);
-	auto l = offsetof(Vertex, id);
-
-	auto x = offsetof(myVertex, position);
-	auto y = offsetof(myVertex, normal);
 
 	unsigned int VBO, EBO;
 	glGenVertexArrays(1, &VAO);
