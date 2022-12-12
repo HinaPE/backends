@@ -65,7 +65,6 @@ public:
 	UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
 
 public:
-	class Test;
 	UniversalMesh(const UniversalMesh &src) = delete;
 	UniversalMesh(UniversalMesh &&src) noexcept = default;
 	~UniversalMesh();
@@ -109,20 +108,4 @@ private:
 };
 using LinesPtr = std::shared_ptr<Lines>;
 }
-
-#include "../platform.h"
-#include "../shader.h"
-class Kasumi::UniversalMesh::Test : public App
-{
-public:
-public:
-	void prepare() final;
-	void update(double dt) final;
-	auto quit() -> bool final { return false; }
-
-	Test();
-	UniversalMeshPtr _mesh;
-	ShaderPtr _shader;
-	unsigned int VAO;
-};
 #endif //KASUMI_MESH_H

@@ -216,6 +216,9 @@ void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, st
 
 // ================================================== Private Methods ==================================================
 
+
+
+// ================================================== Lines ==================================================
 Kasumi::Lines::Lines() : _vao(0), _vbo(0) { init(); }
 void Kasumi::Lines::add(const mVector3 &start, const mVector3 &end, const mVector3 &color)
 {
@@ -271,76 +274,4 @@ void Kasumi::Lines::update()
 	_opt.dirty = false;
 }
 
-// ================================================== Testing ==================================================
-#include <array>
-Kasumi::UniversalMesh::Test::Test()
-{
-//	_mesh = std::make_shared<Kasumi::UniversalMesh>(std::move(verts), std::vector(indices.begin(), indices.end()));
-	const char *vertex_shader_src = "#version 330 core\n"
-									"layout (location = 0) in vec3 aPos;\n"
-									"void main()\n"
-									"{\n"
-									"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-									"}\0";
-	const char *fragment_shader_src = "#version 330 core\n"
-									  "out vec4 FragColor;\n"
-									  "void main()\n"
-									  "{\n"
-									  "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-									  "}\n\0";
-	_shader = std::make_shared<Kasumi::Shader>(vertex_shader_src, fragment_shader_src);
-}
-void Kasumi::UniversalMesh::Test::prepare()
-{
-	using VV = Vertex;
-	const std::array<float, 12> vertices = {
-			-0.2f, 0.0f, 0.0f,
-			0.2f, 0.0f, 0.0f,
-			0.0f, 0.2f, 0.0f,
-			0.0f, -0.2f, 0.0f
-	};
-	const std::array<unsigned int, 6> indices = {
-			0, 1, 2,
-			0, 3, 1
-	};
-	std::vector<VV> verts;
-	for (int i = 0; i < vertices.size(); i += 3)
-	{
-		VV v;
-		v.position = {vertices[i], vertices[i + 1], vertices[i + 2]};
-		verts.emplace_back(std::move(v));
-	}
-
-	auto a = sizeof(VV);
-	auto b = sizeof(mVector3);
-	auto c = sizeof(mVector2);
-	auto d = sizeof(unsigned int);
-
-	unsigned int VBO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VV) * verts.size(), &verts[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VV), (void *) (0 * sizeof(float)));
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-void Kasumi::UniversalMesh::Test::update(double dt)
-{
-	_shader->use();
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-//	_mesh->render(_shader);
-}
-
-// ================================================== Testing ==================================================
-
+// ================================================== Lines ==================================================
