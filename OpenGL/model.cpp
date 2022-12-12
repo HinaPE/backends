@@ -21,6 +21,12 @@ void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, 
 	_shader->uniform("model", model);
 	_shader->uniform("view", view);
 	_shader->uniform("projection", projection);
+
+	if (_opt.instancing)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
+		glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+	}
 }
 void Kasumi::Model::render()
 {
@@ -148,7 +154,7 @@ void Kasumi::Model::setup_instancing(const std::vector<Kasumi::Pose> &instance_p
 
 	glGenBuffers(1, &_opt.instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
 
 	for (auto &&mesh: _meshes)
 	{
