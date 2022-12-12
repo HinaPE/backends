@@ -26,8 +26,8 @@ void Kasumi::Model::render()
 {
 	_shader->use();
 
-//	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
-//					: glDisable(GL_DEPTH_TEST);
+	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
+					: glDisable(GL_DEPTH_TEST);
 	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

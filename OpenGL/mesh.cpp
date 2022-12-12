@@ -141,7 +141,21 @@ void Kasumi::UniversalMesh::init(std::vector<Vertex> &&vertices, std::vector<Ind
 	glBindVertexArray(_vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-	_verts.front().setup_offset();
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, normal)); // location = 1, normal
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, tex_coord)); // location = 2, tex_coord
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 3, color
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, tangent)); // location = 4, tangent
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, bi_tangent)); // location = 5, bi_tangent
+	glEnableVertexAttribArray(5);
+	glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(Vertex), (GLvoid *) offsetof(Vertex, id)); // location = 6, id
+	glEnableVertexAttribArray(6);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 
@@ -199,23 +213,6 @@ void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, st
 		for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
 			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
 }
-void Kasumi::UniversalMesh::Vertex::setup_offset()
-{
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) 0); // location = 0, position
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) sizeof(mVector3)); // location = 1, normal
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3))); // location = 2, tex_coord
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (2 * sizeof(mVector3) + sizeof(mVector2))); // location = 3, color
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (3 * sizeof(mVector3) + sizeof(mVector2))); // location = 4, tangent
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (4 * sizeof(mVector3) + sizeof(mVector2))); // location = 5, bi_tangent
-	glEnableVertexAttribArray(5);
-	glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(Vertex), (GLvoid *) (5 * sizeof(mVector3) + sizeof(mVector2))); // location = 6, id
-	glEnableVertexAttribArray(6);
-}
 
 // ================================================== Private Methods ==================================================
 
@@ -241,24 +238,40 @@ Kasumi::UniversalMesh::Test::Test()
 }
 void Kasumi::UniversalMesh::Test::prepare()
 {
+	using VV = Vertex;
 	const std::array<float, 12> vertices = {
-			-0.5f, 0.f, 0.0f,
-			0.5f, 0.f, 0.0f,
-			0.0f, 0.5f, 0.0f,
-			0.0f, -0.5f, 0.0f
+			-0.2f, 0.0f, 0.0f,
+			0.2f, 0.0f, 0.0f,
+			0.0f, 0.2f, 0.0f,
+			0.0f, -0.2f, 0.0f
 	};
 	const std::array<unsigned int, 6> indices = {
 			0, 1, 2,
 			0, 3, 1
 	};
-	std::vector<myVertex> verts;
-	for (int i = 0; i < vertices.size(); ++i)
+	std::vector<VV> verts;
+	for (int i = 0; i < vertices.size(); i += 3)
 	{
-		myVertex v;
+		VV v;
 		v.position = {vertices[i], vertices[i + 1], vertices[i + 2]};
 		verts.emplace_back(std::move(v));
-		i += 3;
 	}
+
+	auto a = sizeof(VV);
+	auto b = sizeof(mVector3);
+	auto c = sizeof(mVector2);
+	auto d = sizeof(unsigned int);
+
+	auto f = offsetof(Vertex, position);
+	auto g = offsetof(Vertex, normal);
+	auto h = offsetof(Vertex, tex_coord);
+	auto i = offsetof(Vertex, color);
+	auto j = offsetof(Vertex, tangent);
+	auto k = offsetof(Vertex, bi_tangent);
+	auto l = offsetof(Vertex, id);
+
+	auto x = offsetof(myVertex, position);
+	auto y = offsetof(myVertex, normal);
 
 	unsigned int VBO, EBO;
 	glGenVertexArrays(1, &VAO);
@@ -267,11 +280,11 @@ void Kasumi::UniversalMesh::Test::prepare()
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(myVertex) * verts.size(), &verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(VV) * verts.size(), &verts[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(myVertex), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VV), (void *) (0 * sizeof(float)));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -282,6 +295,7 @@ void Kasumi::UniversalMesh::Test::update(double dt)
 	_shader->use();
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 //	_mesh->render(_shader);
 }
 

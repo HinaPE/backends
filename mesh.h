@@ -27,7 +27,7 @@ protected:
 		mVector3 bi_tangent;
 		unsigned int id;
 
-		virtual void setup_offset();
+//		virtual void setup_offset();
 	};
 	using Index = unsigned int;
 
@@ -90,6 +90,7 @@ public:
 	struct myVertex
 	{
 		mVector3 position;
+		unsigned int normal;
 	};
 public:
 	void prepare() final;

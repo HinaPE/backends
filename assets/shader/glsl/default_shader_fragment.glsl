@@ -19,18 +19,16 @@ uniform sampler2D texture_height1;
 
 void main()
 {
-//    vec3 out_color = vec3(0.0f, 0.0f, 0.0f);
-//    if (is_colored)
-//    {
-//        out_color += Color;
-//    }
-//
-//    if (is_textured)
-//    {
-//        out_color += texture(texture_diffuse1, TexCoords).rgb; // diffuse map
-//    }
-//
-//    FragColor = vec4(out_color, 1.0f);
+    vec3 out_color = vec3(0.0f, 0.0f, 0.0f);
+    if (is_colored)
+    {
+        out_color += Color;
+    }
 
-    FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    if (is_textured)
+    {
+        out_color += texture(texture_diffuse1, TexCoords).rgb; // diffuse map
+    }
+
+    FragColor = vec4(out_color, 1.0f);
 }

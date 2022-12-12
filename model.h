@@ -30,7 +30,7 @@ public: //! ==================== Rendering Options ====================
 	{
 		// rendering options
 		bool depth_test = true;
-		bool render_wireframe = true;
+		bool render_wireframe = false;
 
 		// instancing
 		bool instancing = false;
