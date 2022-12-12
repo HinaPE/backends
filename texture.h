@@ -8,19 +8,12 @@ namespace Kasumi
 {
 class Texture
 {
-public:
+public: //! ==================== Public Methods ====================
     void bind(int texture_idx = 0) const;
 
-private:
-    unsigned int ID;
-    std::string _path;
-    int _width, _height, _nr_channels;
-
-/**
- * Constructors & Destructor
- * - [DELETE] copy constructor & copy assignment operator
- * - [ENABLE] move constructor & move assignment operator
- */
+//! Constructors & Destructor
+//! - [DELETE] copy constructor & copy assignment operator
+//! - [ENABLE] move constructor & move assignment operator
 public:
 	Texture(const std::string &path);
 	Texture(const Texture &src) = delete;
@@ -28,6 +21,11 @@ public:
 	~Texture();
 	void operator=(const Texture &src) = delete;
 	auto operator=(Texture &&src) noexcept -> Texture & = default;
+
+private:
+	unsigned int ID;
+	std::string _path;
+	int _width, _height, _nr_channels;
 };
 using TexturePtr = std::shared_ptr<Texture>;
 }

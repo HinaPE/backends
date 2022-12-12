@@ -15,8 +15,7 @@ namespace Kasumi
 //!
 class UniversalMesh final
 {
-//! ==================== Rendering ====================
-protected:
+protected: //! ==================== Rendering Info ====================
 	struct Vertex
 	{
 		mVector3 position;
@@ -53,7 +52,6 @@ private:
 private:
 	mVector3 _center_point;
 	mBBox _bbox;
-
 
 //! ==================== Constructors & Destructor ====================
 //! - [DELETE] copy constructor & copy assignment operator

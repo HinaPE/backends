@@ -55,18 +55,18 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 {
     if (left_button_pressed)
     {
-        //        if (!is_left_button_first_click)
-        //        {
-        //        real delta_x = static_cast<real>(x_pos - last_mouse_pos_x);
-        //        real delta_y = static_cast<real>(y_pos - last_mouse_pos_y);
-        //            mQuaternion q = mQuaternion(mVector3(0, 1, 0), static_cast<real>(delta_x) * _opt.orbit_sens);
-        //            q = q * mQuaternion(up(), static_cast<real>(delta_y) * _opt.orbit_sens);
-        //            _opt.rotation = q * _opt.rotation;
-        //            update();
-        //        } else
-        //            is_left_button_first_click = false;
-        //        last_mouse_pos_x = x_pos;
-        //        last_mouse_pos_y = y_pos;
+        if (!is_left_button_first_click)
+        {
+            real delta_x = -static_cast<real>(x_pos - last_mouse_pos_x);
+            real delta_y = -static_cast<real>(y_pos - last_mouse_pos_y);
+            mQuaternion q = mQuaternion(mVector3(0, 1, 0), static_cast<real>(delta_x) * _opt.orbit_sens);
+            q = q * mQuaternion(up(), static_cast<real>(delta_y) * _opt.orbit_sens);
+            _opt.rotation = q * _opt.rotation;
+            update();
+        } else
+            is_left_button_first_click = false;
+        last_mouse_pos_x = x_pos;
+        last_mouse_pos_y = y_pos;
     } else if (middle_button_pressed)
     {
         if (!is_middle_button_first_click)

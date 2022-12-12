@@ -7,7 +7,7 @@ namespace Kasumi
 {
 class Camera final
 {
-public:
+public: //! ==================== Public Methods ====================
     auto get_projection() const -> mMatrix4x4;
     auto get_view() const -> mMatrix4x4;
     void key(int key, int scancode, int action, int mods);
@@ -41,8 +41,11 @@ public:
         bool orbit_flip_vertical = false;
     } _opt;
 
+//! ==================== Constructors & Destructor ====================
+//! - [DELETE] copy constructor & copy assignment operator
+//! - [ENABLE] move constructor & move assignment operator
 public:
-    Camera(Opt opt);
+    explicit Camera(Opt opt);
     Camera(const Camera &) = delete;
     Camera(Camera &&) = default;
     ~Camera() = default;
