@@ -5,9 +5,7 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-#include "texture.h"
 #include "mesh.h"
-#include "shader.h"
 #include "pose.h"
 
 #include <vector>

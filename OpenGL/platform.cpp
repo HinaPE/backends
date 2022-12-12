@@ -157,8 +157,5 @@ void Kasumi::Platform::end_frame()
 
 Kasumi::App::App() : App(1920, 768) {}
 Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height)) {}
-void Kasumi::App::launch()
-{
-	_platform->launch(shared_from_this());
-}
+void Kasumi::App::launch() { _platform->launch(shared_from_this()); }
 

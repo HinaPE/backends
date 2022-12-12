@@ -1,7 +1,6 @@
 #ifndef KASUMI_PLATFORM_H
 #define KASUMI_PLATFORM_H
 
-
 #include <string>
 #include <utility>
 #include <vector>
@@ -16,14 +15,15 @@ namespace Kasumi
 class App;
 class Platform
 {
-public:
-	void launch(const std::shared_ptr<App> &app);
+public: //! ==================== Public Methods ====================
+	void add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
 	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
 	void add_mouse_callback(std::function<void(int button, int action, int mods)> &&callback);
 	void add_scroll_callback(std::function<void(double x_offset, double y_offset)> &&callback);
 	void add_cursor_callback(std::function<void(double x_pos, double y_pos)> &&callback);
+	void launch(const std::shared_ptr<App> &app);
 
-public:
+public: //! ==================== Platform Opt ====================
 	struct Opt
 	{
 		bool clear_color = true;
@@ -32,6 +32,9 @@ public:
 	};
 	Opt opt;
 
+//! ==================== Constructors & Destructor ====================
+//! - [DELETE] copy constructor & copy assignment operator
+//! - [DELETE] move constructor & move assignment operator
 public:
 	Platform(int width, int height);
 	Platform(const Platform &) = delete;
@@ -41,7 +44,6 @@ public:
 	auto operator=(Platform &&) -> Platform & = delete;
 
 private:
-	void add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
 	void rendering_loop(const std::shared_ptr<App> &app);
 	void clear_window();
 	void begin_frame();
@@ -62,7 +64,7 @@ private:
 using PlatformPtr = std::shared_ptr<Platform>;
 class App : public std::enable_shared_from_this<App>
 {
-public:
+public: //! ==================== Abstract Interfaces ====================
 	virtual void prepare() = 0;
 	virtual void update(double dt) = 0;
 	virtual auto quit() -> bool = 0;
@@ -70,14 +72,14 @@ public:
 	virtual void mouse_button(int button, int action, int mods) {}
 	virtual void mouse_scroll(double x_offset, double y_offset) {}
 	virtual void mouse_cursor(double x_pos, double y_pos) {}
-
-public:
-	App();
-	App(int width, int height, const std::string &title = "Kasumi Renderer");
 	virtual void launch() final;
 
+public: //! ==================== Constructors ====================
+	App();
+	App(int width, int height, const std::string &title = "Kasumi Renderer");
+
 private:
-	PlatformPtr _platform;
+	PlatformPtr _platform; // the platform that this app is running on
 };
 }
 
