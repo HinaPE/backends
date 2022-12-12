@@ -22,8 +22,13 @@ public: //! ==================== Model Info ====================
 	using Vertex = UniversalMesh::Vertex;
 	using Index = UniversalMesh::Index;
 	auto vertices(size_t i) -> std::vector<Vertex> &;
+	void instancing();
+	void add_instances(const std::vector<Pose>& poses);
+	void add_instances(const Pose& pose);
+	void clear_instances();
 private:
 	std::vector<UniversalMeshPtr> _meshes;
+	std::vector<mMatrix4x4> _instance_matrices; // make sure instancing() is called before use this
 	LinesPtr _lines;
 	std::string _path;
 
@@ -31,22 +36,20 @@ public: //! ==================== Rendering Options ====================
 	struct Opt
 	{
 		// rendering options
-		bool depth_test = true;
 		bool render_surface = true;
 		bool render_wireframe = false;
 		bool render_bbox = false;
+		bool depth_test = true;
 
 		// bounding box options
-		mVector3 bbox_color = { 0.f, 0.f, 0.f };
+		mVector3 bbox_color = {0.f, 0.f, 0.f};
 
 		// instancing
 		bool instancing = false;
+		bool instance_dirty = true;
 		unsigned int instanceVBO;
-		int instance_count;
-		std::vector<mMatrix4x4> instance_matrices;
 	} _opt;
 	inline void use_custom_shader(const ShaderPtr &shader) { _shader = shader; }
-	void setup_instancing(const std::vector<Pose> &instance_poses);
 	void update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection);
 	void render();
 private:

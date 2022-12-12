@@ -33,8 +33,13 @@ void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, 
 
 	if (_opt.instancing)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
-		glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+		if (_opt.instance_dirty && !_instance_matrices.empty())
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
+			glBufferData(GL_ARRAY_BUFFER, _instance_matrices.size() * sizeof(mMatrix4x4), &_instance_matrices[0], GL_DYNAMIC_DRAW);
+			for (auto &&mesh: _meshes)
+				mesh->_opt.instance_count = _instance_matrices.size();
+		}
 	}
 }
 void Kasumi::Model::render()
@@ -64,7 +69,54 @@ auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
 	_meshes[i]->mark_dirty();
 	return _meshes[i]->_verts;
 }
+void Kasumi::Model::instancing()
+{
+	_shader = _default_instanced_mesh_shader;
 
+	_opt.instancing = true;
+
+	glGenBuffers(1, &_opt.instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
+
+	for (auto &&mesh: _meshes)
+	{
+		glBindVertexArray(mesh->_vao);
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
+		glEnableVertexAttribArray(8);
+		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
+		glEnableVertexAttribArray(9);
+		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
+		glEnableVertexAttribArray(10);
+		glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
+
+		glVertexAttribDivisor(7, 1);
+		glVertexAttribDivisor(8, 1);
+		glVertexAttribDivisor(9, 1);
+		glVertexAttribDivisor(10, 1);
+
+		glBindVertexArray(0);
+
+		mesh->_opt.instanced = true;
+	}
+
+	_instance_matrices.reserve(100000); // prepare a large capacity vector, to promote performance.
+}
+void Kasumi::Model::add_instances(const std::vector<Pose> &poses)
+{
+	for (auto &&pose: poses) _instance_matrices.push_back(pose.get_model_matrix().transposed());
+	_opt.instance_dirty = true;
+}
+void Kasumi::Model::add_instances(const Kasumi::Pose &pose)
+{
+	_instance_matrices.push_back(pose.get_model_matrix().transposed());
+	_opt.instance_dirty = true;
+}
+void Kasumi::Model::clear_instances()
+{
+	_instance_matrices.clear();
+	_opt.instance_dirty = true;
+}
 // ================================================== Public Methods ==================================================
 
 
@@ -205,42 +257,6 @@ auto Kasumi::Model::process_mesh(const aiMesh *mesh, const aiScene *scene) -> Ka
 	textures["ambient"] = load_material(aiTextureType_AMBIENT);
 
 	return std::make_shared<Kasumi::UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures));
-}
-void Kasumi::Model::setup_instancing(const std::vector<Kasumi::Pose> &instance_poses)
-{
-	_shader = _default_instanced_mesh_shader;
-
-	_opt.instancing = true;
-	_opt.instance_count = instance_poses.size();
-	for (auto &pose: instance_poses)
-		_opt.instance_matrices.emplace_back(pose.get_model_matrix().transposed());
-
-	glGenBuffers(1, &_opt.instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
-
-	for (auto &&mesh: _meshes)
-	{
-		glBindVertexArray(mesh->_vao);
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
-		glEnableVertexAttribArray(8);
-		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
-		glEnableVertexAttribArray(9);
-		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
-		glEnableVertexAttribArray(10);
-		glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
-
-		glVertexAttribDivisor(7, 1);
-		glVertexAttribDivisor(8, 1);
-		glVertexAttribDivisor(9, 1);
-		glVertexAttribDivisor(10, 1);
-
-		glBindVertexArray(0);
-
-		mesh->_opt.instanced = true;
-		mesh->_opt.instance_count = _opt.instance_count;
-	}
 }
 auto Kasumi::Model::center_of_gravity() const -> mVector3
 {
