@@ -8,6 +8,7 @@
 #include "texture.h"
 #include "mesh.h"
 #include "shader.h"
+#include "pose.h"
 
 #include <vector>
 #include <string>
@@ -39,7 +40,7 @@ public: //! ==================== Rendering Options ====================
 		std::vector<mMatrix4x4> instance_matrices;
 	} _opt;
 	inline void use_custom_shader(const ShaderPtr &shader) { _shader = shader; }
-	void setup_instancing(std::vector<mMatrix4x4> &&instance_matrices);
+	void setup_instancing(const std::vector<Pose> &instance_poses);
 	void update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection);
 	void render();
 private:

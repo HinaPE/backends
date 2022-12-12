@@ -137,17 +137,18 @@ auto Kasumi::Model::process_mesh(const aiMesh *mesh, const aiScene *scene) -> Ka
 
 	return std::make_shared<Kasumi::UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures));
 }
-void Kasumi::Model::setup_instancing(std::vector<mMatrix4x4> &&instance_matrices)
+void Kasumi::Model::setup_instancing(const std::vector<Kasumi::Pose> &instance_poses)
 {
 	_shader = _default_instanced_mesh_shader;
 
 	_opt.instancing = true;
-	_opt.instance_count = instance_matrices.size();
-	_opt.instance_matrices = std::move(instance_matrices);
+	_opt.instance_count = instance_poses.size();
+	for (auto &pose: instance_poses)
+		_opt.instance_matrices.emplace_back(pose.get_model_matrix().transposed());
 
 	glGenBuffers(1, &_opt.instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _opt.instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_STATIC_DRAW); // TODO: transpose
+	glBufferData(GL_ARRAY_BUFFER, _opt.instance_count * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_STATIC_DRAW);
 
 	for (auto &&mesh: _meshes)
 	{

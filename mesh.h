@@ -26,8 +26,6 @@ protected:
 		mVector3 tangent;
 		mVector3 bi_tangent;
 		unsigned int id;
-
-//		virtual void setup_offset();
 	};
 	using Index = unsigned int;
 
