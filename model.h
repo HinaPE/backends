@@ -32,9 +32,12 @@ public: //! ==================== Rendering Options ====================
 	{
 		// rendering options
 		bool depth_test = true;
-		bool render_surface = false;
+		bool render_surface = true;
 		bool render_wireframe = false;
-		bool render_bbox = true;
+		bool render_bbox = false;
+
+		// bounding box options
+		mVector3 bbox_color = { 0.f, 0.f, 0.f };
 
 		// instancing
 		bool instancing = false;

@@ -54,6 +54,8 @@ void Kasumi::Model::render()
 	if (_opt.render_bbox)
 	{
 		_default_line_shader->use();
+		for (auto &line: _lines->lines())
+			line.color = _opt.bbox_color;
 		_lines->render(_default_line_shader);
 	}
 }

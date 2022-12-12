@@ -86,7 +86,7 @@ public:
 	{
 		bool dirty = true;
 		bool smooth = true;
-		float thickness = 1.0f;
+		float thickness = 0.0f;
 	} _opt;
 public:
 	struct Vertex
@@ -96,6 +96,7 @@ public:
 	};
 	Lines();
 	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = Color::PURPLE);
+	auto lines() -> std::vector<Vertex> &;
 	void render(const ShaderPtr &shader);
 
 private:

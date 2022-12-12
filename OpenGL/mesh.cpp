@@ -241,6 +241,11 @@ void Kasumi::Lines::render(const Kasumi::ShaderPtr &shader)
 	glDrawArrays(GL_LINES, 0, (GLsizei) _lines.size());
 	glBindVertexArray(0);
 }
+auto Kasumi::Lines::lines() -> std::vector<Vertex> &
+{
+	_opt.dirty = true;
+	return _lines;
+}
 void Kasumi::Lines::init()
 {
 	glGenVertexArrays(1, &_vao);
