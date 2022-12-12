@@ -61,17 +61,18 @@ private:
 //! - [DELETE] copy constructor & copy assignment operator
 //! - [ENABLE] move constructor & move assignment operator
 public:
+	friend class Model;
+	UniversalMesh(const std::string &primitive_name, const std::string &texture_name);
+	UniversalMesh(const std::string &primitive_name, const mVector3 &color);
+	UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
+
+public:
+	class Test;
 	UniversalMesh(const UniversalMesh &src) = delete;
 	UniversalMesh(UniversalMesh &&src) noexcept = default;
 	~UniversalMesh();
 	void operator=(const UniversalMesh &src) = delete;
 	auto operator=(UniversalMesh &&src) noexcept -> UniversalMesh & = default;
-
-public:
-	friend class Model;
-	UniversalMesh(const std::string &primitive_name, const std::string &texture_name);
-	UniversalMesh(const std::string &primitive_name, const mVector3 &color);
-	UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
 
 private:
 	void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
@@ -81,4 +82,23 @@ private:
 using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
 }
 
+#include "../platform.h"
+#include "../shader.h"
+class Kasumi::UniversalMesh::Test : public App
+{
+public:
+	struct myVertex
+	{
+		mVector3 position;
+	};
+public:
+	void prepare() final;
+	void update(double dt) final;
+	auto quit() -> bool final { return false; }
+
+	Test();
+	UniversalMeshPtr _mesh;
+	ShaderPtr _shader;
+	unsigned int VAO;
+};
 #endif //KASUMI_MESH_H

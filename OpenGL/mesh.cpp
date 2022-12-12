@@ -19,11 +19,15 @@ Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const st
 }
 Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
-	_textures = std::move(textures);
-	_opt.textured = true;
+	if (!textures.empty())
+	{
+		_textures = std::move(textures);
+		_opt.textured = true;
+	} else
+		_opt.textured = false;
 	init(std::move(vertices), std::move(indices));
 }
-Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const mVector3 &color)
+Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
@@ -214,3 +218,72 @@ void Kasumi::UniversalMesh::Vertex::setup_offset()
 }
 
 // ================================================== Private Methods ==================================================
+
+
+// ================================================== Testing ==================================================
+#include <array>
+Kasumi::UniversalMesh::Test::Test()
+{
+//	_mesh = std::make_shared<Kasumi::UniversalMesh>(std::move(verts), std::vector(indices.begin(), indices.end()));
+	const char *vertex_shader_src = "#version 330 core\n"
+									"layout (location = 0) in vec3 aPos;\n"
+									"void main()\n"
+									"{\n"
+									"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+									"}\0";
+	const char *fragment_shader_src = "#version 330 core\n"
+									  "out vec4 FragColor;\n"
+									  "void main()\n"
+									  "{\n"
+									  "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+									  "}\n\0";
+	_shader = std::make_shared<Kasumi::Shader>(vertex_shader_src, fragment_shader_src);
+}
+void Kasumi::UniversalMesh::Test::prepare()
+{
+	const std::array<float, 12> vertices = {
+			-0.5f, 0.f, 0.0f,
+			0.5f, 0.f, 0.0f,
+			0.0f, 0.5f, 0.0f,
+			0.0f, -0.5f, 0.0f
+	};
+	const std::array<unsigned int, 6> indices = {
+			0, 1, 2,
+			0, 3, 1
+	};
+	std::vector<myVertex> verts;
+	for (int i = 0; i < vertices.size(); ++i)
+	{
+		myVertex v;
+		v.position = {vertices[i], vertices[i + 1], vertices[i + 2]};
+		verts.emplace_back(std::move(v));
+		i += 3;
+	}
+
+	unsigned int VBO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(myVertex) * verts.size(), &verts, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(myVertex), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+void Kasumi::UniversalMesh::Test::update(double dt)
+{
+	_shader->use();
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+//	_mesh->render(_shader);
+}
+
+// ================================================== Testing ==================================================
+

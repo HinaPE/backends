@@ -16,6 +16,8 @@ public:
 public:
     Shader(const std::string &vertex_path, const std::string &fragment_path);
     Shader(const std::string &vertex_path, const std::string &fragment_path, const std::string &geometry_path);
+	Shader(const char *vertex_src, const char *fragment_src);
+	Shader(const char *vertex_src, const char *fragment_src, const char *geometry_src);
     Shader(const Shader &src) = delete;
     Shader(Shader &&src) noexcept = default;
     ~Shader();
