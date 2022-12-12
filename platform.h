@@ -36,7 +36,7 @@ public: //! ==================== Platform Opt ====================
 //! - [DELETE] copy constructor & copy assignment operator
 //! - [DELETE] move constructor & move assignment operator
 public:
-	Platform(int width, int height);
+	Platform(int width, int height, const std::string& title = "Kasumi: illumine the endless night");
 	Platform(const Platform &) = delete;
 	Platform(Platform &&) = delete;
 	~Platform() = default;
@@ -65,9 +65,9 @@ using PlatformPtr = std::shared_ptr<Platform>;
 class App : public std::enable_shared_from_this<App>
 {
 public: //! ==================== Abstract Interfaces ====================
-	virtual void prepare() = 0;
-	virtual void update(double dt) = 0;
-	virtual auto quit() -> bool = 0;
+	virtual void prepare() {}
+	virtual void update(double dt) {}
+	virtual auto quit() -> bool { return false; }
 	virtual void key(int key, int scancode, int action, int mods) {}
 	virtual void mouse_button(int button, int action, int mods) {}
 	virtual void mouse_scroll(double x_offset, double y_offset) {}
@@ -75,8 +75,10 @@ public: //! ==================== Abstract Interfaces ====================
 	virtual void launch() final;
 
 public: //! ==================== Constructors ====================
-	App();
 	App(int width, int height, const std::string &title = "Kasumi Renderer");
+
+protected:
+	int _width, _height;
 
 private:
 	PlatformPtr _platform; // the platform that this app is running on

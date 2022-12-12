@@ -8,10 +8,21 @@ namespace Kasumi
 class Framebuffer
 {
 public:
-    Framebuffer(int width, int height);
+	void use() const;
+	void unuse() const;
+	void bind_texture() const;
+
+public:
+	Framebuffer(int width, int height);
+	~Framebuffer();
 
 private:
-    int _width, _height;
+	void setup();
+
+private:
+	unsigned int _fbo;
+	unsigned int _texture;
+	int _width, _height;
 };
 using FramebufferPtr = std::shared_ptr<Framebuffer>;
 }

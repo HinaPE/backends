@@ -7,9 +7,9 @@
 #include "backends/imgui_impl_glfw.h"
 #include "../font.dat"
 
-Kasumi::Platform::Platform(int width, int height) : _inited(false), _width(width), _height(height), _current_window(nullptr)
+Kasumi::Platform::Platform(int width, int height, const std::string& title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
-	add_new_window(_width, _height, "Kasumi: illumine the endless night", {1.f, 1.f, 1.f});
+	add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
 }
 
 void Kasumi::Platform::launch(const std::shared_ptr<App> &app)
@@ -155,7 +155,6 @@ void Kasumi::Platform::end_frame()
 	glfwPollEvents();
 }
 
-Kasumi::App::App() : App(1920, 768) {}
-Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height)) {}
+Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)), _width(width), _height(height) {}
 void Kasumi::App::launch() { _platform->launch(shared_from_this()); }
 
