@@ -104,7 +104,7 @@ endif ()
 if (Vulkan)
     find_package(Vulkan REQUIRED)
     file(GLOB Vulkan_IMPL
-#            Vulkan/shader.cpp
+            Vulkan/shader.cpp Vulkan/shader.h
             Vulkan/platform.cpp Vulkan/platform.h
 #            Vulkan/mesh.cpp
 #            Vulkan/texture.cpp
@@ -141,4 +141,12 @@ if (Vulkan)
     endif ()
     target_link_libraries(VulkanApp PUBLIC glfw Vulkan::Vulkan)
     target_link_libraries(VulkanApp PUBLIC HinaPE_Common)
+    target_compile_definitions(
+            VulkanApp
+            PUBLIC
+            -DBuiltinSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBuiltinModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBuiltinShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+    )
 endif ()

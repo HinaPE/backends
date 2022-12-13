@@ -1,6 +1,6 @@
 #ifndef KASUMI_PLATFORM_H
 #define KASUMI_PLATFORM_H
-
+#include "vulkan/vulkan.h"
 // This is a Vulkan Implementation of Platform
 
 #include <string>
@@ -53,6 +53,8 @@ private:
 	void begin_frame();
 	void end_frame();
 
+	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
 private:
 	bool _inited;
 	int _width, _height;
@@ -64,6 +66,29 @@ private:
 	std::vector<std::function<void(int, int, int)>> _mouse_callbacks;
 	std::vector<std::function<void(double, double)>> _scroll_callbacks;
 	std::vector<std::function<void(double, double)>> _cursor_callbacks;
+
+private:
+	VkInstance instance;
+	VkSurfaceKHR surface;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkDevice device;
+	VkQueue graphicsQueue;
+	VkQueue presentQueue;
+	VkSwapchainKHR swapChain;
+	std::vector<VkImage> swapChainImages;
+	VkFormat swapChainImageFormat;
+	VkExtent2D swapChainExtent;
+	std::vector<VkImageView> swapChainImageViews;
+	VkRenderPass renderPass;
+	VkPipelineLayout pipelineLayout;
+	VkPipeline graphicsPipeline;
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+	VkCommandPool commandPool;
+	VkCommandBuffer commandBuffer;
+
+	VkSemaphore imageAvailableSemaphore;
+	VkSemaphore renderFinishedSemaphore;
+	VkFence inFlightFence;
 };
 using PlatformPtr = std::shared_ptr<Platform>;
 class App : public std::enable_shared_from_this<App>
