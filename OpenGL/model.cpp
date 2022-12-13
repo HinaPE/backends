@@ -256,6 +256,8 @@ auto Kasumi::Model::process_mesh(const aiMesh *mesh, const aiScene *scene) -> Ka
 			std::replace(tex_path.begin(), tex_path.end(), '\\', '/');
 			std::string absolute_path = _path.substr(0, _path.find_last_of('/')) + "/" + tex_path;
 			res.push_back(std::move(std::make_shared<Kasumi::Texture>(absolute_path)));
+
+			std::cout << absolute_path << std::endl;
 		}
 		return res;
 	};

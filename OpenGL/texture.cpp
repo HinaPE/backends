@@ -33,6 +33,8 @@ Kasumi::Texture::Texture(const std::string &path) : _path(path)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(data);
+
+	std::cout << path << std::endl;
 }
 
 Kasumi::Texture::~Texture()
