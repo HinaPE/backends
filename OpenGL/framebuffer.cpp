@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Kasumi::Framebuffer::Framebuffer(int width, int height) : _width(width), _height(height), _fbo(0) {}
+Kasumi::Framebuffer::Framebuffer(int width, int height) : _width(width), _height(height), _fbo(0), _texture(0) {}
 
 void Kasumi::Framebuffer::use() const { glBindFramebuffer(GL_FRAMEBUFFER, _fbo); }
 void Kasumi::Framebuffer::unuse() const { glBindFramebuffer(GL_FRAMEBUFFER, 0); }

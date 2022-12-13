@@ -48,6 +48,16 @@ void Kasumi::Model::render()
 
 	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
 					: glDisable(GL_DEPTH_TEST);
+
+	_opt.stencil_test ? glEnable(GL_STENCIL_TEST)
+					  : glDisable(GL_STENCIL_TEST);
+
+	_opt.cull_face ? glEnable(GL_CULL_FACE)
+				   : glDisable(GL_CULL_FACE);
+
+	_opt.blend ? glEnable(GL_BLEND)
+			   : glDisable(GL_BLEND);
+
 	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

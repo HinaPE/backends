@@ -38,6 +38,9 @@ public: //! ==================== Rendering Options ====================
 		bool render_wireframe = false;
 		bool render_bbox = false;
 		bool depth_test = true;
+		bool stencil_test = false;
+		bool cull_face = false;
+		bool blend = true;
 
 		// bounding box options
 		mVector3 bbox_color = {0.f, 0.f, 0.f};

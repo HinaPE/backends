@@ -29,8 +29,10 @@ public: //! ==================== Platform Opt ====================
 		bool clear_color = true;
 		bool clear_depth = true;
 		bool clear_stencil = true;
-	};
-	Opt opt;
+
+		bool MSAA = true;
+		int MSAA_sample = 4;
+	} _opt;
 
 //! ==================== Constructors & Destructor ====================
 //! - [DELETE] copy constructor & copy assignment operator

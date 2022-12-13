@@ -51,6 +51,8 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		if (_opt.MSAA)
+			glfwWindowHint(GLFW_SAMPLES, _opt.MSAA_sample);
 #ifdef __APPLE__
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -98,6 +100,10 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 	{
 		if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
 			std::cerr << "Failed to initialize GLAD" << std::endl;
+
+		if (_opt.MSAA)
+			glEnable(GL_MULTISAMPLE);
+
 		ImGui::CreateContext();
 		ImGui_ImplGlfw_InitForOpenGL(_current_window, true); // TODO: install callbacks?
 		ImGui_ImplOpenGL3_Init();
@@ -124,18 +130,18 @@ void Kasumi::Platform::rendering_loop(const std::shared_ptr<App> &app)
 
 void Kasumi::Platform::clear_window()
 {
-	if (opt.clear_color)
+	if (_opt.clear_color)
 	{
 		auto color = _clear_colors[_current_window_name];
 		glClearColor(std::get<0>(color), std::get<1>(color), std::get<2>(color), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
-	if (opt.clear_depth)
+	if (_opt.clear_depth)
 	{
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
-	if (opt.clear_stencil)
+	if (_opt.clear_stencil)
 		glClear(GL_STENCIL_BUFFER_BIT);
 }
 
