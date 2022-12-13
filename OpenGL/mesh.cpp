@@ -21,8 +21,10 @@ Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector
 {
 	if (!textures.empty())
 	{
+		for (auto &pair: textures)
+			if (!pair.second.empty())
+				_opt.textured = true;
 		_textures = std::move(textures);
-		_opt.textured = true;
 	} else
 		_opt.textured = false;
 	init(std::move(vertices), std::move(indices));

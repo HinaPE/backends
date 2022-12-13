@@ -191,7 +191,7 @@ auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
 	auto l = _bbox.lowerCorner;
 	auto u = _bbox.upperCorner;
 
-	// cube's all edges
+	// bounding box
 	_lines->add(mVector3(l.x, l.y, l.z), mVector3(u.x, l.y, l.z));
 	_lines->add(mVector3(u.x, l.y, l.z), mVector3(u.x, u.y, l.z));
 	_lines->add(mVector3(u.x, u.y, l.z), mVector3(l.x, u.y, l.z));
@@ -204,7 +204,6 @@ auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
 	_lines->add(mVector3(u.x, l.y, l.z), mVector3(u.x, l.y, u.z));
 	_lines->add(mVector3(u.x, u.y, l.z), mVector3(u.x, u.y, u.z));
 	_lines->add(mVector3(l.x, u.y, l.z), mVector3(l.x, u.y, u.z));
-
 
 	return true;
 }
