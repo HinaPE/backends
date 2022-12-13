@@ -79,6 +79,7 @@ auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
 	_meshes[i]->mark_dirty();
 	return _meshes[i]->_verts;
 }
+auto Kasumi::Model::mesh_size() const -> size_t { return _meshes.size(); }
 void Kasumi::Model::instancing()
 {
 	_shader = _default_instanced_mesh_shader;
