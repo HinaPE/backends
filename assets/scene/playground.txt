@@ -1,0 +1,1 @@
+model desk position 0 -10 0  scale 5 5 5
