@@ -33,8 +33,31 @@ Kasumi::Texture::Texture(const std::string &path) : _path(path)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(data);
+}
 
-	std::cout << path << std::endl;
+Kasumi::Texture::Texture(unsigned char *data, int width, int height, int channels) : _width(width), _height(height), _nr_channels(channels)
+{
+	ID = 0;
+
+	if (!data)
+		return;
+
+	auto format = GL_RED;
+	if (_nr_channels == 1)
+		format = GL_RED;
+	else if (_nr_channels == 3)
+		format = GL_RGB;
+	else if (_nr_channels == 4)
+		format = GL_RGBA;
+
+	glGenTextures(1, &ID);
+	glBindTexture(GL_TEXTURE_2D, ID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, format, GL_UNSIGNED_BYTE, data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Kasumi::Texture::~Texture()

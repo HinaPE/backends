@@ -1,6 +1,9 @@
 #include "glad/glad.h"
 #include "../model.h"
 
+//#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include <map>
 #include <utility>
 #include <algorithm>
@@ -252,12 +255,25 @@ auto Kasumi::Model::process_mesh(const aiMesh *mesh, const aiScene *scene) -> Ka
 		{
 			aiString aiPath;
 			materials->GetTexture(type, i, &aiPath);
+
 			std::string tex_path(aiPath.C_Str());
 			std::replace(tex_path.begin(), tex_path.end(), '\\', '/');
 			std::string absolute_path = _path.substr(0, _path.find_last_of('/')) + "/" + tex_path;
-			res.push_back(std::move(std::make_shared<Kasumi::Texture>(absolute_path)));
 
-			std::cout << absolute_path << std::endl;
+			if (scene->GetEmbeddedTexture(aiPath.C_Str()) != nullptr)
+			{
+				auto *tex = scene->GetEmbeddedTexture(aiPath.C_Str());
+
+				int width, height, nr_channels;
+				unsigned char *data = stbi_load_from_memory(reinterpret_cast<unsigned char *>(tex->pcData), tex->mWidth, &width, &height, &nr_channels, 0);
+				if (data)
+					res.push_back(std::move(std::make_shared<Kasumi::Texture>(data, width, height, nr_channels)));
+				else
+					std::cout << "Failed to load embedded texture: " << tex_path << std::endl;
+			} else
+				res.push_back(std::move(std::make_shared<Kasumi::Texture>(absolute_path)));
+
+			std::cout << "Load texture: " << absolute_path << std::endl;
 		}
 		return res;
 	};

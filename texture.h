@@ -16,6 +16,7 @@ public: //! ==================== Public Methods ====================
 //! - [ENABLE] move constructor & move assignment operator
 public:
 	Texture(const std::string &path);
+	Texture(unsigned char *data, int width, int height, int channels);
 	Texture(const Texture &src) = delete;
 	Texture(Texture &&src) noexcept = default;
 	~Texture();
