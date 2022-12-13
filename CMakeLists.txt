@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Kasumi_backend VERSION 1.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
 
 option(OpenGL "Enable OpenGL backend" ON)
-option(Vulkan "Enable Vulkan backend" ON)
+option(Vulkan "Enable Vulkan backend" OFF)
 option(Metal "Enable Metal backend" OFF)
 option(DirectX "Enable DirectX 11 backend" OFF)
 
