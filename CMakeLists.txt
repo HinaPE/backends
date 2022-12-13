@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 project(Kasumi_backend VERSION 1.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
 
 option(OpenGL "Enable OpenGL backend" ON)
-option(Vulkan "Enable Vulkan backend" OFF)
+option(Vulkan "Enable Vulkan backend" ON)
+option(Metal "Enable Metal backend" OFF)
+option(DirectX "Enable DirectX 11 backend" OFF)
 
 if (NOT TARGET HinaPE_Common)
     set(KASUMI_COMMON_DIR "../common")
@@ -97,4 +99,46 @@ if (OpenGL)
             -DBuiltinShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
             -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
+endif ()
+
+if (Vulkan)
+    find_package(Vulkan REQUIRED)
+    file(GLOB Vulkan_IMPL
+#            Vulkan/shader.cpp
+            Vulkan/platform.cpp Vulkan/platform.h
+#            Vulkan/mesh.cpp
+#            Vulkan/texture.cpp
+#            Vulkan/framebuffer.cpp
+#            Vulkan/model.cpp
+#            Vulkan/camera.cpp
+#            Vulkan/instance.cpp
+            )
+    set(Imgui_Vulkan
+            deps/imgui/imgui.h
+            deps/imgui/imgui.cpp
+            deps/imgui/imgui_draw.cpp
+            deps/imgui/imgui_widgets.cpp
+            deps/imgui/imgui_tables.cpp
+            deps/imgui/imconfig.h
+            deps/imgui/imgui_internal.h
+            deps/imgui/imstb_rectpack.h
+            deps/imgui/imstb_textedit.h
+            deps/imgui/imstb_truetype.h
+            deps/imgui/implot.h
+            deps/imgui/implot.cpp
+            deps/imgui/implot_items.cpp
+            deps/imgui/implot_internal.h
+            deps/imgui/backends/imgui_impl_vulkan.cpp
+            deps/imgui/backends/imgui_impl_vulkan.h
+            deps/imgui/backends/imgui_impl_glfw.cpp
+            deps/imgui/backends/imgui_impl_glfw.h
+            )
+    add_executable(VulkanApp Vulkan/main.cpp ${Vulkan_IMPL} ${Imgui_Vulkan})
+    set_target_properties(VulkanApp PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS OFF)
+    target_include_directories(VulkanApp PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
+    if (NOT TARGET glfw)
+        add_subdirectory(deps/glfw3)
+    endif ()
+    target_link_libraries(VulkanApp PUBLIC glfw Vulkan::Vulkan)
+    target_link_libraries(VulkanApp PUBLIC HinaPE_Common)
 endif ()
