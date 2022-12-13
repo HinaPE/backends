@@ -3,6 +3,7 @@
 #include "../platform.h"
 
 #include "imgui.h"
+#include "implot.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 #include "../font.dat"
@@ -105,6 +106,7 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 			glEnable(GL_MULTISAMPLE);
 
 		ImGui::CreateContext();
+		ImPlot::CreateContext();
 		ImGui_ImplGlfw_InitForOpenGL(_current_window, true); // TODO: install callbacks?
 		ImGui_ImplOpenGL3_Init();
 

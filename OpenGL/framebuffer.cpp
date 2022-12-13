@@ -10,7 +10,7 @@ Kasumi::Framebuffer::Framebuffer(int width, int height, float base_x, float base
 void Kasumi::Framebuffer::use() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.9f, 0.9f, 0.9f, 0.9f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if (render_callback)
@@ -21,6 +21,8 @@ void Kasumi::Framebuffer::render() const
 {
 	unuse();
 	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	_screen_shader->use();
 	_screen_shader->uniform("screenTexture", 0);
 	glBindVertexArray(_vao);
@@ -28,6 +30,7 @@ void Kasumi::Framebuffer::render() const
 	glActiveTexture(GL_TEXTURE0);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 }
 
 void Kasumi::Framebuffer::setup()
@@ -62,7 +65,7 @@ void Kasumi::Framebuffer::setup()
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);

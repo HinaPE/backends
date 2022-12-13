@@ -77,6 +77,7 @@ void Kasumi::Model::render()
 		_lines->render(_default_line_shader);
 	}
 }
+void Kasumi::Model::framebuffer_mode(bool mode) { _shader->uniform("framebuffer_mode", mode); }
 auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
 {
 	_meshes[i]->mark_dirty();

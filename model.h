@@ -54,6 +54,7 @@ public: //! ==================== Rendering Options ====================
 	inline void use_custom_shader(const ShaderPtr &shader) { _shader = shader; }
 	void update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection);
 	void render();
+	void framebuffer_mode(bool mode);
 private:
 	static ShaderPtr _default_mesh_shader;
 	static ShaderPtr _default_instanced_mesh_shader;

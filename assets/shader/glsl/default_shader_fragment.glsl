@@ -5,6 +5,7 @@ in vec3 Color;
 
 uniform bool is_colored;
 uniform bool is_textured;
+uniform bool is_framebuffer;
 
 uniform int diffuse_texture_num;
 uniform int specular_texture_num;
@@ -27,8 +28,11 @@ void main()
 
     if (is_textured)
     {
-        out_color += texture(texture_diffuse1, TexCoords).rgb; // diffuse map
+        out_color += texture(texture_diffuse1, TexCoords).rgb;// diffuse map
     }
 
-    FragColor = vec4(out_color, 1.0f);
+    float alpha = 1.0f;
+    if (is_framebuffer)
+        alpha = 0.1;
+    FragColor = vec4(out_color, alpha);
 }
