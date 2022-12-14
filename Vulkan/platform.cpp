@@ -11,6 +11,7 @@
 
 #include <set>
 #include <fstream>
+#include <optional>
 #include <cstdint> // for uint32_t
 #include <limits> // for std::numeric_limits
 #include <algorithm> // for std::clamp
