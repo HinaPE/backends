@@ -150,3 +150,5 @@ if (Vulkan)
             -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
+
+add_subdirectory(experimental)
