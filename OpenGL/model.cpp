@@ -81,7 +81,17 @@ void Kasumi::Model::render()
 		_lines->render(_default_line_shader);
 	}
 }
-void Kasumi::Model::framebuffer_mode(bool mode) { _shader->uniform("is_framebuffer", mode); }
+void Kasumi::Model::framebuffer_mode(bool mode)
+{
+	static bool cached_wireframe = _opt.render_wireframe;
+	_shader->uniform("is_framebuffer", mode);
+	if (mode)
+	{
+		cached_wireframe = _opt.render_wireframe;
+		_opt.render_wireframe = true;
+	} else
+		_opt.render_wireframe = cached_wireframe;
+}
 auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
 {
 	_meshes[i]->mark_dirty();
