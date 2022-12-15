@@ -23,6 +23,7 @@ void Kasumi::Framebuffer::render() const
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	_screen_shader->use();
 	_screen_shader->uniform("screenTexture", 0);
 	glBindVertexArray(_vao);
