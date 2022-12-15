@@ -12,27 +12,27 @@ if (NOT TARGET HinaPE_Common)
 endif ()
 
 file(GLOB UNIVERSE_FILES
+        camera.h
+        framebuffer.h
+        light.h
+        mesh.h
+        model.h
         platform.h
+        pose.h
         shader.h
         texture.h
-        mesh.h
-        instance.h
-        model.h
-        framebuffer.h
-        camera.h
-        pose.h
         )
 
 if (OpenGL)
     file(GLOB OPENGL_IMPL
-            OpenGL/shader.cpp
-            OpenGL/platform.cpp
-            OpenGL/mesh.cpp
-            OpenGL/texture.cpp
-            OpenGL/framebuffer.cpp
-            OpenGL/model.cpp
             OpenGL/camera.cpp
-            OpenGL/instance.cpp
+            OpenGL/framebuffer.cpp
+            OpenGL/light.cpp
+            OpenGL/mesh.cpp
+            OpenGL/model.cpp
+            OpenGL/platform.cpp
+            OpenGL/shader.cpp
+            OpenGL/texture.cpp
             )
     set(Imgui_OpenGL
             deps/imgui/imgui.h
