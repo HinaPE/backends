@@ -45,6 +45,10 @@ void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, 
 		}
 	}
 }
+void Kasumi::Model::update_light(const Kasumi::LightPtr &light)
+{
+	light->sync_shader(_shader);
+}
 void Kasumi::Model::render()
 {
 	_shader->use();

@@ -5,6 +5,7 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
+#include "light.h"
 #include "mesh.h"
 #include "pose.h"
 
@@ -53,6 +54,7 @@ public: //! ==================== Rendering Options ====================
 	} _opt;
 	inline void use_custom_shader(const ShaderPtr &shader) { _shader = shader; }
 	void update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection);
+	void update_light(const LightPtr &light);
 	void render();
 	void framebuffer_mode(bool mode); // when this is on, the model will be rendered transparently
 private:

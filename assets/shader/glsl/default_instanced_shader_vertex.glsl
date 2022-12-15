@@ -12,12 +12,19 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 
-out vec2 TexCoords;
-out vec3 Color;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} vs_out;
 
 void main()
 {
-    TexCoords = aTexCoords;
-    Color = aColor;
+    vs_out.FragPos = aPos;
+    vs_out.Normal = mat3(transpose(inverse(model))) * aNormal;
+    vs_out.TexCoords = aTexCoords;
+    vs_out.Color = aColor;
     gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }
