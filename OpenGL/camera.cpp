@@ -77,7 +77,7 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
             float right_rot = -delta_y * _opt.orbit_sens;
             if (_opt.orbit_flip_vertical)
                 right_rot = -right_rot;
-            auto t_up = _opt.rotation * up();
+            auto t_up = up();
             auto t_front = front();
             auto t_right = t_front.cross(t_up).normalized();
             _opt.rotation = mQuaternion(t_up, up_rot) * mQuaternion(t_right, right_rot) * _opt.rotation;
