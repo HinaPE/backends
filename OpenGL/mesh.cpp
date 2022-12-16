@@ -233,6 +233,8 @@ void Kasumi::Lines::render(const Kasumi::ShaderPtr &shader)
 	if (_lines.empty())
 		return;
 
+	shader->use();
+
 	if (_opt.dirty)
 		update();
 
@@ -274,6 +276,11 @@ void Kasumi::Lines::update()
 	glBindVertexArray(0);
 
 	_opt.dirty = false;
+}
+void Kasumi::Lines::clear()
+{
+	_lines.clear();
+	_opt.dirty = true;
 }
 
 // ================================================== Lines ==================================================

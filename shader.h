@@ -40,7 +40,7 @@ public:
     auto operator=(Shader &&src) noexcept -> Shader & = default;
 
 private:
-    static auto validate(unsigned int id) -> bool;
+    static void validate(unsigned int shader, const std::string &type);
 };
 using ShaderPtr = std::shared_ptr<Shader>;
 }

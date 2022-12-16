@@ -83,7 +83,7 @@ public:
 	{
 		bool dirty = true;
 		bool smooth = true;
-		float thickness = 0.0f;
+		float thickness = 0.0f; // NO USE FOR OpenGL 3.0
 	} _opt;
 public:
 	struct Vertex
@@ -93,6 +93,7 @@ public:
 	};
 	Lines();
 	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = Color::PURPLE);
+	void clear();
 	auto lines() -> std::vector<Vertex> &;
 	void render(const ShaderPtr &shader);
 

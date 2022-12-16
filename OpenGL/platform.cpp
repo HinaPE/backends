@@ -8,6 +8,8 @@
 #include "backends/imgui_impl_glfw.h"
 #include "../font.dat"
 
+#include <exception>
+
 Kasumi::Platform::Platform(int width, int height, const std::string& title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
 	add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
@@ -64,11 +66,7 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 	_windows[title] = _current_window;
 	_clear_colors[title] = clear_color;
 	if (_current_window == nullptr)
-	{
-		std::cerr << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return;
-	}
+		throw std::runtime_error("Failed to create GLFW window");
 	glfwMakeContextCurrent(_current_window);
 	glfwSetWindowUserPointer(_current_window, this);
 	glfwSetFramebufferSizeCallback(_current_window, [](GLFWwindow *window, int width, int height) { glViewport(0, 0, width, height); });
@@ -100,7 +98,7 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 	if (!_inited)
 	{
 		if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-			std::cerr << "Failed to initialize GLAD" << std::endl;
+			throw std::runtime_error("Failed to initialize GLAD");
 
 		if (_opt.MSAA)
 			glEnable(GL_MULTISAMPLE);

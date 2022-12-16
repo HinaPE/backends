@@ -73,7 +73,7 @@ private:
 //! - [DELETE] copy constructor & copy assignment operator
 //! - [ENABLE] move constructor & move assignment operator
 public:
-	Model(const std::string &model_path);
+	explicit Model(const std::string &model_path);
 	Model(const std::string &primitive_name, const std::string &texture_name);
 	Model(const std::string &primitive_name, const mVector3 &color);
 	Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});

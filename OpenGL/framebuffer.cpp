@@ -2,24 +2,22 @@
 #include "../framebuffer.h"
 
 #include <array>
-#include <iostream>
+#include <exception>
 
 Kasumi::Framebuffer::Framebuffer(int width, int height, float base_x, float base_y, float top_x, float top_y)
 		: _width(width), _height(height), _base_x(base_x), _base_y(base_y), _top_x(top_x), _top_y(top_y), _fbo(0), _vao(0), _texture(0), _screen_shader(std::make_shared<Kasumi::Shader>(std::string(BuiltinShaderDir) + "screen_vertex.glsl", std::string(BuiltinShaderDir) + "screen_fragment.glsl")) { setup(); }
 
-void Kasumi::Framebuffer::use() const
+void Kasumi::Framebuffer::render() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-	glClearColor(0.9f, 0.9f, 0.9f, 0.9f);
+	glClearColor(_opt.background_color.x, _opt.background_color.y, _opt.background_color.z, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if (render_callback)
 		render_callback();
-}
-void Kasumi::Framebuffer::unuse() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
-void Kasumi::Framebuffer::render() const
-{
-	unuse();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -80,7 +78,7 @@ void Kasumi::Framebuffer::setup()
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer incomplete!" << std::endl;
+		throw std::runtime_error("Framebuffer is not complete!");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 Kasumi::Framebuffer::~Framebuffer() { glDeleteFramebuffers(1, &_fbo); }

@@ -8,7 +8,6 @@
 #include <functional>
 #include <memory>
 #include <tuple>
-#include <iostream>
 
 namespace Kasumi
 {

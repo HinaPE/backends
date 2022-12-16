@@ -11,13 +11,17 @@ namespace Kasumi
 class Framebuffer
 {
 public:
-	void use() const;
-	static void unuse() ;
 	void render() const;
-	std::function<void()> render_callback;
+	std::function<void()> render_callback = nullptr;
 
 public:
-	Framebuffer(int width, int height, float base_x, float base_y, float top_x, float top_y);
+	struct Opt
+	{
+		mVector3 background_color = {0.9, 0.9, 0.9};
+	} _opt;
+
+public:
+	Framebuffer(int width, int height, float base_x = -1, float base_y = -1, float top_x = 1, float top_y = 1);
 	~Framebuffer();
 
 private:

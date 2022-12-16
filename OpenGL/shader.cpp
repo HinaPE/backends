@@ -1,6 +1,7 @@
 #include "../shader.h"
 #include "glad/glad.h"
 #include <fstream>
+#include <exception>
 
 Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragment_path) : Shader(vertex_path, fragment_path, "") {}
 Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragment_path, const std::string &geometry_path)
@@ -33,11 +34,9 @@ Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragme
 	glAttachShader(ID, f);
 	glLinkProgram(ID);
 
-	if (!validate(v) || !validate(f))
-	{
-		glDeleteProgram(ID);
-		ID = 0;
-	}
+	validate(v, "VERTEX");
+	validate(f, "FRAGMENT");
+	validate(ID, "PROGRAM");
 
 	// to save GPU memory
 	glDeleteShader(v);
@@ -58,11 +57,9 @@ Kasumi::Shader::Shader(const char *vertex_src, const char *fragment_src, const c
 	glAttachShader(ID, f);
 	glLinkProgram(ID);
 
-	if (!validate(v) || !validate(f))
-	{
-		glDeleteProgram(ID);
-		ID = 0;
-	}
+	validate(v, "VERTEX");
+	validate(f, "FRAGMENT");
+	validate(ID, "PROGRAM");
 
 	// to save GPU memory
 	glDeleteShader(v);
@@ -80,24 +77,29 @@ void Kasumi::Shader::use() const
 {
 	glUseProgram(ID);
 }
-auto Kasumi::Shader::validate(unsigned int id) -> bool
+void Kasumi::Shader::validate(unsigned int shader, const std::string &type)
 {
-	GLint compiled = 0;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &compiled);
-	if (compiled == GL_FALSE)
+	int success;
+	char infoLog[1024];
+	if (type != "PROGRAM")
 	{
-		GLint len = 0;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
-
-		auto *msg = new GLchar[len];
-		glGetShaderInfoLog(id, len, &len, msg);
-
-//        printf_s("Shader %d failed to compile: %s", id, msg); // TODO: Replace with logger
-		delete[] msg;
-
-		return false;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+			std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+			throw std::runtime_error("shader compile error");
+		}
+	} else
+	{
+		glGetProgramiv(shader, GL_LINK_STATUS, &success);
+		if (!success)
+		{
+			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+			std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+			throw std::runtime_error("shader compile error");
+		}
 	}
-	return true;
 }
 void Kasumi::Shader::uniform(const std::string &name, bool value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value)); }
 void Kasumi::Shader::uniform(const std::string &name, int value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), value); }
