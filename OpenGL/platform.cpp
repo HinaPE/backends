@@ -8,7 +8,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "../font.dat"
 
-#include <exception>
+#include <stdexcept>
 
 Kasumi::Platform::Platform(int width, int height, const std::string& title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
