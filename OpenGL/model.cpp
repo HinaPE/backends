@@ -80,7 +80,7 @@ void Kasumi::Model::render()
 		_lines->render(_default_line_shader);
 	}
 }
-void Kasumi::Model::framebuffer_mode(bool mode)
+void Kasumi::Model::debug_frame_mode(bool mode)
 {
 	static bool cached_wireframe = _opt.render_wireframe;
 	_shader->uniform("is_framebuffer", mode);

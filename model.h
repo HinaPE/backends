@@ -56,7 +56,7 @@ public: //! ==================== Rendering Options ====================
 	void update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection);
 	void update_light(const LightPtr &light);
 	void render();
-	void framebuffer_mode(bool mode); // when this is on, the model will be rendered transparently
+	void debug_frame_mode(bool mode); // when this is on, the model will be rendered transparently
 private:
 	static ShaderPtr _default_mesh_shader;
 	static ShaderPtr _default_instanced_mesh_shader;

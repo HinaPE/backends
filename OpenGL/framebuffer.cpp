@@ -2,7 +2,7 @@
 #include "../framebuffer.h"
 
 #include <array>
-#include <exception>
+#include <stdexcept>
 
 Kasumi::Framebuffer::Framebuffer(int width, int height, float base_x, float base_y, float top_x, float top_y)
 		: _width(width), _height(height), _base_x(base_x), _base_y(base_y), _top_x(top_x), _top_y(top_y), _fbo(0), _vao(0), _texture(0), _screen_shader(std::make_shared<Kasumi::Shader>(std::string(BuiltinShaderDir) + "screen_vertex.glsl", std::string(BuiltinShaderDir) + "screen_fragment.glsl")) { setup(); }
