@@ -20,7 +20,7 @@ class Model
 public: //! ==================== Model Info ====================
 	using Vertex = UniversalMesh::Vertex;
 	using Index = UniversalMesh::Index;
-	auto vertices(size_t i) -> std::vector<Vertex> &;
+	auto vertices(size_t i = 0) -> std::vector<Vertex> &;
 	auto mesh_size() const -> size_t;
 	void instancing();
 	void add_instances(const std::vector<Pose>& poses);
