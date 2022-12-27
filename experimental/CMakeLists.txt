@@ -3,21 +3,21 @@ project(Pathtracer VERSION 1.0.0 DESCRIPTION "Kasumi Pathtracer" LANGUAGES CXX)
 
 find_package(Threads REQUIRED)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX=1")
-
-if (WIN32)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_WINDOWS=1")
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-elseif (APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_MAC=1")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework QuartzCore")
-    set(CMAKE_XCODE_GENERATE_SCHEME ON)
-    set(XCODE_SCHEME_ENVIRONMENT ON)
-elseif (UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_LINUX=1")
-endif ()
+#set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+#
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX=1")
+#
+#if (WIN32)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_WINDOWS=1")
+#    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+#elseif (APPLE)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_MAC=1")
+#    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework QuartzCore")
+#    set(CMAKE_XCODE_GENERATE_SCHEME ON)
+#    set(XCODE_SCHEME_ENVIRONMENT ON)
+#elseif (UNIX)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_LINUX=1")
+#endif ()
 
 add_subdirectory(src)
 add_subdirectory(imgui)
@@ -34,14 +34,14 @@ foreach(file ${files})
             ${file}
             )
 endforeach()
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Resources" FILES ${ASSETS})
+#source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Resources" FILES ${ASSETS})
 
 add_executable(PathTracer
         src/Main.cpp
         ${ASSETS}
         )
 
-set_target_properties(PathTracer PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
+set_target_properties(PathTracer PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
 
 target_link_libraries(PathTracer PUBLIC Core glfw glad imgui imguizmo Threads::Threads ${OPENGL_LIBRARY})
 
