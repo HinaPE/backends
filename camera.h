@@ -8,6 +8,7 @@ namespace Kasumi
 class Camera final
 {
 public: //! ==================== Public Methods ====================
+	auto screen_to_world(const mVector2 &screen_pos) const -> mVector3;
     auto get_projection() const -> mMatrix4x4;
     auto get_view() const -> mMatrix4x4;
     void key(int key, int scancode, int action, int mods);
@@ -26,7 +27,7 @@ public:
 
         // for projection
         real vertical_fov = 45;
-        real aspect_ratio = 1920.f / 768.f;
+        real aspect_ratio = 1500.f / 700.f;
         real near_plane = 0.01;
         real far_plane = 100;
 

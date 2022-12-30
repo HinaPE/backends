@@ -57,7 +57,8 @@ public: //! ==================== Rendering Options ====================
 	void update_light(const LightPtr &light);
 	void render();
 	void debug_frame_mode(bool mode); // when this is on, the model will be rendered transparently
-private:
+
+public:
 	static ShaderPtr _default_mesh_shader;
 	static ShaderPtr _default_instanced_mesh_shader;
 	static ShaderPtr _default_line_shader;
