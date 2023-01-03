@@ -40,6 +40,9 @@ public:
         real aperture = 0; // not used yet
         real focal_dist = 1; // not used yet
         bool orbit_flip_vertical = false;
+
+		// 2D mode
+		bool is2D = false;
     } _opt;
 
 //! ==================== Constructors & Destructor ====================
