@@ -12,6 +12,7 @@ Kasumi::Model::Model(const std::string &model_path) : _path(model_path), _lines(
 Kasumi::Model::Model(const std::string &primitive_name, const std::string &texture_name) : _lines(std::make_shared<Lines>()) { load(std::make_shared<UniversalMesh>(primitive_name, texture_name)); }
 Kasumi::Model::Model(const std::string &primitive_name, const mVector3 &color) : _lines(std::make_shared<Lines>()) { load(std::make_shared<UniversalMesh>(primitive_name, color)); }
 Kasumi::Model::Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _lines(std::make_shared<Lines>()) { load(std::make_shared<UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures))); }
+Kasumi::Model::Model(Kasumi::LinesPtr lines) : _lines(std::move(lines)) { load(std::move(lines)); }
 Kasumi::Model::~Model() { std::cout << "delete model: " << _path << std::endl; }
 
 // ================================================== Public Methods ==================================================
@@ -26,7 +27,7 @@ void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, 
 	_shader->uniform("view", view);
 	_shader->uniform("projection", projection);
 
-	if (_opt.render_bbox)
+	if (_opt.render_bbox || _opt.line_model)
 	{
 		_default_line_shader->use();
 		_default_line_shader->uniform("model", model);
@@ -51,6 +52,12 @@ void Kasumi::Model::update_light(const Kasumi::LightPtr &light)
 }
 void Kasumi::Model::render()
 {
+	if (_opt.line_model)
+	{
+		_lines->render(_default_line_shader);
+		return;
+	}
+
 	_shader->use();
 
 	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
@@ -67,7 +74,6 @@ void Kasumi::Model::render()
 
 	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 
 	if (_opt.render_surface)
 		for (auto &mesh: _meshes)
@@ -218,6 +224,19 @@ auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
 	_lines->add(mVector3(u.x, l.y, l.z), mVector3(u.x, l.y, u.z));
 	_lines->add(mVector3(u.x, u.y, l.z), mVector3(u.x, u.y, u.z));
 	_lines->add(mVector3(l.x, u.y, l.z), mVector3(l.x, u.y, u.z));
+
+	return true;
+}
+auto Kasumi::Model::load(Kasumi::LinesPtr &&lines) -> bool
+{
+	if (_default_mesh_shader == nullptr)
+		_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	if (_default_instanced_mesh_shader == nullptr)
+		_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	if (_default_line_shader == nullptr)
+		_default_line_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_line_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_line_shader_fragment.glsl");
+	_shader = _default_mesh_shader;
+	_opt.line_model = true;
 
 	return true;
 }

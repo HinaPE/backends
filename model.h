@@ -51,6 +51,9 @@ public: //! ==================== Rendering Options ====================
 		bool instancing = false;
 		bool instance_dirty = true;
 		unsigned int instanceVBO;
+
+		// line model
+		bool line_model = false;
 	} _opt;
 	inline void use_custom_shader(const ShaderPtr &shader) { _shader = shader; }
 	void update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection);
@@ -78,6 +81,7 @@ public:
 	Model(const std::string &primitive_name, const std::string &texture_name);
 	Model(const std::string &primitive_name, const mVector3 &color);
 	Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
+	Model(LinesPtr lines); // a lines model
 
 public:
 	Model(const Model &) = delete;
@@ -89,6 +93,7 @@ public:
 private:
 	auto load(const std::string &path) -> bool;
 	auto load(UniversalMeshPtr &&mesh) -> bool;
+	auto load(LinesPtr &&lines) -> bool;
 	void process_node(const aiNode *node, const aiScene *scene);
 	auto process_mesh(const aiMesh *mesh, const aiScene *scene) -> UniversalMeshPtr;
 };
