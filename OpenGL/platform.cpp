@@ -75,7 +75,6 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 		auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
 		for (auto &callback: platform->_key_callbacks)
 			callback(key, scancode, action, mods);
-		std::cout << "key: " << key << std::endl;
 	});
 	glfwSetMouseButtonCallback(_current_window, [](GLFWwindow *window, int button, int action, int mods)
 	{
