@@ -144,6 +144,11 @@ void Kasumi::Model::add_instances(const Kasumi::Pose &pose)
 	_instance_matrices.push_back(pose.get_model_matrix().transposed());
 	_opt.instance_dirty = true;
 }
+void Kasumi::Model::set_instance_matrices(const std::vector<mMatrix4x4> &matrices)
+{
+	_instance_matrices = matrices;
+	_opt.instance_dirty = true;
+}
 void Kasumi::Model::clear_instances()
 {
 	_instance_matrices.clear();

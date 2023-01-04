@@ -25,6 +25,7 @@ public: //! ==================== Model Info ====================
 	void instancing();
 	void add_instances(const std::vector<Pose>& poses);
 	void add_instances(const Pose& pose);
+	void set_instance_matrices(const std::vector<mMatrix4x4> &matrices);
 	void clear_instances();
 private:
 	std::vector<UniversalMeshPtr> _meshes;
