@@ -52,14 +52,6 @@ void Kasumi::Model::update_light(const Kasumi::LightPtr &light)
 }
 void Kasumi::Model::render()
 {
-	if (_opt.line_model)
-	{
-		_lines->render(_default_line_shader);
-		return;
-	}
-
-	_shader->use();
-
 	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
 					: glDisable(GL_DEPTH_TEST);
 
@@ -74,6 +66,12 @@ void Kasumi::Model::render()
 
 	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	if (_opt.line_model)
+	{
+		_lines->render(_default_line_shader);
+		return;
+	}
 
 	if (_opt.render_surface)
 		for (auto &mesh: _meshes)

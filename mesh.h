@@ -84,6 +84,7 @@ public:
 		bool dirty = true;
 		bool smooth = true;
 		float thickness = 0.0f; // NO USE FOR OpenGL 3.0
+		float _opacity = 1.0;
 	} _opt;
 public:
 	struct Vertex

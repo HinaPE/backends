@@ -234,6 +234,7 @@ void Kasumi::Lines::render(const Kasumi::ShaderPtr &shader)
 		return;
 
 	shader->use();
+	shader->uniform("opacity", _opt._opacity);
 
 	if (_opt.dirty)
 		update();
