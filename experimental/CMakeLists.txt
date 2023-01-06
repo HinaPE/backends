@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 project(Pathtracer VERSION 1.0.0 DESCRIPTION "Kasumi Pathtracer" LANGUAGES CXX)
 
 find_package(Threads REQUIRED)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 project(Kasumi_backend VERSION 1.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
 
 option(OpenGL "Enable OpenGL backend" ON)

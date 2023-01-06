@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 project(Kasumi_igl VERSION 0.2.0 DESCRIPTION "Kasumi: Illumine the Endless Night." LANGUAGES CXX C)
 
 file(GLOB_RECURSE IGL_SRC *.h *.cpp *.c)
