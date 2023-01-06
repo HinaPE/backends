@@ -41,7 +41,7 @@ add_executable(PathTracer
         ${ASSETS}
         )
 
-set_target_properties(PathTracer PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+set_target_properties(PathTracer PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS ON)
 
 target_link_libraries(PathTracer PUBLIC Core glfw glad imgui imguizmo Threads::Threads ${OPENGL_LIBRARY})
 

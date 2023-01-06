@@ -135,7 +135,7 @@ add_library(Core STATIC
 
         )
 
-set_target_properties(Core PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS OFF)
+set_target_properties(Core PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS ON)
 
 target_include_directories(Core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
