@@ -10,6 +10,14 @@
 #include "geometry/bounding_box3.h"
 #include "geometry/point3.h"
 
+//#include "math/array.h"
+//#include "math/matrix.h"
+//#include "math/quaternion.h"
+//#include "math/ray.h"
+//#include "math/transform.h"
+//#include "math/vector.h"
+//#include "geom/bbox.h"
+
 #include <iostream>
 #include <iomanip>
 #include <memory>
