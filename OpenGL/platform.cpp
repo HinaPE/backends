@@ -45,7 +45,6 @@ void Kasumi::Platform::add_key_callback(std::function<void(int, int, int, int)> 
 void Kasumi::Platform::add_mouse_callback(std::function<void(int, int, int)> &&callback) { _mouse_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_scroll_callback(std::function<void(double, double)> &&callback) { _scroll_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_cursor_callback(std::function<void(double, double)> &&callback) { _cursor_callbacks.emplace_back(std::move(callback)); }
-#include <iostream>
 void Kasumi::Platform::add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
 {
 	if (!_inited)
