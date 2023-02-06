@@ -34,7 +34,7 @@ public:
 //! - [DELETE] copy constructor & copy assignment operator
 //! - [ENABLE] move constructor & move assignment operator
 public:
-	Light(Opt opt);
+	explicit Light(Opt opt);
 	Light(const Light &src) = delete;
 	Light(Light &&src) noexcept = default;
 	~Light();

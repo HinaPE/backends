@@ -9,5 +9,6 @@
 #include "math/vector.h"
 #include "geom/bbox.h"
 #include "util/parallel.h"
+#include "util/timer.h"
 
 #endif //MATH_API_H

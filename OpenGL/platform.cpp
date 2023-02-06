@@ -112,7 +112,7 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 		config.FontDataOwnedByAtlas = false;
 		ImGui::GetIO().IniFilename = nullptr;
 		ImGui::GetIO().Fonts->Clear();
-		ImGui::GetIO().Fonts->AddFontFromMemoryTTF(font_ttf, font_ttf_len, 14.0f, &config);
+		ImGui::GetIO().Fonts->AddFontFromMemoryTTF(font_ttf, static_cast<int>(font_ttf_len), 14.0f, &config);
 		ImGui::GetIO().Fonts->Build();
 		_inited = true;
 	}
@@ -133,7 +133,7 @@ void Kasumi::Platform::clear_window()
 	if (_opt.clear_color)
 	{
 		auto color = _clear_colors[_current_window_name];
-		glClearColor(std::get<0>(color), std::get<1>(color), std::get<2>(color), 1.0f);
+		glClearColor(static_cast<GLfloat>(std::get<0>(color)), static_cast<GLfloat>(std::get<1>(color)), static_cast<GLfloat>(std::get<2>(color)), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	if (_opt.clear_depth)
