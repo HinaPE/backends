@@ -180,20 +180,20 @@ auto Kasumi::Model::load(const std::string &path) -> bool
 	for (auto &m: _meshes)
 		_bbox.merge(m->_bbox);
 
-	auto l = _bbox.lowerCorner;
-	auto u = _bbox.upperCorner;
-	_lines->add(mVector3(l.x, l.y, l.z), mVector3(u.x, l.y, l.z));
-	_lines->add(mVector3(l.x, l.y, l.z), mVector3(l.x, u.y, l.z));
-	_lines->add(mVector3(l.x, l.y, l.z), mVector3(l.x, l.y, u.z));
-	_lines->add(mVector3(u.x, u.y, u.z), mVector3(l.x, u.y, u.z));
-	_lines->add(mVector3(u.x, u.y, u.z), mVector3(u.x, l.y, u.z));
-	_lines->add(mVector3(u.x, u.y, u.z), mVector3(u.x, u.y, l.z));
-	_lines->add(mVector3(l.x, u.y, u.z), mVector3(l.x, u.y, l.z));
-	_lines->add(mVector3(l.x, u.y, u.z), mVector3(l.x, l.y, u.z));
-	_lines->add(mVector3(u.x, l.y, u.z), mVector3(u.x, l.y, l.z));
-	_lines->add(mVector3(u.x, l.y, u.z), mVector3(u.x, u.y, u.z));
-	_lines->add(mVector3(u.x, l.y, l.z), mVector3(u.x, u.y, l.z));
-	_lines->add(mVector3(u.x, l.y, l.z), mVector3(l.x, l.y, l.z));
+	auto l = _bbox._lower_corner;
+	auto u = _bbox._upper_corner;
+	_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(u.x(), l.y(), l.z()));
+	_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(l.x(), u.y(), l.z()));
+	_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(l.x(), l.y(), u.z()));
+	_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(l.x(), u.y(), u.z()));
+	_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(u.x(), l.y(), u.z()));
+	_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(u.x(), u.y(), l.z()));
+	_lines->add(mVector3(l.x(), u.y(), u.z()), mVector3(l.x(), u.y(), l.z()));
+	_lines->add(mVector3(l.x(), u.y(), u.z()), mVector3(l.x(), l.y(), u.z()));
+	_lines->add(mVector3(u.x(), l.y(), u.z()), mVector3(u.x(), l.y(), l.z()));
+	_lines->add(mVector3(u.x(), l.y(), u.z()), mVector3(u.x(), u.y(), u.z()));
+	_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), u.y(), l.z()));
+	_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(l.x(), l.y(), l.z()));
 	return true;
 }
 auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
@@ -211,22 +211,22 @@ auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
 	for (auto &m: _meshes)
 		_bbox.merge(m->_bbox);
 
-	auto l = _bbox.lowerCorner;
-	auto u = _bbox.upperCorner;
+	auto l = _bbox._lower_corner;
+	auto u = _bbox._upper_corner;
 
 	// bounding box
-	_lines->add(mVector3(l.x, l.y, l.z), mVector3(u.x, l.y, l.z));
-	_lines->add(mVector3(u.x, l.y, l.z), mVector3(u.x, u.y, l.z));
-	_lines->add(mVector3(u.x, u.y, l.z), mVector3(l.x, u.y, l.z));
-	_lines->add(mVector3(l.x, u.y, l.z), mVector3(l.x, l.y, l.z));
-	_lines->add(mVector3(l.x, l.y, u.z), mVector3(u.x, l.y, u.z));
-	_lines->add(mVector3(u.x, l.y, u.z), mVector3(u.x, u.y, u.z));
-	_lines->add(mVector3(u.x, u.y, u.z), mVector3(l.x, u.y, u.z));
-	_lines->add(mVector3(l.x, u.y, u.z), mVector3(l.x, l.y, u.z));
-	_lines->add(mVector3(l.x, l.y, l.z), mVector3(l.x, l.y, u.z));
-	_lines->add(mVector3(u.x, l.y, l.z), mVector3(u.x, l.y, u.z));
-	_lines->add(mVector3(u.x, u.y, l.z), mVector3(u.x, u.y, u.z));
-	_lines->add(mVector3(l.x, u.y, l.z), mVector3(l.x, u.y, u.z));
+	_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(u.x(), l.y(), l.z()));
+	_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), u.y(), l.z()));
+	_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(l.x(), u.y(), l.z()));
+	_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), l.y(), l.z()));
+	_lines->add(mVector3(l.x(), l.y(), u.z()), mVector3(u.x(), l.y(), u.z()));
+	_lines->add(mVector3(u.x(), l.y(), u.z()), mVector3(u.x(), u.y(), u.z()));
+	_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(l.x(), u.y(), u.z()));
+	_lines->add(mVector3(l.x(), u.y(), u.z()), mVector3(l.x(), l.y(), u.z()));
+	_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(l.x(), l.y(), u.z()));
+	_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), l.y(), u.z()));
+	_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(u.x(), u.y(), u.z()));
+	_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), u.y(), u.z()));
 
 	return true;
 }

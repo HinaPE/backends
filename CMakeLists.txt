@@ -6,9 +6,9 @@ option(Vulkan "Enable Vulkan backend" OFF)
 option(Metal "Enable Metal backend" OFF)
 option(DirectX "Enable DirectX 11 backend" OFF)
 
-if (NOT TARGET HinaPE_Common)
-    set(KASUMI_COMMON_DIR "../common")
-    add_subdirectory(${KASUMI_COMMON_DIR} HinaPE_Common)
+if (NOT TARGET _HinaPE_Common)
+    set(KASUMI_COMMON_DIR "../../_common")
+    add_subdirectory(${KASUMI_COMMON_DIR} _HinaPE_Common)
 endif ()
 
 file(GLOB UNIVERSE_FILES
@@ -90,7 +90,7 @@ if (OpenGL)
     target_link_libraries(Kasumi_backend PUBLIC glad)
     target_link_libraries(Kasumi_backend PUBLIC glfw)
     target_link_libraries(Kasumi_backend PUBLIC nfd)
-    target_link_libraries(Kasumi_backend PUBLIC HinaPE_Common)
+    target_link_libraries(Kasumi_backend PUBLIC _HinaPE_Common)
     target_compile_definitions(
             Kasumi_backend
             PUBLIC
@@ -140,7 +140,7 @@ if (Vulkan)
         add_subdirectory(deps/glfw3)
     endif ()
     target_link_libraries(VulkanApp PUBLIC glfw Vulkan::Vulkan)
-    target_link_libraries(VulkanApp PUBLIC HinaPE_Common)
+    target_link_libraries(VulkanApp PUBLIC _HinaPE_Common)
     target_compile_definitions(
             VulkanApp
             PUBLIC

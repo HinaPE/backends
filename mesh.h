@@ -51,7 +51,7 @@ private:
 //! ==================== Geometry Info ====================
 private:
 	mVector3 _center_point;
-	mBBox _bbox;
+	mBBox3 _bbox;
 
 //! ==================== Constructors & Destructor ====================
 //! - [DELETE] copy constructor & copy assignment operator
@@ -71,7 +71,7 @@ public:
 
 private:
 	void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
-	void load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = Color::NO_COLORS);
+	void load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
 	void update();
 };
 using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
@@ -93,7 +93,7 @@ public:
 		mVector3 color;
 	};
 	Lines();
-	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = Color::PURPLE);
+	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::PURPLE);
 	void clear();
 	auto lines() -> std::vector<Vertex> &;
 	void render(const ShaderPtr &shader);

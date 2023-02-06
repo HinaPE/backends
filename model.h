@@ -71,7 +71,7 @@ public:
 public: //! ==================== Geometry Info ====================
 	auto center_of_gravity() const -> mVector3;
 private:
-	mBBox _bbox;
+	mBBox3 _bbox;
 	mVector3 _center_point;
 
 //! ==================== Constructors & Destructor ====================

@@ -17,12 +17,12 @@ Kasumi::Camera::Camera(Kasumi::Camera::Opt opt) : _opt(std::move(opt)) { update(
 auto Kasumi::Camera::screen_to_world(const mVector2 &screen_pos) const -> mVector3
 {
 	auto VP = get_projection();
-	auto invVP = VP.inverse();
+	auto invVP = VP.inversed();
 
-	auto screen_pos_3d = mVector4((screen_pos.x - 750.f) / 750.f, (350.f - screen_pos.y) / 350.f, 0, 1);
+	auto screen_pos_3d = mVector4((screen_pos.x() - 750.f) / 750.f, (350.f - screen_pos.y()) / 350.f, 0, 1);
 	auto world_pos_3d = invVP * screen_pos_3d;
-	world_pos_3d /= world_pos_3d.w;
-	return {world_pos_3d.x, world_pos_3d.y, world_pos_3d.z};
+	world_pos_3d /= world_pos_3d.w();
+	return {world_pos_3d.x(), world_pos_3d.y(), world_pos_3d.z()};
 }
 
 auto Kasumi::Camera::get_projection() const -> mMatrix4x4 { return _projection; }
@@ -141,4 +141,4 @@ auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real
 	return projection;
 }
 
-auto Kasumi::Camera::view_matrix(const mVector3 &position, const mQuaternion &rotation) -> mMatrix4x4 { return (mMatrix4x4::makeTranslationMatrix(position) * rotation.matrix4()).inverse(); }
+auto Kasumi::Camera::view_matrix(const mVector3 &position, const mQuaternion &rotation) -> mMatrix4x4 { return (mMatrix4x4::make_translation_matrix(position) * rotation.matrix4x4()).inversed(); }

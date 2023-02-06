@@ -10,7 +10,7 @@ Kasumi::Framebuffer::Framebuffer(int width, int height, float base_x, float base
 void Kasumi::Framebuffer::render() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-	glClearColor(_opt.background_color.x, _opt.background_color.y, _opt.background_color.z, 1.0);
+	glClearColor(_opt.background_color.x(), _opt.background_color.y(), _opt.background_color.z(), 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if (render_callback)

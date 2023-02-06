@@ -19,8 +19,8 @@ public: //! ==================== Public Methods ====================
 	void uniform(const std::string &name, const mVector2 &value) const;
 	void uniform(const std::string &name, const mVector3 &value) const;
 	void uniform(const std::string &name, const mVector4 &value) const;
-	void uniform(const std::string &name, mMatrix3x3 value) const;
-	void uniform(const std::string &name, mMatrix4x4 value) const;
+	void uniform(const std::string &name, const mMatrix3x3& value) const;
+	void uniform(const std::string &name, const mMatrix4x4& value) const;
 
 public:
 	unsigned int ID;
