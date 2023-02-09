@@ -69,7 +69,7 @@ void Kasumi::Model::render()
 
 	if (_opt.line_model)
 	{
-		_lines->render(_default_line_shader);
+		_lines->render(*_default_line_shader);
 		return;
 	}
 
@@ -81,7 +81,7 @@ void Kasumi::Model::render()
 	{
 		for (auto &line: _lines->lines())
 			line.color = _opt.bbox_color;
-		_lines->render(_default_line_shader);
+		_lines->render(*_default_line_shader);
 	}
 }
 void Kasumi::Model::debug_frame_mode(bool mode)

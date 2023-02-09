@@ -10,9 +10,9 @@
 
 #include <stdexcept>
 
-Kasumi::Platform::Platform(int width, int height, const std::string& title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
+Kasumi::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
-	add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
+	_add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
 }
 
 void Kasumi::Platform::launch(const std::shared_ptr<App> &app)
@@ -39,13 +39,13 @@ void Kasumi::Platform::launch(const std::shared_ptr<App> &app)
 						{
 							app->mouse_cursor(x_pos, y_pos);
 						});
-	rendering_loop(app);
+	_rendering_loop(app);
 }
 void Kasumi::Platform::add_key_callback(std::function<void(int, int, int, int)> &&callback) { _key_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_mouse_callback(std::function<void(int, int, int)> &&callback) { _mouse_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_scroll_callback(std::function<void(double, double)> &&callback) { _scroll_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_cursor_callback(std::function<void(double, double)> &&callback) { _cursor_callbacks.emplace_back(std::move(callback)); }
-void Kasumi::Platform::add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
+void Kasumi::Platform::_add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
 {
 	if (!_inited)
 	{
@@ -117,17 +117,17 @@ void Kasumi::Platform::add_new_window(int width, int height, const std::string &
 	}
 }
 
-void Kasumi::Platform::rendering_loop(const std::shared_ptr<App> &app)
+void Kasumi::Platform::_rendering_loop(const std::shared_ptr<App> &app)
 {
 	while (!glfwWindowShouldClose(_current_window) || app->quit())
 	{
-		begin_frame();
+		_begin_frame();
 		app->update(0.02);
-		end_frame();
+		_end_frame();
 	}
 }
 
-void Kasumi::Platform::clear_window()
+void Kasumi::Platform::_clear_window()
 {
 	if (_opt.clear_color)
 	{
@@ -144,15 +144,15 @@ void Kasumi::Platform::clear_window()
 		glClear(GL_STENCIL_BUFFER_BIT);
 }
 
-void Kasumi::Platform::begin_frame()
+void Kasumi::Platform::_begin_frame()
 {
-	clear_window();
+	_clear_window();
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void Kasumi::Platform::end_frame()
+void Kasumi::Platform::_end_frame()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -160,6 +160,6 @@ void Kasumi::Platform::end_frame()
 	glfwPollEvents();
 }
 
-Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)), _width(width), _height(height) {}
+Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)) {}
 void Kasumi::App::launch() { _platform->launch(shared_from_this()); }
 

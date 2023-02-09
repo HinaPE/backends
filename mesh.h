@@ -1,6 +1,14 @@
 #ifndef KASUMI_MESH_H
 #define KASUMI_MESH_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
+// Dependency:
+// - Math Backend
+// - Shader Backend
+// - Texture Backend
+
 #include "math_api.h"
 #include "shader.h"
 #include "texture.h"
@@ -15,7 +23,7 @@ namespace Kasumi
 //!
 class UniversalMesh final
 {
-protected: //! ==================== Rendering Info ====================
+protected:
 	struct Vertex
 	{
 		mVector3 position;
@@ -53,9 +61,6 @@ private:
 	mVector3 _center_point;
 	mBBox3 _bbox;
 
-//! ==================== Constructors & Destructor ====================
-//! - [DELETE] copy constructor & copy assignment operator
-//! - [ENABLE] move constructor & move assignment operator
 public:
 	friend class Model;
 	UniversalMesh(const std::string &primitive_name, const std::string &texture_name);
@@ -65,19 +70,31 @@ public:
 public:
 	UniversalMesh(const UniversalMesh &src) = delete;
 	UniversalMesh(UniversalMesh &&src) noexcept = default;
-	~UniversalMesh();
 	void operator=(const UniversalMesh &src) = delete;
 	auto operator=(UniversalMesh &&src) noexcept -> UniversalMesh & = default;
+	~UniversalMesh();
 
 private:
-	void init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
-	void load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
-	void update();
+	void _init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
+	void _load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
+	void _update();
 };
 using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
 
 class Lines final
 {
+public:
+	struct Vertex
+	{
+		mVector3 position;
+		mVector3 color;
+	};
+	Lines();
+	auto lines() -> std::vector<Vertex> &;
+	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::PURPLE);
+	void render(const Shader &shader);
+	void clear();
+
 public:
 	struct Opt
 	{
@@ -86,26 +103,15 @@ public:
 		float thickness = 0.0f; // NO USE FOR OpenGL 3.0
 		float _opacity = 1.0;
 	} _opt;
-public:
-	struct Vertex
-	{
-		mVector3 position;
-		mVector3 color;
-	};
-	Lines();
-	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::PURPLE);
-	void clear();
-	auto lines() -> std::vector<Vertex> &;
-	void render(const ShaderPtr &shader);
 
 private:
-	void init();
-	void update();
+	void _init();
+	void _update();
 
 private:
 	unsigned int _vao, _vbo;
 	std::vector<Vertex> _lines; // start, end
 };
 using LinesPtr = std::shared_ptr<Lines>;
-}
+} // namespace Kasumi
 #endif //KASUMI_MESH_H

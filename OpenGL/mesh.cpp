@@ -10,12 +10,12 @@ Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const st
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
 	std::vector<TexturePtr> diffuse_textures;
-	load_primitive(primitive_name, vertices, indices);
+	_load_primitive(primitive_name, vertices, indices);
 
 	diffuse_textures.push_back(std::make_shared<Kasumi::Texture>(std::string(BuiltinTextureDir) + texture_name));
 	_textures["diffuse"] = diffuse_textures;
 	_opt.textured = true;
-	init(std::move(vertices), std::move(indices));
+	_init(std::move(vertices), std::move(indices));
 }
 Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
@@ -27,15 +27,15 @@ Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector
 		_textures = std::move(textures);
 	} else
 		_opt.textured = false;
-	init(std::move(vertices), std::move(indices));
+	_init(std::move(vertices), std::move(indices));
 }
 Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
-	load_primitive(primitive_name, vertices, indices, color);
+	_load_primitive(primitive_name, vertices, indices, color);
 	_opt.colored = true;
-	init(std::move(vertices), std::move(indices));
+	_init(std::move(vertices), std::move(indices));
 }
 
 Kasumi::UniversalMesh::~UniversalMesh()
@@ -56,7 +56,7 @@ Kasumi::UniversalMesh::~UniversalMesh()
 void Kasumi::UniversalMesh::render(const ShaderPtr &shader)
 {
 	if (_dirty)
-		update();
+		_update();
 
 	shader->use();
 
@@ -131,7 +131,7 @@ void Kasumi::UniversalMesh::render(const ShaderPtr &shader)
 
 // ================================================== Private Methods ==================================================
 
-void Kasumi::UniversalMesh::init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices)
+void Kasumi::UniversalMesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices)
 {
 	_verts = std::move(vertices);
 	_idxs = std::move(indices);
@@ -173,7 +173,7 @@ void Kasumi::UniversalMesh::init(std::vector<Vertex> &&vertices, std::vector<Ind
 		_bbox.merge(v.position);
 	_dirty = true;
 }
-void Kasumi::UniversalMesh::update()
+void Kasumi::UniversalMesh::_update()
 {
 	glBindVertexArray(_vao);
 
@@ -186,7 +186,7 @@ void Kasumi::UniversalMesh::update()
 	glBindVertexArray(0);
 	_dirty = false;
 }
-void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
+void Kasumi::UniversalMesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
 {
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -221,23 +221,23 @@ void Kasumi::UniversalMesh::load_primitive(const std::string &primitive_name, st
 
 
 // ================================================== Lines ==================================================
-Kasumi::Lines::Lines() : _vao(0), _vbo(0) { init(); }
+Kasumi::Lines::Lines() : _vao(0), _vbo(0) { _init(); }
 void Kasumi::Lines::add(const mVector3 &start, const mVector3 &end, const mVector3 &color)
 {
 	_lines.emplace_back(Vertex{start, color});
 	_lines.emplace_back(Vertex{end, color});
 	_opt.dirty = true;
 }
-void Kasumi::Lines::render(const Kasumi::ShaderPtr &shader)
+void Kasumi::Lines::render(const Kasumi::Shader &shader)
 {
 	if (_lines.empty())
 		return;
 
-	shader->use();
-	shader->uniform("opacity", _opt._opacity);
+	shader.use();
+	shader.uniform("opacity", _opt._opacity);
 
 	if (_opt.dirty)
-		update();
+		_update();
 
 	glLineWidth(_opt.thickness);
 	if (_opt.smooth)
@@ -254,7 +254,7 @@ auto Kasumi::Lines::lines() -> std::vector<Vertex> &
 	_opt.dirty = true;
 	return _lines;
 }
-void Kasumi::Lines::init()
+void Kasumi::Lines::_init()
 {
 	glGenVertexArrays(1, &_vao);
 	glGenBuffers(1, &_vbo);
@@ -269,7 +269,7 @@ void Kasumi::Lines::init()
 
 	glBindVertexArray(0);
 }
-void Kasumi::Lines::update()
+void Kasumi::Lines::_update()
 {
 	glBindVertexArray(_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);

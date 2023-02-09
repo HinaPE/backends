@@ -1,6 +1,12 @@
 #ifndef KASUMI_PLATFORM_H
 #define KASUMI_PLATFORM_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
+// Dependency:
+// - Fully Decoupled
+
 #include <string>
 #include <utility>
 #include <vector>
@@ -14,15 +20,16 @@ namespace Kasumi
 class App;
 class Platform
 {
-public: //! ==================== Public Methods ====================
-	void add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
+public:
+	void launch(const std::shared_ptr<App> &app);
+
+public:
 	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
 	void add_mouse_callback(std::function<void(int button, int action, int mods)> &&callback);
 	void add_scroll_callback(std::function<void(double x_offset, double y_offset)> &&callback);
 	void add_cursor_callback(std::function<void(double x_pos, double y_pos)> &&callback);
-	void launch(const std::shared_ptr<App> &app);
 
-public: //! ==================== Platform Opt ====================
+public:
 	struct Opt
 	{
 		bool clear_color = true;
@@ -33,9 +40,6 @@ public: //! ==================== Platform Opt ====================
 		int MSAA_sample = 4;
 	} _opt;
 
-//! ==================== Constructors & Destructor ====================
-//! - [DELETE] copy constructor & copy assignment operator
-//! - [DELETE] move constructor & move assignment operator
 public:
 	Platform(int width, int height, const std::string& title = "Kasumi: illumine the endless night");
 	Platform(const Platform &) = delete;
@@ -45,10 +49,11 @@ public:
 	auto operator=(Platform &&) -> Platform & = delete;
 
 private:
-	void rendering_loop(const std::shared_ptr<App> &app);
-	void clear_window();
-	void begin_frame();
-	void end_frame();
+	void _add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
+	void _rendering_loop(const std::shared_ptr<App> &app);
+	void _clear_window();
+	void _begin_frame();
+	void _end_frame();
 
 private:
 	bool _inited;
@@ -78,12 +83,9 @@ public: //! ==================== Abstract Interfaces ====================
 public: //! ==================== Constructors ====================
 	App(int width, int height, const std::string &title = "Kasumi Renderer");
 
-protected:
-	int _width, _height;
-
 private:
-	PlatformPtr _platform; // the platform that this app is running on
+	PlatformPtr _platform;
 };
-}
+} // namespace Kasumi
 
 #endif //KASUMI_PLATFORM_H

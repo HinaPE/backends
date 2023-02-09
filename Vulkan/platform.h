@@ -18,7 +18,7 @@ class App;
 class Platform
 {
 public: //! ==================== Public Methods ====================
-	void add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
+	void _add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
 	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
 	void add_mouse_callback(std::function<void(int button, int action, int mods)> &&callback);
 	void add_scroll_callback(std::function<void(double x_offset, double y_offset)> &&callback);
@@ -48,10 +48,10 @@ public:
 	auto operator=(Platform &&) -> Platform & = delete;
 
 private:
-	void rendering_loop(const std::shared_ptr<App> &app);
-	void clear_window();
-	void begin_frame();
-	void end_frame();
+	void _rendering_loop(const std::shared_ptr<App> &app);
+	void _clear_window();
+	void _begin_frame();
+	void _end_frame();
 
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 

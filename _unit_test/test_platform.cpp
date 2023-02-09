@@ -5,17 +5,26 @@ class TestApp : public Kasumi::App
 {
 private:
 	Kasumi::ModelPtr _model;
+	Kasumi::LinesPtr _lines;
 
 public:
 	TestApp(int width, int height, const std::string &title) : App(width, height, title) {}
 
 	void prepare() final
 	{
-		_model = std::make_shared<Kasumi::Model>(std::string(BuiltinModelDir) + "bunny.obj");
+		Kasumi::Shader::Init();
+
+//		_model = std::make_shared<Kasumi::Model>(std::string(BuiltinModelDir) + "bunny.obj");
+
+		_lines = std::make_shared<Kasumi::Lines>();
+		_lines->add({0, 0, 0}, {1, 0, 0});
 	}
 	void update(double dt) final
 	{
-		_model->render();
+//		_model->render();
+//		_lines->render();
+
+		_lines->render(*Kasumi::Shader::DefaultLineShader);
 	}
 	auto quit() -> bool final { return App::quit(); }
 	void key(int key, int scancode, int action, int mods) final { App::key(key, scancode, action, mods); }
@@ -26,7 +35,7 @@ public:
 
 auto main() -> int
 {
-	auto test = std::make_shared<TestApp>(800, 600, "Test App");
+	auto test = std::make_shared<TestApp>(1024, 768, "Test App");
 	test->launch();
 	return 0;
 }

@@ -3,6 +3,11 @@
 #include <fstream>
 #include <exception>
 
+std::unique_ptr<Kasumi::Shader> Kasumi::Shader::DefaultMeshShader = nullptr;
+std::unique_ptr<Kasumi::Shader> Kasumi::Shader::DefaultInstanceShader = nullptr;
+std::unique_ptr<Kasumi::Shader> Kasumi::Shader::DefaultLineShader = nullptr;
+std::unique_ptr<Kasumi::Shader> Kasumi::Shader::DefaultPointShader = nullptr;
+
 Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragment_path) : Shader(vertex_path, fragment_path, "") {}
 Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragment_path, const std::string &geometry_path)
 {
@@ -34,9 +39,9 @@ Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragme
 	glAttachShader(ID, f);
 	glLinkProgram(ID);
 
-	validate(v, "VERTEX");
-	validate(f, "FRAGMENT");
-	validate(ID, "PROGRAM");
+	_validate(v, "VERTEX");
+	_validate(f, "FRAGMENT");
+	_validate(ID, "PROGRAM");
 
 	// to save GPU memory
 	glDeleteShader(v);
@@ -57,9 +62,9 @@ Kasumi::Shader::Shader(const char *vertex_src, const char *fragment_src, const c
 	glAttachShader(ID, f);
 	glLinkProgram(ID);
 
-	validate(v, "VERTEX");
-	validate(f, "FRAGMENT");
-	validate(ID, "PROGRAM");
+	_validate(v, "VERTEX");
+	_validate(f, "FRAGMENT");
+	_validate(ID, "PROGRAM");
 
 	// to save GPU memory
 	glDeleteShader(v);
@@ -77,7 +82,18 @@ void Kasumi::Shader::use() const
 {
 	glUseProgram(ID);
 }
-void Kasumi::Shader::validate(unsigned int shader, const std::string &type)
+void Kasumi::Shader::Init()
+{
+	if (DefaultMeshShader == nullptr)
+		DefaultMeshShader = std::make_unique<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	if (DefaultInstanceShader == nullptr)
+		DefaultInstanceShader = std::make_unique<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
+	if (DefaultLineShader == nullptr)
+		DefaultLineShader = std::make_unique<Shader>(std::string(BuiltinShaderDir) + "default_line_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_line_shader_fragment.glsl");
+//		if (DefaultPointShader == nullptr)
+//			DefaultPointShader = std::make_unique<Shader>(std::string(BuiltinShaderDir) + "default_point_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_point_shader_fragment.glsl");
+}
+void Kasumi::Shader::_validate(unsigned int shader, const std::string &type)
 {
 	int success;
 	char infoLog[1024];
@@ -108,6 +124,5 @@ void Kasumi::Shader::uniform(const std::string &name, float value) const { glUni
 void Kasumi::Shader::uniform(const std::string &name, const mVector2 &value) const { glUniform2f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y())); }
 void Kasumi::Shader::uniform(const std::string &name, const mVector3 &value) const { glUniform3f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z())); }
 void Kasumi::Shader::uniform(const std::string &name, const mVector4 &value) const { glUniform4f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z()), static_cast<float>(value.w())); }
-void Kasumi::Shader::uniform(const std::string &name, const mMatrix3x3& value) const { glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.transposed().data()); }
-void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4& value) const { glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.transposed().data()); }
-
+void Kasumi::Shader::uniform(const std::string &name, const mMatrix3x3 &value) const { glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.transposed().data()); }
+void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4 &value) const { glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.transposed().data()); }

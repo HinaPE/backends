@@ -69,7 +69,7 @@ void KasumiVulkan::Platform::recordCommandBuffer(VkCommandBuffer commandBuffer, 
 
 KasumiVulkan::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
-	add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
+	_add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
 }
 void KasumiVulkan::Platform::launch(const std::shared_ptr<App> &app)
 {
@@ -95,14 +95,14 @@ void KasumiVulkan::Platform::launch(const std::shared_ptr<App> &app)
 						{
 							app->mouse_cursor(x_pos, y_pos);
 						});
-	rendering_loop(app);
+	_rendering_loop(app);
 }
 void KasumiVulkan::Platform::add_key_callback(std::function<void(int, int, int, int)> &&callback) { _key_callbacks.emplace_back(std::move(callback)); }
 void KasumiVulkan::Platform::add_mouse_callback(std::function<void(int, int, int)> &&callback) { _mouse_callbacks.emplace_back(std::move(callback)); }
 void KasumiVulkan::Platform::add_scroll_callback(std::function<void(double, double)> &&callback) { _scroll_callbacks.emplace_back(std::move(callback)); }
 void KasumiVulkan::Platform::add_cursor_callback(std::function<void(double, double)> &&callback) { _cursor_callbacks.emplace_back(std::move(callback)); }
 
-void KasumiVulkan::Platform::add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
+void KasumiVulkan::Platform::_add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
 {
 	if (!_inited)
 	{
@@ -658,11 +658,11 @@ void KasumiVulkan::Platform::add_new_window(int width, int height, const std::st
 	}
 }
 
-void KasumiVulkan::Platform::rendering_loop(const std::shared_ptr<App> &app)
+void KasumiVulkan::Platform::_rendering_loop(const std::shared_ptr<App> &app)
 {
 	while (!glfwWindowShouldClose(_current_window) || app->quit())
 	{
-		begin_frame();
+		_begin_frame();
 		app->update(0.02);
 
 		vkWaitForFences(device, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
@@ -708,20 +708,20 @@ void KasumiVulkan::Platform::rendering_loop(const std::shared_ptr<App> &app)
 
 		vkQueuePresentKHR(presentQueue, &presentInfo);
 
-		end_frame();
+		_end_frame();
 	}
 }
-void KasumiVulkan::Platform::clear_window()
+void KasumiVulkan::Platform::_clear_window()
 {
 }
-void KasumiVulkan::Platform::begin_frame()
+void KasumiVulkan::Platform::_begin_frame()
 {
-	clear_window();
+	_clear_window();
 //	ImGui_ImplVulkan_NewFrame();
 //	ImGui_ImplGlfw_NewFrame();
 //	ImGui::NewFrame();
 }
-void KasumiVulkan::Platform::end_frame()
+void KasumiVulkan::Platform::_end_frame()
 {
 //	ImGui::Render();
 //	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData());
