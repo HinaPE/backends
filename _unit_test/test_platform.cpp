@@ -17,13 +17,26 @@ public:
 //		_model = std::make_shared<Kasumi::Model>(std::string(BuiltinModelDir) + "bunny.obj");
 
 		_lines = std::make_shared<Kasumi::Lines>();
-		_lines->add({0, 0, 0}, {1, 0, 0});
+		_lines->add({-1, 0, 0}, {1, 0, 0});
+		_lines->add({0, -1, 0}, {0, 1, 0});
+		_lines->add({0, 0, -1}, {0, 0, 1});
+		_lines->add({-1, 1, 0}, {1, 1, 0});
+		_lines->add({-1, 1, 0}, {-1, -1, 0});
+		_lines->add({1, 1, 0}, {1, -1, 0});
+		_lines->add({-1, -1, 0}, {1, -1, 0});
+		_lines->add({-1, 1, 0}, {1, -1, 0});
+		_lines->add({1, 1, 0}, {-1, -1, 0});
 	}
 	void update(double dt) final
 	{
 //		_model->render();
 //		_lines->render();
 
+		auto &shader = Kasumi::Shader::DefaultLineShader;
+		shader->use();
+		shader->uniform("projection", Kasumi::Camera::project_matrix(45, 1920. / 1080., 0.01, 100));
+		shader->uniform("view", Kasumi::Camera::view_matrix({0, 0, 2}, {1, 0, 0, 0}));
+		shader->uniform("model", mMatrix4x4::Identity());
 		_lines->render(*Kasumi::Shader::DefaultLineShader);
 	}
 	auto quit() -> bool final { return App::quit(); }
