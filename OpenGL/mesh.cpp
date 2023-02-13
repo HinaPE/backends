@@ -5,6 +5,12 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
+#ifdef HINAPE_DOUBLE
+#define GL_REAL GL_DOUBLE
+#else
+#define GL_REAL GL_FLOAT
+#endif
+
 Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const std::string &texture_name) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
 	std::vector<Vertex> vertices;
@@ -53,12 +59,12 @@ Kasumi::UniversalMesh::~UniversalMesh()
 
 // ================================================== Public Methods ==================================================
 
-void Kasumi::UniversalMesh::render(const ShaderPtr &shader)
+void Kasumi::UniversalMesh::render(const Kasumi::Shader &shader)
 {
 	if (_dirty)
 		_update();
 
-	shader->use();
+	shader.use();
 
 	int texture_index = 0;
 	auto diffuse_textures = _textures["diffuse"];
@@ -67,8 +73,8 @@ void Kasumi::UniversalMesh::render(const ShaderPtr &shader)
 		case 1:
 		{
 			diffuse_textures[0]->bind(texture_index);
-			shader->uniform("diffuse_texture_num", 1);
-			shader->uniform("texture_diffuse1", texture_index);
+			shader.uniform("diffuse_texture_num", 1);
+			shader.uniform("texture_diffuse1", texture_index);
 			++texture_index;
 		}
 			break;
@@ -76,47 +82,47 @@ void Kasumi::UniversalMesh::render(const ShaderPtr &shader)
 		{
 			diffuse_textures[0]->bind(texture_index);
 			diffuse_textures[1]->bind(texture_index + 1);
-			shader->uniform("diffuse_texture_num", 2);
-			shader->uniform("texture_diffuse1", texture_index);
-			shader->uniform("texture_diffuse2", texture_index + 1);
+			shader.uniform("diffuse_texture_num", 2);
+			shader.uniform("texture_diffuse1", texture_index);
+			shader.uniform("texture_diffuse2", texture_index + 1);
 			++texture_index;
 			++texture_index;
 		}
 			break;
 		default: // NOT SUPPORT FOR MORE DIFFUSE TEXTURES NOW
-			shader->uniform("diffuse_texture_num", 0);
+			shader.uniform("diffuse_texture_num", 0);
 			break;
 	}
 	auto specular_textures = _textures["specular"];
 	if (!specular_textures.empty())
 	{
 		specular_textures[0]->bind(texture_index);
-		shader->uniform("specular_texture_num", 1);
-		shader->uniform("texture_specular1", texture_index);
+		shader.uniform("specular_texture_num", 1);
+		shader.uniform("texture_specular1", texture_index);
 		texture_index++;
 	} else
-		shader->uniform("specular_texture_num", 0);
+		shader.uniform("specular_texture_num", 0);
 	auto normal_textures = _textures["normal"];
 	if (!normal_textures.empty())
 	{
 		normal_textures[0]->bind(texture_index);
-		shader->uniform("normal_texture_num", 1);
-		shader->uniform("texture_normal1", texture_index);
+		shader.uniform("normal_texture_num", 1);
+		shader.uniform("texture_normal1", texture_index);
 		texture_index++;
 	} else
-		shader->uniform("normal_texture_num", 0);
+		shader.uniform("normal_texture_num", 0);
 	auto height_textures = _textures["height"];
 	if (!height_textures.empty())
 	{
 		height_textures[0]->bind(texture_index);
-		shader->uniform("height_texture_num", 1);
-		shader->uniform("texture_height1", texture_index);
+		shader.uniform("height_texture_num", 1);
+		shader.uniform("texture_height1", texture_index);
 		texture_index++;
 	} else
-		shader->uniform("height_texture_num", 0);
+		shader.uniform("height_texture_num", 0);
 
-	shader->uniform("is_colored", _opt.colored);
-	shader->uniform("is_textured", _opt.textured);
+	shader.uniform("is_colored", _opt.colored);
+	shader.uniform("is_textured", _opt.textured);
 
 	glBindVertexArray(_vao);
 	if (_opt.instanced)
@@ -144,17 +150,17 @@ void Kasumi::UniversalMesh::_init(std::vector<Vertex> &&vertices, std::vector<In
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
+	glVertexAttribPointer(0, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, normal)); // location = 1, normal
+	glVertexAttribPointer(1, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, normal)); // location = 1, normal
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, tex_coord)); // location = 2, tex_coord
+	glVertexAttribPointer(2, 2, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, tex_coord)); // location = 2, tex_coord
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 3, color
+	glVertexAttribPointer(3, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 3, color
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, tangent)); // location = 4, tangent
+	glVertexAttribPointer(4, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, tangent)); // location = 4, tangent
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, bi_tangent)); // location = 5, bi_tangent
+	glVertexAttribPointer(5, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, bi_tangent)); // location = 5, bi_tangent
 	glEnableVertexAttribArray(5);
 	glVertexAttribIPointer(6, 1, GL_UNSIGNED_INT, sizeof(Vertex), (GLvoid *) offsetof(Vertex, id)); // location = 6, id
 	glEnableVertexAttribArray(6);
@@ -261,10 +267,10 @@ void Kasumi::Lines::_init()
 	glBindVertexArray(_vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
+	glVertexAttribPointer(0, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 1, color
+	glVertexAttribPointer(1, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 1, color
 	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);

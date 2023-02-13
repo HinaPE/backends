@@ -36,7 +36,7 @@ protected:
 	};
 	using Index = unsigned int;
 
-private:
+public:
 	struct Opt
 	{
 		bool colored = false;
@@ -44,7 +44,7 @@ private:
 		bool instanced = false;
 		int instance_count;
 	} _opt;
-	void render(const ShaderPtr &shader);
+	void render(const Shader &shader);
 	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
 	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
 	inline void mark_dirty() { _dirty = true; }

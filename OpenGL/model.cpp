@@ -17,9 +17,6 @@ Kasumi::Model::~Model() { std::cout << "delete model: " << _path << std::endl; }
 
 // ================================================== Public Methods ==================================================
 
-Kasumi::ShaderPtr Kasumi::Model::_default_mesh_shader = nullptr;
-Kasumi::ShaderPtr Kasumi::Model::_default_instanced_mesh_shader = nullptr;
-Kasumi::ShaderPtr Kasumi::Model::_default_line_shader = nullptr;
 void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, const mMatrix4x4 &projection)
 {
 	_shader->use();
@@ -29,10 +26,10 @@ void Kasumi::Model::update_mvp(const mMatrix4x4 &model, const mMatrix4x4 &view, 
 
 	if (_opt.render_bbox || _opt.line_model)
 	{
-		_default_line_shader->use();
-		_default_line_shader->uniform("model", model);
-		_default_line_shader->uniform("view", view);
-		_default_line_shader->uniform("projection", projection);
+//		_default_line_shader->use();
+//		_default_line_shader->uniform("model", model);
+//		_default_line_shader->uniform("view", view);
+//		_default_line_shader->uniform("projection", projection);
 	}
 
 	if (_opt.instancing)
@@ -69,19 +66,19 @@ void Kasumi::Model::render()
 
 	if (_opt.line_model)
 	{
-		_lines->render(*_default_line_shader);
+//		_lines->render(*_default_line_shader);
 		return;
 	}
 
 	if (_opt.render_surface)
 		for (auto &mesh: _meshes)
-			mesh->render(_shader);
+//			mesh->render(_shader);
 
 	if (_opt.render_bbox)
 	{
 		for (auto &line: _lines->lines())
 			line.color = _opt.bbox_color;
-		_lines->render(*_default_line_shader);
+//		_lines->render(*_default_line_shader);
 	}
 }
 void Kasumi::Model::debug_frame_mode(bool mode)
@@ -103,7 +100,7 @@ auto Kasumi::Model::vertices(size_t i) -> std::vector<Vertex> &
 auto Kasumi::Model::mesh_size() const -> size_t { return _meshes.size(); }
 void Kasumi::Model::instancing()
 {
-	_shader = _default_instanced_mesh_shader;
+//	_shader = _default_instanced_mesh_shader;
 
 	_opt.instancing = true;
 
@@ -162,14 +159,6 @@ void Kasumi::Model::clear_instances()
 
 auto Kasumi::Model::load(const std::string &path) -> bool
 {
-	if (_default_mesh_shader == nullptr)
-		_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-	if (_default_instanced_mesh_shader == nullptr)
-		_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-	if (_default_line_shader == nullptr)
-		_default_line_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_line_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_line_shader_fragment.glsl");
-	_shader = _default_mesh_shader;
-
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -198,14 +187,6 @@ auto Kasumi::Model::load(const std::string &path) -> bool
 }
 auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
 {
-	if (_default_mesh_shader == nullptr)
-		_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-	if (_default_instanced_mesh_shader == nullptr)
-		_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-	if (_default_line_shader == nullptr)
-		_default_line_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_line_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_line_shader_fragment.glsl");
-	_shader = _default_mesh_shader;
-
 	_meshes.emplace_back(std::move(mesh));
 
 	for (auto &m: _meshes)
@@ -232,13 +213,6 @@ auto Kasumi::Model::load(Kasumi::UniversalMeshPtr &&mesh) -> bool
 }
 auto Kasumi::Model::load(Kasumi::LinesPtr &&lines) -> bool
 {
-	if (_default_mesh_shader == nullptr)
-		_default_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-	if (_default_instanced_mesh_shader == nullptr)
-		_default_instanced_mesh_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_shader_fragment.glsl");
-	if (_default_line_shader == nullptr)
-		_default_line_shader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_line_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_line_shader_fragment.glsl");
-	_shader = _default_mesh_shader;
 	_opt.line_model = true;
 
 	return true;
@@ -327,7 +301,7 @@ auto Kasumi::Model::center_of_gravity() const -> mVector3
 	mVector3 res;
 	for (auto &&mesh: _meshes)
 		res += mesh->_center_point;
-	return res / static_cast<float>(_meshes.size());
+	return res / static_cast<real>(_meshes.size());
 }
 
 // ================================================== Private Methods ==================================================

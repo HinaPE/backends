@@ -117,12 +117,29 @@ void Kasumi::Shader::_validate(unsigned int shader, const std::string &type)
 		}
 	}
 }
+
+#ifdef HINAPE_DOUBLE
+#define HINA_GL_1F glUniform1d
+#define HINA_GL_2F glUniform2d
+#define HINA_GL_3F glUniform3d
+#define HINA_GL_4F glUniform4d
+#define HINA_GL_M3 glUniformMatrix3dv
+#define HINA_GL_M4 glUniformMatrix4dv
+#else
+#define HINA_GL_1F glUniform1f
+#define HINA_GL_2F glUniform2f
+#define HINA_GL_3F glUniform3f
+#define HINA_GL_4F glUniform4f
+#define HINA_GL_M3 glUniformMatrix3fv
+#define HINA_GL_M4 glUniformMatrix4fv
+#endif
+
 void Kasumi::Shader::uniform(const std::string &name, bool value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value)); }
 void Kasumi::Shader::uniform(const std::string &name, int value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), value); }
 void Kasumi::Shader::uniform(const std::string &name, unsigned int value) const { glUniform1ui(glGetUniformLocation(ID, name.c_str()), value); }
-void Kasumi::Shader::uniform(const std::string &name, float value) const { glUniform1f(glGetUniformLocation(ID, name.c_str()), value); }
-void Kasumi::Shader::uniform(const std::string &name, const mVector2 &value) const { glUniform2f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y())); }
-void Kasumi::Shader::uniform(const std::string &name, const mVector3 &value) const { glUniform3f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z())); }
-void Kasumi::Shader::uniform(const std::string &name, const mVector4 &value) const { glUniform4f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z()), static_cast<float>(value.w())); }
-void Kasumi::Shader::uniform(const std::string &name, const mMatrix3x3 &value) const { glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.transposed().data()); }
-void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4 &value) const { glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.transposed().data()); }
+void Kasumi::Shader::uniform(const std::string &name, float value) const { HINA_GL_1F(glGetUniformLocation(ID, name.c_str()), value); }
+void Kasumi::Shader::uniform(const std::string &name, const mVector2 &value) const { HINA_GL_2F(glGetUniformLocation(ID, name.c_str()), value.x(), value.y()); }
+void Kasumi::Shader::uniform(const std::string &name, const mVector3 &value) const { HINA_GL_3F(glGetUniformLocation(ID, name.c_str()), value.x(), value.y(), value.z()); }
+void Kasumi::Shader::uniform(const std::string &name, const mVector4 &value) const { HINA_GL_4F(glGetUniformLocation(ID, name.c_str()), value.x(), value.y(), value.z(), value.w()); }
+void Kasumi::Shader::uniform(const std::string &name, const mMatrix3x3 &value) const { HINA_GL_M3(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.data()); }
+void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4 &value) const { HINA_GL_M4(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.data()); }

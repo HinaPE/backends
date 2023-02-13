@@ -63,9 +63,6 @@ public: //! ==================== Rendering Options ====================
 	void debug_frame_mode(bool mode); // when this is on, the model will be rendered transparently
 
 public:
-	static ShaderPtr _default_mesh_shader;
-	static ShaderPtr _default_instanced_mesh_shader;
-	static ShaderPtr _default_line_shader;
 	ShaderPtr _shader;
 
 public: //! ==================== Geometry Info ====================
