@@ -7,7 +7,7 @@
 // Dependency:
 // - Math Backend
 
-#include "math_api.h"
+#include "common.h"
 
 #include <vector>
 #include <string>
@@ -15,7 +15,7 @@
 
 namespace Kasumi
 {
-class Shader final
+class Shader final : public HinaPE::CopyDisable
 {
 public:
 	unsigned int ID;
@@ -31,6 +31,7 @@ public:
 	Shader(const std::string &vertex_path, const std::string &fragment_path, const std::string &geometry_path);
 	Shader(const char *vertex_src, const char *fragment_src);
 	Shader(const char *vertex_src, const char *fragment_src, const char *geometry_src);
+	~Shader();
 
 	void uniform(const std::string &name, bool value) const;
 	void uniform(const std::string &name, int value) const;
@@ -43,13 +44,6 @@ public:
 	void uniform(const std::string &name, const mMatrix4x4 &value) const;
 
 	void use() const;
-
-public:
-	Shader(const Shader &src) = delete;
-	Shader(Shader &&src) noexcept = default;
-	void operator=(const Shader &src) = delete;
-	auto operator=(Shader &&src) noexcept -> Shader & = default;
-	~Shader();
 
 private:
 	static void _validate(unsigned int shader, const std::string &type);

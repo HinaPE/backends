@@ -1,6 +1,12 @@
 #ifndef KASUMI_TEXTURE_H
 #define KASUMI_TEXTURE_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
+// Dependency:
+// - Fully Decoupled
+
 #include <string>
 #include <memory>
 
@@ -8,20 +14,12 @@ namespace Kasumi
 {
 class Texture
 {
-public: //! ==================== Public Methods ====================
-    void bind(int texture_idx = 0) const;
-
-//! Constructors & Destructor
-//! - [DELETE] copy constructor & copy assignment operator
-//! - [ENABLE] move constructor & move assignment operator
 public:
-	Texture(const std::string &path);
+	explicit Texture(const std::string &path);
 	Texture(unsigned char *data, int width, int height, int channels);
-	Texture(const Texture &src) = delete;
-	Texture(Texture &&src) noexcept = default;
 	~Texture();
-	void operator=(const Texture &src) = delete;
-	auto operator=(Texture &&src) noexcept -> Texture & = default;
+
+    void bind(int texture_idx = 0) const;
 
 private:
 	unsigned int ID;

@@ -1,12 +1,12 @@
 #include "GLFW/glfw3.h"
 
 #include "platform.h"
-#include "model.h"
+#include "mesh.h"
+#include "camera.h"
 
 class TestApp : public Kasumi::App
 {
 private:
-	Kasumi::ModelPtr _model;
 	Kasumi::UniversalMeshPtr _mesh;
 	Kasumi::LinesPtr _lines;
 	mMatrix4x4 projection;
@@ -29,9 +29,6 @@ public:
 	}
 	void update(double dt) final
 	{
-//		_model->render();
-//		_lines->render();
-
 		projection = Kasumi::Camera::project_matrix(45, 1, 0.1, 100);
 		view = Kasumi::Camera::view_matrix({x, 0, z}, {1, 0, 0, 0});
 

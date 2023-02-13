@@ -9,7 +9,7 @@
 // - Shader Backend
 // - Texture Backend
 
-#include "math_api.h"
+#include "common.h"
 #include "shader.h"
 #include "texture.h"
 
@@ -17,13 +17,22 @@
 
 namespace Kasumi
 {
-//!
-//! This is an ENCAPSULATED class.
-//! Any access is not permitted, except for the friend classes.
-//!
 class UniversalMesh final
 {
-protected:
+public:
+	friend class Model;
+	struct Vertex;
+	using Index = unsigned int;
+	UniversalMesh(const std::string &primitive_name, const std::string &texture_name);
+	UniversalMesh(const std::string &primitive_name, const mVector3 &color);
+	UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
+	~UniversalMesh();
+
+	void render(const Shader &shader);
+	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
+	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
+	inline void mark_dirty() { _dirty = true; }
+
 	struct Vertex
 	{
 		mVector3 position;
@@ -34,7 +43,6 @@ protected:
 		mVector3 bi_tangent;
 		unsigned int id;
 	};
-	using Index = unsigned int;
 
 public:
 	struct Opt
@@ -44,10 +52,11 @@ public:
 		bool instanced = false;
 		int instance_count;
 	} _opt;
-	void render(const Shader &shader);
-	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
-	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
-	inline void mark_dirty() { _dirty = true; }
+
+private:
+	void _init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
+	void _load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
+	void _update();
 
 private:
 	unsigned int _vao, _vbo, _ebo;
@@ -56,32 +65,13 @@ private:
 	std::map<std::string, std::vector<TexturePtr>> _textures;
 	bool _dirty;
 
-//! ==================== Geometry Info ====================
-private:
+	// geometry
 	mVector3 _center_point;
 	mBBox3 _bbox;
-
-public:
-	friend class Model;
-	UniversalMesh(const std::string &primitive_name, const std::string &texture_name);
-	UniversalMesh(const std::string &primitive_name, const mVector3 &color);
-	UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
-
-public:
-	UniversalMesh(const UniversalMesh &src) = delete;
-	UniversalMesh(UniversalMesh &&src) noexcept = default;
-	void operator=(const UniversalMesh &src) = delete;
-	auto operator=(UniversalMesh &&src) noexcept -> UniversalMesh & = default;
-	~UniversalMesh();
-
-private:
-	void _init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
-	void _load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
-	void _update();
 };
 using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
 
-class Lines final
+class Lines final : public HinaPE::CopyDisable
 {
 public:
 	struct Vertex

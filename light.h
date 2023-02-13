@@ -1,6 +1,14 @@
 #ifndef KASUMI_LIGHT_H
 #define KASUMI_LIGHT_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
+// Dependency:
+// - Math Backend
+// - Shader
+// - Camera
+
 #include "shader.h"
 #include "camera.h"
 
@@ -12,7 +20,7 @@ class Light final
 {
 public: //! ==================== Public Methods ====================
 	void update(const CameraPtr &camera);
-	void sync_shader(const ShaderPtr &shader) const;
+	void sync_shader(const Shader &shader) const;
 	void render();
 //	ShaderPtr _shader;
 

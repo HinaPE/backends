@@ -7,7 +7,7 @@
 // Dependency:
 // - Math Backend
 
-#include "math_api.h"
+#include "common.h"
 
 namespace Kasumi
 {

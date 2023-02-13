@@ -1,7 +1,7 @@
 #ifndef KASUMI_POSE_H
 #define KASUMI_POSE_H
 
-#include "math_api.h"
+#include "common.h"
 
 namespace Kasumi
 {

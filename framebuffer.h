@@ -1,6 +1,13 @@
 #ifndef KASUMI_FRAMEBUFFER_H
 #define KASUMI_FRAMEBUFFER_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
+// Dependency:
+// - Math Backend
+// - Shader
+
 #include "shader.h"
 
 #include <functional>
