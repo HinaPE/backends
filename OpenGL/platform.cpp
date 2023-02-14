@@ -21,26 +21,26 @@ void Kasumi::Platform::launch(App &app)
 {
 	app.prepare();
 	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods) // key call back
-					 {
-						 if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-							 glfwSetWindowShouldClose(_current_window, true);
-					 });
+								{
+									if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+										glfwSetWindowShouldClose(_current_window, true);
+								});
 	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods)
-					 {
-						 app.key(key, scancode, action, mods);
-					 });
+								{
+									app.key(key, scancode, action, mods);
+								});
 	_mouse_callbacks.emplace_back([&](int button, int action, int mods)
-					   {
-						   app.mouse_button(button, action, mods);
-					   });
+								  {
+									  app.mouse_button(button, action, mods);
+								  });
 	_scroll_callbacks.emplace_back([&](double x_offset, double y_offset)
-						{
-							app.mouse_scroll(x_offset, y_offset);
-						});
+								   {
+									   app.mouse_scroll(x_offset, y_offset);
+								   });
 	_cursor_callbacks.emplace_back([&](double x_pos, double y_pos)
-						{
-							app.mouse_cursor(x_pos, y_pos);
-						});
+								   {
+									   app.mouse_cursor(x_pos, y_pos);
+								   });
 	_rendering_loop(app);
 }
 void Kasumi::Platform::_new_window(int width, int height, const std::string &title)
@@ -206,6 +206,10 @@ void Kasumi::App::ui_sidebar()
 	ImGui::SetNextWindowPos({next_x, next_y});
 	ImGui::SetNextWindowSizeConstraints({ImGui::GetIO().DisplaySize.x / 5.75f, ImGui::GetIO().DisplaySize.y - next_y}, {ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - next_y});
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
+
+	if (_inspecting != nullptr)
+		_inspecting->inspect();
+
 	ImGui::Separator();
 	ImGui::Text("Shortcuts");
 

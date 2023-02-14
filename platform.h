@@ -7,6 +7,8 @@
 // Dependency:
 // - Fully Decoupled
 
+#include "inspector.h"
+
 #include <string>
 #include <utility>
 #include <vector>
@@ -67,6 +69,7 @@ class App
 {
 public:
 	virtual void launch() final;
+	virtual void inspect(const InspectorPtr &ptr) { _inspecting = ptr; }
 
 protected:
 	// main methods
@@ -97,6 +100,7 @@ public:
 public:
 	friend class Platform;
 	PlatformPtr _platform;
+	InspectorPtr _inspecting;
 };
 } // namespace Kasumi
 #endif //KASUMI_PLATFORM_H
