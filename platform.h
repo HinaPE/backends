@@ -75,7 +75,7 @@ class App
 {
 public:
 	// constructors
-	App(int width, int height, const std::string &title = "Kasumi Renderer");
+	App(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
 
 	// virtual methods
 	virtual void prepare() {}
