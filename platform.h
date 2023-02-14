@@ -21,9 +21,13 @@ class App;
 class Platform
 {
 public:
+	// constructors
+	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
+
+	// methods
 	void launch(const std::shared_ptr<App> &app);
 
-public:
+	// callbacks
 	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
 	void add_mouse_callback(std::function<void(int button, int action, int mods)> &&callback);
 	void add_scroll_callback(std::function<void(double x_offset, double y_offset)> &&callback);
@@ -41,7 +45,6 @@ public:
 	} _opt;
 
 public:
-	Platform(int width, int height, const std::string& title = "Kasumi: illumine the endless night");
 	Platform(const Platform &) = delete;
 	Platform(Platform &&) = delete;
 	~Platform() = default;
@@ -70,7 +73,11 @@ private:
 using PlatformPtr = std::shared_ptr<Platform>;
 class App : public std::enable_shared_from_this<App>
 {
-public: //! ==================== Abstract Interfaces ====================
+public:
+	// constructors
+	App(int width, int height, const std::string &title = "Kasumi Renderer");
+
+	// virtual methods
 	virtual void prepare() {}
 	virtual void update(double dt) {}
 	virtual auto quit() -> bool { return false; }
@@ -80,11 +87,9 @@ public: //! ==================== Abstract Interfaces ====================
 	virtual void mouse_cursor(double x_pos, double y_pos) {}
 	virtual void launch() final;
 
-public: //! ==================== Constructors ====================
-	App(int width, int height, const std::string &title = "Kasumi Renderer");
-
-private:
+public:
 	PlatformPtr _platform;
+	int _width, _height;
 };
 } // namespace Kasumi
 

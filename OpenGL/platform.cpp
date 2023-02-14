@@ -160,6 +160,6 @@ void Kasumi::Platform::_end_frame()
 	glfwPollEvents();
 }
 
-Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)) {}
+Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)), _width(width), _height(height) {}
 void Kasumi::App::launch() { _platform->launch(shared_from_this()); }
 

@@ -12,7 +12,7 @@ private:
 	mMatrix4x4 projection;
 	mMatrix4x4 view;
 	real x = 0;
-	real z = 2;
+	real z = 5;
 
 public:
 	TestApp(int width, int height, const std::string &title) : App(width, height, title) {}
@@ -21,7 +21,6 @@ public:
 	{
 		Kasumi::Shader::Init();
 
-//		_model = std::make_shared<Kasumi::Model>(std::string(BuiltinModelDir) + "bunny.obj");
 		_mesh = std::make_shared<Kasumi::UniversalMesh>("cube", HinaPE::Color::RED);
 
 		_lines = std::make_shared<Kasumi::Lines>();
@@ -29,7 +28,7 @@ public:
 	}
 	void update(double dt) final
 	{
-		projection = Kasumi::Camera::project_matrix(45, 1, 0.1, 100);
+		projection = Kasumi::Camera::project_matrix(45, 1024.f / 768.f, 0.1, 100);
 		view = Kasumi::Camera::view_matrix({x, 0, z}, {1, 0, 0, 0});
 
 		{

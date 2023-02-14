@@ -51,6 +51,21 @@ public:
 		bool textured = false;
 		bool instanced = false;
 		int instance_count;
+
+		// rendering options
+		bool render_surface = true;
+		bool render_wireframe = false;
+		bool render_bbox = false;
+		bool depth_test = true;
+		bool stencil_test = false;
+		bool cull_face = false;
+		bool blend = true;
+
+		// bounding box options
+		mVector3 bbox_color = {0.f, 0.f, 0.f};
+
+		// line model
+		bool line_model = false;
 	} _opt;
 
 private:
@@ -70,6 +85,12 @@ private:
 	mBBox3 _bbox;
 };
 using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
+
+class InstancedMesh final
+{
+public:
+
+};
 
 class Lines final : public HinaPE::CopyDisable
 {
