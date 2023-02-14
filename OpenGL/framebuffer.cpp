@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 Kasumi::Framebuffer::Framebuffer(int width, int height, float base_x, float base_y, float top_x, float top_y)
-		: _width(width), _height(height), _base_x(base_x), _base_y(base_y), _top_x(top_x), _top_y(top_y), _fbo(0), _vao(0), _texture(0), _screen_shader(std::make_shared<Kasumi::Shader>(std::string(BuiltinShaderDir) + "screen_vertex.glsl", std::string(BuiltinShaderDir) + "screen_fragment.glsl")) { setup(); }
+		: _width(width), _height(height), _base_x(base_x), _base_y(base_y), _top_x(top_x), _top_y(top_y), _fbo(0), _vao(0), _texture(0) { setup(); }
 
 void Kasumi::Framebuffer::render() const
 {
@@ -22,8 +22,8 @@ void Kasumi::Framebuffer::render() const
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	_screen_shader->use();
-	_screen_shader->uniform("screenTexture", 0);
+	Kasumi::Shader::DefaultFrameShader->use();
+	Kasumi::Shader::DefaultFrameShader->uniform("screenTexture", 0);
 	glBindVertexArray(_vao);
 	glBindTexture(GL_TEXTURE_2D, _texture);
 	glActiveTexture(GL_TEXTURE0);

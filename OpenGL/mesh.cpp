@@ -18,7 +18,7 @@ Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const st
 	std::vector<TexturePtr> diffuse_textures;
 	_load_primitive(primitive_name, vertices, indices);
 
-	diffuse_textures.push_back(std::make_shared<Kasumi::Texture>(std::string(BuiltinTextureDir) + texture_name));
+	diffuse_textures.push_back(std::make_shared<Kasumi::Texture>(std::string(BackendsTextureDir) + texture_name));
 	_textures["diffuse"] = diffuse_textures;
 	_opt.textured = true;
 	_init(std::move(vertices), std::move(indices));
@@ -210,7 +210,7 @@ void Kasumi::UniversalMesh::_update()
 void Kasumi::UniversalMesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
 {
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(std::string(BuiltinModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene *scene = importer.ReadFile(std::string(BackendsModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
 		return;
 

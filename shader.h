@@ -25,6 +25,7 @@ public:
 	static std::unique_ptr<Shader> DefaultInstanceShader;
 	static std::unique_ptr<Shader> DefaultLineShader;
 	static std::unique_ptr<Shader> DefaultPointShader;
+	static std::unique_ptr<Shader> DefaultFrameShader;
 
 public:
 	Shader(const std::string &vertex_path, const std::string &fragment_path);

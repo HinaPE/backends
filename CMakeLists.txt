@@ -95,10 +95,10 @@ if (OpenGL)
     target_compile_definitions(
             Kasumi_Backends
             PUBLIC
-            -DBuiltinSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBuiltinModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBuiltinShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            -DBackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
@@ -146,9 +146,9 @@ if (Vulkan)
     target_compile_definitions(
             VulkanApp
             PUBLIC
-            -DBuiltinSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBuiltinModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBuiltinShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            -DBackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()

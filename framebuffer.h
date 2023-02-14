@@ -35,7 +35,6 @@ private:
 	void setup();
 
 private:
-	Kasumi::ShaderPtr _screen_shader;
 	unsigned int _fbo, _vao;
 	unsigned int _texture;
 	int _width, _height;
