@@ -11,16 +11,18 @@
 
 namespace Kasumi
 {
-class Camera final
+class Camera final : public HinaPE::CopyDisable
 {
 public:
+	// static
 	static auto project_matrix(real fov, real aspect_ratio, real near, real far) -> mMatrix4x4;
 	static auto view_matrix(const mVector3 &position, const mQuaternion &rotation) -> mMatrix4x4;
 
-public:
-	auto screen_to_world(const mVector2 &screen_pos) const -> mVector3; // NOT COMPLETE YET
 	auto get_projection() const -> mMatrix4x4;
 	auto get_view() const -> mMatrix4x4;
+	auto screen_to_world(const mVector2 &screen_pos) const -> mVector3; // NOT COMPLETE YET
+
+	// callbacks
 	void key(int key, int scancode, int action, int mods);
 	void mouse_button(int button, int action, int mods);
 	void mouse_scroll(double x_offset, double y_offset);
@@ -54,17 +56,7 @@ public:
 		// 2D mode
 		bool is2D = false;
 	} _opt;
-
-//! ==================== Constructors & Destructor ====================
-//! - [DELETE] copy constructor & copy assignment operator
-//! - [ENABLE] move constructor & move assignment operator
-public:
 	explicit Camera(Opt opt);
-	Camera(const Camera &) = delete;
-	Camera(Camera &&) = default;
-	~Camera() = default;
-	auto operator=(const Camera &) -> Camera & = delete;
-	auto operator=(Camera &&) -> Camera & = default;
 
 private:
 	void update();

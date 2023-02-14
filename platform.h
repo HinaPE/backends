@@ -24,9 +24,6 @@ public:
 	// methods
 	void launch(App &app);
 
-	// constructors
-	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
-
 	// callbacks
 	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
 	void add_mouse_callback(std::function<void(int button, int action, int mods)> &&callback);
@@ -43,6 +40,7 @@ public:
 		bool MSAA = true;
 		int MSAA_sample = 4;
 	} _opt;
+	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
 
 public:
 	Platform(const Platform &) = delete;
@@ -74,22 +72,34 @@ using PlatformPtr = std::shared_ptr<Platform>;
 class App
 {
 public:
-	// constructors
-	App(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
-
-	// virtual methods
+	// main methods
 	virtual void prepare() {}
 	virtual void update(double dt) {}
 	virtual auto quit() -> bool { return false; }
+
+	// callbacks
 	virtual void key(int key, int scancode, int action, int mods) {}
 	virtual void mouse_button(int button, int action, int mods) {}
 	virtual void mouse_scroll(double x_offset, double y_offset) {}
 	virtual void mouse_cursor(double x_pos, double y_pos) {}
 	virtual void launch() final;
 
+	// UI
+	virtual void ui_menu();
+	virtual void ui_sidebar();
+
+public:
+	struct Opt
+	{
+		bool running = false;
+
+		int width = 1024;
+		int height = 768;
+	} _opt;
+	explicit App(const Opt &opt);
+
 public:
 	PlatformPtr _platform;
-	int _width, _height;
 };
 } // namespace Kasumi
 

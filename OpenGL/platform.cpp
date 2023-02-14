@@ -10,6 +10,8 @@
 
 #include <stdexcept>
 
+static float next_x = 0.f, next_y = 0.f;
+
 Kasumi::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
 	_add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
@@ -122,6 +124,8 @@ void Kasumi::Platform::_rendering_loop(App &app)
 	while (!glfwWindowShouldClose(_current_window) || app.quit())
 	{
 		_begin_frame();
+		app.ui_menu();
+		app.ui_sidebar();
 		app.update(0.02);
 		_end_frame();
 	}
@@ -160,5 +164,52 @@ void Kasumi::Platform::_end_frame()
 	glfwPollEvents();
 }
 
-Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)), _width(width), _height(height) {}
+Kasumi::App::App(const Kasumi::App::Opt &opt) : _opt(opt), _platform(std::make_shared<Kasumi::Platform>(opt.width, opt.height)) {}
 void Kasumi::App::launch() { _platform->launch(*this); }
+void Kasumi::App::ui_menu()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Open Scene (Ctrl+o)")) {}
+			if (ImGui::MenuItem("Export Scene (Ctrl+e)")) {}
+			if (ImGui::MenuItem("Save Scene (Ctrl+s)")) {}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Undo (Ctrl+z)")) {}
+			if (ImGui::MenuItem("Redo (Ctrl+y)")) {}
+			if (ImGui::MenuItem("Edit Debug Data (Ctrl+d)")) {}
+			if (ImGui::MenuItem("Settings")) {}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Pathtracer"))
+		{
+			if (ImGui::MenuItem("Load Pathtracer")) {}
+			ImGui::EndMenu();
+		}
+
+		ImGui::Text("FPS: %.0f", ImGui::GetIO().Framerate);
+		next_x = 0.f;
+		next_y = ImGui::GetWindowSize().y;
+		ImGui::EndMainMenuBar();
+	}
+}
+void Kasumi::App::ui_sidebar()
+{
+	ImGui::SetNextWindowPos({next_x, next_y});
+	ImGui::SetNextWindowSizeConstraints({ImGui::GetIO().DisplaySize.x / 5.75f, ImGui::GetIO().DisplaySize.y - next_y}, {ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - next_y});
+	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
+	ImGui::Separator();
+	ImGui::Text("Shortcuts");
+	ImGui::BeginDisabled(true);
+	ImGui::Checkbox("Space: start/stop sim", &_opt.running);
+	ImGui::EndDisabled();
+	ImGui::Text("W: wireframe mode");
+	next_x += ImGui::GetWindowSize().x;
+	ImGui::End();
+}
