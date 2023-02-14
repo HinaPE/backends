@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(Kasumi_backend VERSION 1.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
+project(Kasumi_Backends VERSION 1.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
 
 option(OpenGL "Enable OpenGL backend" ON)
 option(Vulkan "Enable Vulkan backend" OFF)
@@ -83,17 +83,17 @@ if (OpenGL)
             target_compile_options(assimp PUBLIC -Wno-error)
         endif ()
     endif ()
-    add_library(Kasumi_backend ${UNIVERSE_FILES} ${OPENGL_IMPL} ${Imgui_OpenGL})
-    set_target_properties(Kasumi_backend PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
-    target_include_directories(Kasumi_backend PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
-    target_include_directories(Kasumi_backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-    target_link_libraries(Kasumi_backend PUBLIC assimp)
-    target_link_libraries(Kasumi_backend PUBLIC glad)
-    target_link_libraries(Kasumi_backend PUBLIC glfw)
-    target_link_libraries(Kasumi_backend PUBLIC nfd)
-    target_link_libraries(Kasumi_backend PUBLIC HinaPE_Common)
+    add_library(Kasumi_Backends ${UNIVERSE_FILES} ${OPENGL_IMPL} ${Imgui_OpenGL})
+    set_target_properties(Kasumi_Backends PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
+    target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
+    target_include_directories(Kasumi_Backends PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    target_link_libraries(Kasumi_Backends PUBLIC assimp)
+    target_link_libraries(Kasumi_Backends PUBLIC glad)
+    target_link_libraries(Kasumi_Backends PUBLIC glfw)
+    target_link_libraries(Kasumi_Backends PUBLIC nfd)
+    target_link_libraries(Kasumi_Backends PUBLIC HinaPE_Common)
     target_compile_definitions(
-            Kasumi_backend
+            Kasumi_Backends
             PUBLIC
             -DBuiltinSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
             -DBuiltinModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
@@ -152,7 +152,3 @@ if (Vulkan)
             -DBuiltinTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
-
-add_subdirectory(experimental)
-#add_subdirectory(_unit_test)
-add_subdirectory(tutorials)

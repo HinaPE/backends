@@ -20,33 +20,29 @@ Kasumi::Platform::Platform(int width, int height, const std::string &title) : _i
 void Kasumi::Platform::launch(App &app)
 {
 	app.prepare();
-	add_key_callback([&](int key, int scancode, int action, int mods) // key call back
+	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods) // key call back
 					 {
 						 if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 							 glfwSetWindowShouldClose(_current_window, true);
 					 });
-	add_key_callback([&](int key, int scancode, int action, int mods)
+	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods)
 					 {
 						 app.key(key, scancode, action, mods);
 					 });
-	add_mouse_callback([&](int button, int action, int mods)
+	_mouse_callbacks.emplace_back([&](int button, int action, int mods)
 					   {
 						   app.mouse_button(button, action, mods);
 					   });
-	add_scroll_callback([&](double x_offset, double y_offset)
+	_scroll_callbacks.emplace_back([&](double x_offset, double y_offset)
 						{
 							app.mouse_scroll(x_offset, y_offset);
 						});
-	add_cursor_callback([&](double x_pos, double y_pos)
+	_cursor_callbacks.emplace_back([&](double x_pos, double y_pos)
 						{
 							app.mouse_cursor(x_pos, y_pos);
 						});
 	_rendering_loop(app);
 }
-void Kasumi::Platform::add_key_callback(std::function<void(int, int, int, int)> &&callback) { _key_callbacks.emplace_back(std::move(callback)); }
-void Kasumi::Platform::add_mouse_callback(std::function<void(int, int, int)> &&callback) { _mouse_callbacks.emplace_back(std::move(callback)); }
-void Kasumi::Platform::add_scroll_callback(std::function<void(double, double)> &&callback) { _scroll_callbacks.emplace_back(std::move(callback)); }
-void Kasumi::Platform::add_cursor_callback(std::function<void(double, double)> &&callback) { _cursor_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::_new_window(int width, int height, const std::string &title)
 {
 	if (!_inited)
@@ -163,6 +159,15 @@ void Kasumi::Platform::_end_frame()
 
 Kasumi::App::App(const Kasumi::App::Opt &opt) : _opt(opt), _platform(std::make_shared<Kasumi::Platform>(opt.width, opt.height)) {}
 void Kasumi::App::launch() { _platform->launch(*this); }
+void Kasumi::App::key(int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+		_opt.running = !_opt.running;
+}
+auto Kasumi::App::quit() -> bool { return false; }
+void Kasumi::App::mouse_button(int button, int action, int mods) {}
+void Kasumi::App::mouse_scroll(double x_offset, double y_offset) {}
+void Kasumi::App::mouse_cursor(double x_pos, double y_pos) {}
 void Kasumi::App::ui_menu()
 {
 	if (ImGui::BeginMainMenuBar())
@@ -202,12 +207,19 @@ void Kasumi::App::ui_sidebar()
 	ImGui::SetNextWindowSizeConstraints({ImGui::GetIO().DisplaySize.x / 5.75f, ImGui::GetIO().DisplaySize.y - next_y}, {ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - next_y});
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
 	ImGui::Separator();
-	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs);
 	ImGui::Text("Shortcuts");
+
 	ImGui::BeginDisabled(true);
 	ImGui::Checkbox("Space: start/stop sim", &_opt.running);
 	ImGui::EndDisabled();
-	ImGui::Text("W: wireframe mode");
+
+	ImGui::BeginDisabled(true);
+	ImGui::Checkbox("W: wireframe mode", &_opt.wireframe);
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
+
+	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs);
 	next_x += ImGui::GetWindowSize().x;
 	ImGui::End();
 }

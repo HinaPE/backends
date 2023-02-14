@@ -22,14 +22,7 @@ class App;
 class Platform
 {
 public:
-	// methods
 	void launch(App &app);
-
-	// callbacks
-	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
-	void add_mouse_callback(std::function<void(int button, int action, int mods)> &&callback);
-	void add_scroll_callback(std::function<void(double x_offset, double y_offset)> &&callback);
-	void add_cursor_callback(std::function<void(double x_pos, double y_pos)> &&callback);
 
 public:
 	struct Opt
@@ -79,13 +72,13 @@ protected:
 	// main methods
 	virtual void prepare() {}
 	virtual void update(double dt) {}
-	virtual auto quit() -> bool { return false; }
+	virtual auto quit() -> bool;
 
 	// callbacks
-	virtual void key(int key, int scancode, int action, int mods) {}
-	virtual void mouse_button(int button, int action, int mods) {}
-	virtual void mouse_scroll(double x_offset, double y_offset) {}
-	virtual void mouse_cursor(double x_pos, double y_pos) {}
+	virtual void key(int key, int scancode, int action, int mods);
+	virtual void mouse_button(int button, int action, int mods);
+	virtual void mouse_scroll(double x_offset, double y_offset);
+	virtual void mouse_cursor(double x_pos, double y_pos);
 
 	// UI
 	virtual void ui_menu();
@@ -95,6 +88,7 @@ public:
 	struct Opt
 	{
 		bool running = false;
+		bool wireframe = false;
 
 		int width = 1024, height = 768;
 	} _opt;
@@ -105,5 +99,4 @@ public:
 	PlatformPtr _platform;
 };
 } // namespace Kasumi
-
 #endif //KASUMI_PLATFORM_H
