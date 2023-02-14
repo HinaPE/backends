@@ -15,9 +15,9 @@ Kasumi::Platform::Platform(int width, int height, const std::string &title) : _i
 	_add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
 }
 
-void Kasumi::Platform::launch(const std::shared_ptr<App> &app)
+void Kasumi::Platform::launch(App &app)
 {
-	app->prepare();
+	app.prepare();
 	add_key_callback([&](int key, int scancode, int action, int mods) // key call back
 					 {
 						 if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -25,19 +25,19 @@ void Kasumi::Platform::launch(const std::shared_ptr<App> &app)
 					 });
 	add_key_callback([&](int key, int scancode, int action, int mods)
 					 {
-						 app->key(key, scancode, action, mods);
+						 app.key(key, scancode, action, mods);
 					 });
 	add_mouse_callback([&](int button, int action, int mods)
 					   {
-						   app->mouse_button(button, action, mods);
+						   app.mouse_button(button, action, mods);
 					   });
 	add_scroll_callback([&](double x_offset, double y_offset)
 						{
-							app->mouse_scroll(x_offset, y_offset);
+							app.mouse_scroll(x_offset, y_offset);
 						});
 	add_cursor_callback([&](double x_pos, double y_pos)
 						{
-							app->mouse_cursor(x_pos, y_pos);
+							app.mouse_cursor(x_pos, y_pos);
 						});
 	_rendering_loop(app);
 }
@@ -117,12 +117,12 @@ void Kasumi::Platform::_add_new_window(int width, int height, const std::string 
 	}
 }
 
-void Kasumi::Platform::_rendering_loop(const std::shared_ptr<App> &app)
+void Kasumi::Platform::_rendering_loop(App &app)
 {
-	while (!glfwWindowShouldClose(_current_window) || app->quit())
+	while (!glfwWindowShouldClose(_current_window) || app.quit())
 	{
 		_begin_frame();
-		app->update(0.02);
+		app.update(0.02);
 		_end_frame();
 	}
 }
@@ -161,5 +161,4 @@ void Kasumi::Platform::_end_frame()
 }
 
 Kasumi::App::App(int width, int height, const std::string &title) : _platform(std::make_shared<Kasumi::Platform>(width, height, title)), _width(width), _height(height) {}
-void Kasumi::App::launch() { _platform->launch(shared_from_this()); }
-
+void Kasumi::App::launch() { _platform->launch(*this); }

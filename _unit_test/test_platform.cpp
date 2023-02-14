@@ -25,6 +25,9 @@ public:
 
 		_lines = std::make_shared<Kasumi::Lines>();
 		_lines->add({-0.9, 0, 0}, {0.9, 0, 0});
+
+		for (auto &v: _mesh->vertices())
+			v.position *= 0.5f;
 	}
 	void update(double dt) final
 	{

@@ -21,11 +21,11 @@ class App;
 class Platform
 {
 public:
+	// methods
+	void launch(App &app);
+
 	// constructors
 	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
-
-	// methods
-	void launch(const std::shared_ptr<App> &app);
 
 	// callbacks
 	void add_key_callback(std::function<void(int key, int scancode, int action, int mods)> &&callback);
@@ -53,7 +53,7 @@ public:
 
 private:
 	void _add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
-	void _rendering_loop(const std::shared_ptr<App> &app);
+	void _rendering_loop(App &app);
 	void _clear_window();
 	void _begin_frame();
 	void _end_frame();
@@ -71,7 +71,7 @@ private:
 	std::vector<std::function<void(double, double)>> _cursor_callbacks;
 };
 using PlatformPtr = std::shared_ptr<Platform>;
-class App : public std::enable_shared_from_this<App>
+class App
 {
 public:
 	// constructors
