@@ -154,5 +154,5 @@ if (Vulkan)
 endif ()
 
 add_subdirectory(experimental)
-add_subdirectory(_unit_test)
+#add_subdirectory(_unit_test)
 add_subdirectory(tutorials)

@@ -72,6 +72,9 @@ using PlatformPtr = std::shared_ptr<Platform>;
 class App
 {
 public:
+	virtual void launch() final;
+
+protected:
 	// main methods
 	virtual void prepare() {}
 	virtual void update(double dt) {}
@@ -82,7 +85,6 @@ public:
 	virtual void mouse_button(int button, int action, int mods) {}
 	virtual void mouse_scroll(double x_offset, double y_offset) {}
 	virtual void mouse_cursor(double x_pos, double y_pos) {}
-	virtual void launch() final;
 
 	// UI
 	virtual void ui_menu();
@@ -99,6 +101,7 @@ public:
 	explicit App(const Opt &opt);
 
 public:
+	friend class Platform;
 	PlatformPtr _platform;
 };
 } // namespace Kasumi
