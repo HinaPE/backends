@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 #include <tuple>
+#include <array>
 
 namespace Kasumi
 {
@@ -39,6 +40,8 @@ public:
 
 		bool MSAA = true;
 		int MSAA_sample = 4;
+
+		std::array<float, 3> background_color = {1.f, 1.f, 1.f};
 	} _opt;
 	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
 
@@ -50,7 +53,7 @@ public:
 	auto operator=(Platform &&) -> Platform & = delete;
 
 private:
-	void _add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color);
+	void _new_window(int width, int height, const std::string &title);
 	void _rendering_loop(App &app);
 	void _clear_window();
 	void _begin_frame();
@@ -61,8 +64,6 @@ private:
 	int _width, _height;
 	std::string _current_window_name;
 	class GLFWwindow *_current_window;
-	std::map<std::string, GLFWwindow *> _windows;
-	std::map<std::string, std::tuple<double, double, double>> _clear_colors;
 	std::vector<std::function<void(int, int, int, int)>> _key_callbacks;
 	std::vector<std::function<void(int, int, int)>> _mouse_callbacks;
 	std::vector<std::function<void(double, double)>> _scroll_callbacks;
@@ -95,8 +96,7 @@ public:
 	{
 		bool running = false;
 
-		int width = 1024;
-		int height = 768;
+		int width = 1024, height = 768;
 	} _opt;
 	explicit App(const Opt &opt);
 

@@ -14,7 +14,7 @@ static float next_x = 0.f, next_y = 0.f;
 
 Kasumi::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
-	_add_new_window(_width, _height, title, {1.f, 1.f, 1.f});
+	_new_window(_width, _height, title);
 }
 
 void Kasumi::Platform::launch(App &app)
@@ -47,7 +47,7 @@ void Kasumi::Platform::add_key_callback(std::function<void(int, int, int, int)> 
 void Kasumi::Platform::add_mouse_callback(std::function<void(int, int, int)> &&callback) { _mouse_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_scroll_callback(std::function<void(double, double)> &&callback) { _scroll_callbacks.emplace_back(std::move(callback)); }
 void Kasumi::Platform::add_cursor_callback(std::function<void(double, double)> &&callback) { _cursor_callbacks.emplace_back(std::move(callback)); }
-void Kasumi::Platform::_add_new_window(int width, int height, const std::string &title, const std::tuple<double, double, double> &clear_color)
+void Kasumi::Platform::_new_window(int width, int height, const std::string &title)
 {
 	if (!_inited)
 	{
@@ -64,8 +64,6 @@ void Kasumi::Platform::_add_new_window(int width, int height, const std::string 
 
 	_current_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 	_current_window_name = title;
-	_windows[title] = _current_window;
-	_clear_colors[title] = clear_color;
 	if (_current_window == nullptr)
 		throw std::runtime_error("Failed to create GLFW window");
 	glfwMakeContextCurrent(_current_window);
@@ -135,8 +133,7 @@ void Kasumi::Platform::_clear_window()
 {
 	if (_opt.clear_color)
 	{
-		auto color = _clear_colors[_current_window_name];
-		glClearColor(static_cast<GLfloat>(std::get<0>(color)), static_cast<GLfloat>(std::get<1>(color)), static_cast<GLfloat>(std::get<2>(color)), 1.0f);
+		glClearColor(_opt.background_color[0], _opt.background_color[1], _opt.background_color[2], 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	if (_opt.clear_depth)
@@ -205,6 +202,7 @@ void Kasumi::App::ui_sidebar()
 	ImGui::SetNextWindowSizeConstraints({ImGui::GetIO().DisplaySize.x / 5.75f, ImGui::GetIO().DisplaySize.y - next_y}, {ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - next_y});
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
 	ImGui::Separator();
+	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs);
 	ImGui::Text("Shortcuts");
 	ImGui::BeginDisabled(true);
 	ImGui::Checkbox("Space: start/stop sim", &_opt.running);
