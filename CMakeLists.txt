@@ -21,6 +21,7 @@ file(GLOB UNIVERSE_FILES
         pose.h
         shader.h
         texture.h
+        api.h
         )
 
 if (OpenGL)
