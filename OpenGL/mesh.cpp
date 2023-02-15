@@ -317,13 +317,13 @@ Kasumi::InstancedMesh::InstancedMesh(Kasumi::MeshPtr mesh) : _mesh(std::move(mes
 
 	glBindVertexArray(_mesh->_vao);
 	glEnableVertexAttribArray(7);
-	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
+	glVertexAttribPointer(7, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
 	glEnableVertexAttribArray(8);
-	glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
+	glVertexAttribPointer(8, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
 	glEnableVertexAttribArray(9);
-	glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
+	glVertexAttribPointer(9, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
 	glEnableVertexAttribArray(10);
-	glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
+	glVertexAttribPointer(10, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
 
 	glVertexAttribDivisor(7, 1);
 	glVertexAttribDivisor(8, 1);
