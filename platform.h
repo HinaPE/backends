@@ -5,7 +5,7 @@
 // MPL-2.0 license
 
 // Dependency:
-// - Fully Decoupled
+// - Shader
 
 #include "api.h"
 
