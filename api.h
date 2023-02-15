@@ -7,6 +7,7 @@
 #include "platform.h"
 #include "shader.h"
 #include "camera.h"
+#include "light.h"
 
 #include "imgui.h"
 
@@ -41,12 +42,12 @@ public:
 	ShaderPtr _shader = Shader::DefaultMeshShader;
 
 protected:
-	virtual auto _get_view() -> mMatrix4x4 final { return Camera::MainCamera->get_view(); }
-	virtual auto _get_projection() -> mMatrix4x4 final { return Camera::MainCamera->get_projection(); }
 	virtual void _update_uniform()
 	{
-		_shader->uniform("view", _get_view());
-		_shader->uniform("projection", _get_projection());
+		_shader->uniform("view", Camera::MainCamera->get_view());
+		_shader->uniform("projection", Camera::MainCamera->get_projection());
+		_shader->uniform("lightPos", Light::MainLight->_opt.light_pos);
+		_shader->uniform("viewPos", Light::MainLight->_opt.view_pos);
 	}
 	virtual void _draw() = 0;
 };

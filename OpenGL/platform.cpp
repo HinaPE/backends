@@ -164,6 +164,7 @@ Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _o
 	Camera::Init();
 	Camera::MainCamera->_opt.aspect_ratio = static_cast<float>(_opt.width) / static_cast<float>(_opt.height);
 	Camera::MainCamera->_sync_opt();
+	Light::Init();
 }
 void Kasumi::App::launch() { _platform->launch(*this); }
 void Kasumi::App::key(int key, int scancode, int action, int mods)

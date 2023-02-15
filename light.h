@@ -4,25 +4,15 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
-// Dependency:
-// - Math Backend
-// - Shader
-// - Camera
-
-#include "shader.h"
-#include "camera.h"
-
-#include <memory>
+#include "common.h"
 
 namespace Kasumi
 {
-class Light final
+class Light final : public HinaPE::CopyDisable
 {
-public: //! ==================== Public Methods ====================
-	void update(const CameraPtr &camera);
-	void sync_shader(const Shader &shader) const;
-	void render();
-//	ShaderPtr _shader;
+public:
+	static void Init();
+	static std::shared_ptr<Light> MainLight;
 
 public:
 	enum Type { Directional, Point, Spot, Count };
@@ -37,17 +27,6 @@ public:
 		// directional light
 		mVector3 light_dir = mVector3(-1.0f, -1.0f, -1.0f);
 	} _opt;
-
-//! ==================== Constructors & Destructor ====================
-//! - [DELETE] copy constructor & copy assignment operator
-//! - [ENABLE] move constructor & move assignment operator
-public:
-	explicit Light(Opt opt);
-	Light(const Light &src) = delete;
-	Light(Light &&src) noexcept = default;
-	~Light();
-	void operator=(const Light &src) = delete;
-	auto operator=(Light &&src) noexcept -> Light & = default;
 };
 using LightPtr = std::shared_ptr<Light>;
 }
