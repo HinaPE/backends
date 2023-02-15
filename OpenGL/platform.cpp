@@ -234,7 +234,7 @@ void Kasumi::App::ui_sidebar()
 //
 //	ImGui::Separator();
 
-	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs);
+	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
 	next_x += ImGui::GetWindowSize().x;
 	ImGui::End();
 }

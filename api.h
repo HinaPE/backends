@@ -43,7 +43,7 @@ public:
 		_draw();
 	}
 
-	ShaderPtr _shader = Shader::DefaultMeshShader;
+	ShaderPtr _shader = nullptr;
 
 protected:
 	virtual void _update_uniform()
