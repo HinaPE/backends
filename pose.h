@@ -18,7 +18,7 @@ struct Pose : public Inspector
 	inline auto get_model_matrix() const -> mMatrix4x4 { return mMatrix4x4::make_translation_matrix(position) * mQuaternion(euler.x(), euler.y(), euler.z()).matrix4x4() * mMatrix4x4::make_scale_matrix(scale); }
 
 public:
-	void inspect() final
+	void _inspect() final
 	{
 		ImGui::Text("Transform");
 		auto sliders = [&](const std::string& label, mVector3 &data, float sens)
