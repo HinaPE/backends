@@ -16,18 +16,6 @@ namespace Kasumi
 class Mesh final
 {
 public:
-	struct Vertex;
-	using Index = unsigned int;
-	Mesh(const std::string &primitive_name, const std::string &texture_name);
-	Mesh(const std::string &primitive_name, const mVector3 &color);
-	Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
-	~Mesh();
-
-	void render(const Shader &shader);
-	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
-	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
-	inline void mark_dirty() { _dirty = true; }
-
 	struct Vertex
 	{
 		mVector3 position;
@@ -38,6 +26,12 @@ public:
 		mVector3 bi_tangent;
 		unsigned int id;
 	};
+	using Index = unsigned int;
+
+	void render(const Shader &shader);
+	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
+	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
+	inline void mark_dirty() { _dirty = true; }
 
 public:
 	struct Opt
@@ -62,6 +56,10 @@ public:
 		// line model
 		bool line_model = false;
 	} _opt;
+	Mesh(const std::string &primitive_name, const std::string &texture_name);
+	Mesh(const std::string &primitive_name, const mVector3 &color);
+	Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
+	~Mesh();
 
 private:
 	void _init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
@@ -85,14 +83,15 @@ using MeshPtr = std::shared_ptr<Mesh>;
 class InstancedMesh final
 {
 public:
+	void render(const Shader &shader);
+
+public:
 	struct Opt
 	{
 		bool dirty = true;
 		std::vector<mMatrix4x4> instance_matrices;
 	} _opt;
 	explicit InstancedMesh(MeshPtr mesh);
-
-	void render(const Shader &shader);
 
 private:
 	void _update();
@@ -109,7 +108,6 @@ public:
 		mVector3 position;
 		mVector3 color;
 	};
-	Lines();
 	auto lines() -> std::vector<Vertex> &;
 	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::PURPLE);
 	void render(const Shader &shader);
@@ -123,6 +121,7 @@ public:
 		float thickness = 1.0f; // NO USE FOR OpenGL 3.0
 		float _opacity = 1.0;
 	} _opt;
+	Lines();
 
 private:
 	void _init();
@@ -133,6 +132,10 @@ private:
 	std::vector<Vertex> _lines; // start, end
 };
 using LinesPtr = std::shared_ptr<Lines>;
+
+class Points final : public HinaPE::CopyDisable
+{
+};
 } // namespace Kasumi
 
 #endif //BACKENDS_MESH_H

@@ -6,8 +6,11 @@
 
 #include "platform.h"
 #include "shader.h"
+#include "texture.h"
 #include "camera.h"
 #include "light.h"
+#include "mesh.h"
+#include "framebuffer.h"
 
 #include "imgui.h"
 
