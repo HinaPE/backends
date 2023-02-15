@@ -19,6 +19,7 @@ public:
 	static std::shared_ptr<Shader> DefaultLineShader;
 	static std::shared_ptr<Shader> DefaultPointShader;
 	static std::shared_ptr<Shader> DefaultFrameShader;
+	static std::shared_ptr<Shader> Default2DShader;
 
 public:
 	Shader(const std::string &vertex_path, const std::string &fragment_path);
