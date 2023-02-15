@@ -1,5 +1,5 @@
-#ifndef KASUMI_INSPECTOR_H
-#define KASUMI_INSPECTOR_H
+#ifndef KASUMI_API_H
+#define KASUMI_API_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -18,11 +18,11 @@ public:
 	virtual void VALID_CHECK() const {}
 };
 
-class Inspector
+class INSPECTOR
 {
-protected:
+public:
 	friend class App;
-	virtual void _inspect() = 0;
+	virtual void INSPECT() = 0;
 };
 
 class Renderable
@@ -62,8 +62,8 @@ auto as_renderable(SrcType *src) -> Renderable * { return dynamic_cast<Renderabl
 template<class SrcType>
 auto as_valid_check(SrcType *src) -> VALID_CHECKER * { return dynamic_cast<VALID_CHECKER *>(src); }
 
-using InspectorPtr = std::shared_ptr<Inspector>;
+using INSPECTORPtr = std::shared_ptr<INSPECTOR>;
 using RenderablePtr = std::shared_ptr<Renderable>;
 } // namespace Kasumi
 
-#endif //KASUMI_INSPECTOR_H
+#endif //KASUMI_API_H

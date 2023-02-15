@@ -12,7 +12,7 @@ class App
 {
 public:
 	virtual void launch() final;
-	virtual void inspect(const InspectorPtr &ptr) final { _inspecting = ptr; }
+	virtual void inspect(const INSPECTORPtr &ptr) final { _inspecting = ptr; }
 
 protected:
 	// main methods
@@ -43,7 +43,7 @@ public:
 public:
 	friend class Platform;
 	PlatformPtr _platform;
-	InspectorPtr _inspecting;
+	INSPECTORPtr _inspecting;
 };
 } // namespace Kasumi
 

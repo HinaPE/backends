@@ -215,7 +215,7 @@ void Kasumi::App::ui_sidebar()
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
 
 	if (_inspecting != nullptr)
-		_inspecting->_inspect();
+		_inspecting->INSPECT();
 
 	ImGui::Separator();
 	ImGui::Text("Shortcuts");
