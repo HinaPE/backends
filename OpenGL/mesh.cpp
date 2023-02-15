@@ -343,6 +343,8 @@ void Kasumi::InstancedMesh::_update()
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
 
+	_mesh->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
+
 	_opt.dirty = false;
 }
 void Kasumi::InstancedMesh::render(const Kasumi::Shader &shader)

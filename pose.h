@@ -23,9 +23,13 @@ public:
 		ImGui::Text("Transform");
 		auto sliders = [&](const std::string& label, mVector3 &data, float sens)
 		{
+#if HINAPE_DOUBLE
 			auto data_float = data.as_float();
 			ImGui::DragFloat3(label.c_str(), &data_float[0], sens);
 			data = data_float.as_double();
+#else
+			ImGui::DragFloat3(label.c_str(), &data[0], sens);
+#endif
 		};
 		sliders("Position", position, 0.1f);
 		sliders("Rotation", euler, 0.1f);
