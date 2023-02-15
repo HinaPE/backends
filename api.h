@@ -28,6 +28,10 @@ class Renderable : public VALID_CHECKER
 public:
 	Renderable() = default;
 	virtual ~Renderable() = default;
+	ShaderPtr _shader = nullptr;
+	std::function<mMatrix4x4()> _get_model = nullptr;
+	std::function<mMatrix4x4()> _get_view = nullptr;
+	std::function<mMatrix4x4()> _get_projection = nullptr;
 
 public:
 	virtual void render() final
@@ -56,10 +60,6 @@ protected:
 				_get_view != nullptr &&
 				_get_projection != nullptr;
 	}
-	ShaderPtr _shader = nullptr;
-	std::function<mMatrix4x4()> _get_model = nullptr;
-	std::function<mMatrix4x4()> _get_view = nullptr;
-	std::function<mMatrix4x4()> _get_projection = nullptr;
 };
 using RenderablePtr = std::shared_ptr<Renderable>;
 

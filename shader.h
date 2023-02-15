@@ -21,11 +21,11 @@ public:
 	unsigned int ID;
 
 	static void Init();
-	static std::unique_ptr<Shader> DefaultMeshShader;
-	static std::unique_ptr<Shader> DefaultInstanceShader;
-	static std::unique_ptr<Shader> DefaultLineShader;
-	static std::unique_ptr<Shader> DefaultPointShader;
-	static std::unique_ptr<Shader> DefaultFrameShader;
+	static std::shared_ptr<Shader> DefaultMeshShader;
+	static std::shared_ptr<Shader> DefaultInstanceShader;
+	static std::shared_ptr<Shader> DefaultLineShader;
+	static std::shared_ptr<Shader> DefaultPointShader;
+	static std::shared_ptr<Shader> DefaultFrameShader;
 
 public:
 	Shader(const std::string &vertex_path, const std::string &fragment_path);
