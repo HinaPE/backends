@@ -60,13 +60,13 @@ public:
 		bool is2D = false;
 	} _opt;
 	Camera();
+	void _sync_opt();
 
 private:
-	void update();
-	auto up() const -> mVector3;
-	auto front() const -> mVector3;
-	auto distance() const -> real;
-	void loot_at(const mVector3 &focus_point);
+	auto _up() const -> mVector3;
+	auto _front() const -> mVector3;
+	auto _distance() const -> real;
+	void _loot_at(const mVector3 &focus_point);
 
 private:
 	mMatrix4x4 _projection, _view;

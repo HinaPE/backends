@@ -15,7 +15,7 @@ namespace Kasumi
 class VALID_CHECKER
 {
 public:
-	virtual void VALID() const {}
+	virtual void VALID_CHECK() const {}
 };
 
 class Inspector
@@ -25,7 +25,7 @@ protected:
 	virtual void _inspect() = 0;
 };
 
-class Renderable : public VALID_CHECKER
+class Renderable
 {
 public:
 	Renderable() = default;
@@ -38,7 +38,7 @@ public:
 		_draw();
 	}
 
-	ShaderPtr _shader = nullptr;
+	ShaderPtr _shader = Shader::DefaultMeshShader;
 
 protected:
 	virtual auto _get_model() -> mMatrix4x4 = 0;
@@ -51,20 +51,16 @@ protected:
 		_shader->uniform("projection", _get_projection());
 	}
 	virtual void _draw() = 0;
-
-protected:
-	// check valid
-	void VALID() const override
-	{
-		if (_shader != nullptr)
-			throw std::runtime_error("Shader is not set.");
-	}
 };
 
 template<class SrcType>
 auto is_renderable(const SrcType *src) -> bool { return dynamic_cast<const Renderable *>(src) != nullptr; }
 template<class SrcType>
+auto need_valid_check(const SrcType *src) -> bool { return dynamic_cast<const VALID_CHECKER *>(src) != nullptr; }
+template<class SrcType>
 auto as_renderable(SrcType *src) -> Renderable * { return dynamic_cast<Renderable *>(src); }
+template<class SrcType>
+auto as_valid_check(SrcType *src) -> VALID_CHECKER * { return dynamic_cast<VALID_CHECKER *>(src); }
 
 using InspectorPtr = std::shared_ptr<Inspector>;
 using RenderablePtr = std::shared_ptr<Renderable>;

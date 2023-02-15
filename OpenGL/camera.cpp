@@ -11,13 +11,10 @@ static bool is_right_button_first_click = true;
 static double last_mouse_pos_x = 0;
 static double last_mouse_pos_y = 0;
 
-Kasumi::Camera::Camera() { update(); }
+Kasumi::Camera::Camera() { _sync_opt(); }
 
 std::shared_ptr<Kasumi::Camera> Kasumi::Camera::MainCamera = nullptr;
-void Kasumi::Camera::Init()
-{
-	MainCamera = std::make_shared<Camera>();
-}
+void Kasumi::Camera::Init() { MainCamera = std::make_shared<Camera>(); }
 
 // NOT COMPLETE YET
 auto Kasumi::Camera::screen_to_world(const mVector2 &screen_pos) const -> mVector3
@@ -67,7 +64,7 @@ void Kasumi::Camera::mouse_scroll(double x_offset, double y_offset)
 {
 	_opt.radius -= static_cast<real>(y_offset) * _opt.radius_sens;
 	_opt.radius = std::max(_opt.radius, 2.0f * _opt.near_plane);
-	update();
+	_sync_opt();
 }
 void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 {
@@ -95,11 +92,11 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 			float right_rot = -delta_y * _opt.orbit_sens;
 			if (_opt.orbit_flip_vertical)
 				right_rot = -right_rot;
-			auto t_up = up();
-			auto t_front = front();
+			auto t_up = _up();
+			auto t_front = _front();
 			auto t_right = t_front.cross(t_up).normalized();
 			_opt.rotation = mQuaternion(t_up, up_rot) * mQuaternion(t_right, right_rot) * _opt.rotation;
-			update();
+			_sync_opt();
 		} else
 			is_middle_button_first_click = false;
 		last_mouse_pos_x = x_pos;
@@ -110,11 +107,11 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 		{
 			real delta_x = static_cast<real>(x_pos - last_mouse_pos_x);
 			real delta_y = static_cast<real>(y_pos - last_mouse_pos_y);
-			auto t_up = _opt.rotation * up();
-			auto t_front = front();
+			auto t_up = _opt.rotation * _up();
+			auto t_front = _front();
 			auto t_right = t_front.cross(t_up).normalized();
 			_opt.look_at += -delta_x * t_right * _opt.move_sens + t_up * delta_y * _opt.move_sens;
-			update();
+			_sync_opt();
 		} else
 			is_right_button_first_click = false;
 		last_mouse_pos_x = x_pos;
@@ -122,17 +119,17 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 	}
 }
 
-void Kasumi::Camera::update()
+void Kasumi::Camera::_sync_opt()
 {
 	_opt.position = _opt.look_at + _opt.rotation * mVector3(0, 0, _opt.radius);
 	_projection = Camera::project_matrix(_opt.vertical_fov, _opt.aspect_ratio, _opt.near_plane, _opt.far_plane);
 	_view = Camera::view_matrix(_opt.position, _opt.rotation);
 }
 
-auto Kasumi::Camera::up() const -> mVector3 { return {0, 1, 0}; }
-auto Kasumi::Camera::front() const -> mVector3 { return (_opt.look_at - _opt.position).normalized(); }
-auto Kasumi::Camera::distance() const -> real { return (_opt.look_at - _opt.position).length(); }
-void Kasumi::Camera::loot_at(const mVector3 &focus_point) { _opt.look_at = focus_point; } //TODO: not completed
+auto Kasumi::Camera::_up() const -> mVector3 { return {0, 1, 0}; }
+auto Kasumi::Camera::_front() const -> mVector3 { return (_opt.look_at - _opt.position).normalized(); }
+auto Kasumi::Camera::_distance() const -> real { return (_opt.look_at - _opt.position).length(); }
+void Kasumi::Camera::_loot_at(const mVector3 &focus_point) { _opt.look_at = focus_point; } //TODO: not completed
 
 auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real far) -> mMatrix4x4
 {

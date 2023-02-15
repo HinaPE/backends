@@ -9,10 +9,6 @@
 
 #include "common.h"
 
-#include <vector>
-#include <string>
-#include <memory>
-
 namespace Kasumi
 {
 class Shader final : public HinaPE::CopyDisable

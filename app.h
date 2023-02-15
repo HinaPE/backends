@@ -1,6 +1,9 @@
 #ifndef HINAPE_APP_H
 #define HINAPE_APP_H
 
+// Copyright (c) 2023 Xayah Hina
+// MPL-2.0 license
+
 #include "api.h"
 
 namespace Kasumi
@@ -33,7 +36,7 @@ public:
 		bool running = false;
 		bool wireframe = false;
 
-		int width = 1024, height = 768;
+		int width = 1920, height = 1080;
 	} _opt;
 	App();
 
