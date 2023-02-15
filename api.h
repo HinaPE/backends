@@ -6,8 +6,6 @@
 
 #include "shader.h"
 #include "imgui.h"
-#include <memory>
-#include <functional>
 
 namespace Kasumi
 {
@@ -16,6 +14,7 @@ class VALID_CHECKER
 public:
 	virtual auto VALID() const -> bool { return true; }
 };
+
 class Inspector
 {
 protected:
@@ -55,6 +54,7 @@ protected:
 	std::function<mMatrix4x4()> _get_view = nullptr;
 	std::function<mMatrix4x4()> _get_projection = nullptr;
 };
+using RenderablePtr = std::shared_ptr<Renderable>;
 } // namespace Kasumi
 
 #endif //KASUMI_INSPECTOR_H
