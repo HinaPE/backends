@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "light.h"
 #include "mesh.h"
+#include "pose.h"
 #include "framebuffer.h"
 
 #include "imgui.h"
