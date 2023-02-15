@@ -7,8 +7,6 @@
 // Dependency:
 // - Shader
 
-#include "api.h"
-
 #include <string>
 #include <utility>
 #include <vector>
@@ -65,42 +63,5 @@ private:
 	std::vector<std::function<void(double, double)>> _cursor_callbacks;
 };
 using PlatformPtr = std::shared_ptr<Platform>;
-class App
-{
-public:
-	virtual void launch() final;
-	virtual void inspect(const InspectorPtr &ptr) { _inspecting = ptr; }
-
-protected:
-	// main methods
-	virtual void prepare() {}
-	virtual void update(double dt) {}
-	virtual auto quit() -> bool;
-
-	// callbacks
-	virtual void key(int key, int scancode, int action, int mods);
-	virtual void mouse_button(int button, int action, int mods);
-	virtual void mouse_scroll(double x_offset, double y_offset);
-	virtual void mouse_cursor(double x_pos, double y_pos);
-
-	// UI
-	virtual void ui_menu();
-	virtual void ui_sidebar();
-
-public:
-	struct Opt
-	{
-		bool running = false;
-		bool wireframe = false;
-
-		int width = 1024, height = 768;
-	} _opt;
-	explicit App(const Opt &opt);
-
-public:
-	friend class Platform;
-	PlatformPtr _platform;
-	InspectorPtr _inspecting;
-};
 } // namespace Kasumi
 #endif //KASUMI_PLATFORM_H

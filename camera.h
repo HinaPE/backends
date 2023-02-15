@@ -14,6 +14,9 @@ namespace Kasumi
 class Camera final : public HinaPE::CopyDisable
 {
 public:
+	static void Init();
+	static std::shared_ptr<Camera> MainCamera;
+
 	// static
 	static auto project_matrix(real fov, real aspect_ratio, real near, real far) -> mMatrix4x4;
 	static auto view_matrix(const mVector3 &position, const mQuaternion &rotation) -> mMatrix4x4;
@@ -39,7 +42,7 @@ public:
 
 		// for projection
 		real vertical_fov = 45;
-		real aspect_ratio = 1500.f / 700.f;
+		real aspect_ratio = 1024.f / 768.f;
 		real near_plane = 0.01;
 		real far_plane = 100;
 
@@ -56,7 +59,7 @@ public:
 		// 2D mode
 		bool is2D = false;
 	} _opt;
-	explicit Camera(Opt opt);
+	Camera();
 
 private:
 	void update();

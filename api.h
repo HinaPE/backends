@@ -4,7 +4,10 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
+#include "platform.h"
 #include "shader.h"
+#include "camera.h"
+
 #include "imgui.h"
 
 namespace Kasumi
@@ -12,7 +15,7 @@ namespace Kasumi
 class VALID_CHECKER
 {
 public:
-	virtual auto VALID() const -> bool { return true; }
+	virtual void VALID() const {}
 };
 
 class Inspector
@@ -21,28 +24,27 @@ protected:
 	friend class App;
 	virtual void _inspect() = 0;
 };
-using InspectorPtr = std::shared_ptr<Inspector>;
 
 class Renderable : public VALID_CHECKER
 {
 public:
 	Renderable() = default;
 	virtual ~Renderable() = default;
-	ShaderPtr _shader = nullptr;
-	std::function<mMatrix4x4()> _get_model = nullptr;
-	std::function<mMatrix4x4()> _get_view = nullptr;
-	std::function<mMatrix4x4()> _get_projection = nullptr;
 
-public:
 	virtual void render() final
 	{
 		_shader->use();
-		_update_mvp();
+		_update_uniform();
 		_draw();
 	}
 
+	ShaderPtr _shader = nullptr;
+
 protected:
-	virtual void _update_mvp() final
+	virtual auto _get_model() -> mMatrix4x4 = 0;
+	virtual auto _get_view() -> mMatrix4x4 final { return Camera::MainCamera->get_view(); }
+	virtual auto _get_projection() -> mMatrix4x4 final { return Camera::MainCamera->get_projection(); }
+	virtual void _update_uniform()
 	{
 		_shader->uniform("model", _get_model());
 		_shader->uniform("view", _get_view());
@@ -51,28 +53,21 @@ protected:
 	virtual void _draw() = 0;
 
 protected:
-	auto VALID() const -> bool override
+	// check valid
+	void VALID() const override
 	{
-		return
-				VALID_CHECKER::VALID() &&
-				_shader != nullptr &&
-				_get_model != nullptr &&
-				_get_view != nullptr &&
-				_get_projection != nullptr;
+		if (_shader != nullptr)
+			throw std::runtime_error("Shader is not set.");
 	}
 };
-using RenderablePtr = std::shared_ptr<Renderable>;
 
 template<class SrcType>
-auto is_renderable(const SrcType *src) -> bool
-{
-	return dynamic_cast<const Renderable *>(src) != nullptr;
-}
+auto is_renderable(const SrcType *src) -> bool { return dynamic_cast<const Renderable *>(src) != nullptr; }
 template<class SrcType>
-auto as_renderable(SrcType *src) -> Renderable *
-{
-	return dynamic_cast<Renderable *>(src);
-}
+auto as_renderable(SrcType *src) -> Renderable * { return dynamic_cast<Renderable *>(src); }
+
+using InspectorPtr = std::shared_ptr<Inspector>;
+using RenderablePtr = std::shared_ptr<Renderable>;
 } // namespace Kasumi
 
 #endif //KASUMI_INSPECTOR_H

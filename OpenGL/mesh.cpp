@@ -212,7 +212,7 @@ void Kasumi::UniversalMesh::_load_primitive(const std::string &primitive_name, s
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(std::string(BackendsModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode || scene->mNumMeshes > 1 || scene->mRootNode->mNumChildren > 1 /* primitive type should be only one mesh*/)
-		return;
+		throw std::runtime_error("Failed to load primitive: " + primitive_name);
 
 	auto *mesh = scene->mMeshes[0];
 	for (int i = 0; i < mesh->mNumVertices; ++i)

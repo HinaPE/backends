@@ -11,7 +11,13 @@ static bool is_right_button_first_click = true;
 static double last_mouse_pos_x = 0;
 static double last_mouse_pos_y = 0;
 
-Kasumi::Camera::Camera(Kasumi::Camera::Opt opt) : _opt(std::move(opt)) { update(); }
+Kasumi::Camera::Camera() { update(); }
+
+std::shared_ptr<Kasumi::Camera> Kasumi::Camera::MainCamera = nullptr;
+void Kasumi::Camera::Init()
+{
+	MainCamera = std::make_shared<Camera>();
+}
 
 // NOT COMPLETE YET
 auto Kasumi::Camera::screen_to_world(const mVector2 &screen_pos) const -> mVector3

@@ -1,6 +1,7 @@
 #include "glad/glad.h" // include glad before glfw
 #include "GLFW/glfw3.h"
 #include "../platform.h"
+#include "../app.h"
 
 #include "imgui.h"
 #include "implot.h"
@@ -157,7 +158,11 @@ void Kasumi::Platform::_end_frame()
 	glfwPollEvents();
 }
 
-Kasumi::App::App(const Kasumi::App::Opt &opt) : _opt(opt), _platform(std::make_shared<Kasumi::Platform>(opt.width, opt.height)) {}
+Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _opt.height))
+{
+	Shader::Init();
+	Camera::Init();
+}
 void Kasumi::App::launch() { _platform->launch(*this); }
 void Kasumi::App::key(int key, int scancode, int action, int mods)
 {
