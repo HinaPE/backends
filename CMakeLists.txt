@@ -7,7 +7,7 @@ option(Metal "Enable Metal backend" OFF)
 option(DirectX "Enable DirectX 11 backend" OFF)
 
 if (NOT TARGET HinaPE_Common)
-    set(KASUMI_COMMON_DIR "../../_common")
+    set(KASUMI_COMMON_DIR "../common")
     add_subdirectory(${KASUMI_COMMON_DIR} HinaPE_Common)
 endif ()
 
