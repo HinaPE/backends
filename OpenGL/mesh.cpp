@@ -11,7 +11,7 @@
 #define GL_REAL GL_FLOAT
 #endif
 
-Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const std::string &texture_name) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
+Kasumi::Mesh::Mesh(const std::string &primitive_name, const std::string &texture_name) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
@@ -23,7 +23,7 @@ Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const st
 	_opt.textured = true;
 	_init(std::move(vertices), std::move(indices));
 }
-Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
+Kasumi::Mesh::Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
 	if (!textures.empty())
 	{
@@ -35,7 +35,7 @@ Kasumi::UniversalMesh::UniversalMesh(std::vector<Vertex> &&vertices, std::vector
 		_opt.textured = false;
 	_init(std::move(vertices), std::move(indices));
 }
-Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
+Kasumi::Mesh::Mesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
@@ -44,7 +44,7 @@ Kasumi::UniversalMesh::UniversalMesh(const std::string &primitive_name, const mV
 	_init(std::move(vertices), std::move(indices));
 }
 
-Kasumi::UniversalMesh::~UniversalMesh()
+Kasumi::Mesh::~Mesh()
 {
 	glDeleteBuffers(1, &_vao);
 	glDeleteBuffers(1, &_vbo);
@@ -59,7 +59,7 @@ Kasumi::UniversalMesh::~UniversalMesh()
 
 // ================================================== Public Methods ==================================================
 
-void Kasumi::UniversalMesh::render(const Kasumi::Shader &shader)
+void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 {
 	if (_dirty)
 		_update();
@@ -140,7 +140,7 @@ void Kasumi::UniversalMesh::render(const Kasumi::Shader &shader)
 	shader.uniform("is_textured", _opt.textured);
 
 	glBindVertexArray(_vao);
-	if (_opt.instanced)
+	if (_opt.instanced && _opt.instance_count > 0)
 		glDrawElementsInstanced(GL_TRIANGLES, _idxs.size(), GL_UNSIGNED_INT, 0, _opt.instance_count);
 	else
 		glDrawElements(GL_TRIANGLES, (GLuint) _idxs.size(), GL_UNSIGNED_INT, nullptr);
@@ -152,7 +152,7 @@ void Kasumi::UniversalMesh::render(const Kasumi::Shader &shader)
 
 // ================================================== Private Methods ==================================================
 
-void Kasumi::UniversalMesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices)
+void Kasumi::Mesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices)
 {
 	_verts = std::move(vertices);
 	_idxs = std::move(indices);
@@ -194,7 +194,7 @@ void Kasumi::UniversalMesh::_init(std::vector<Vertex> &&vertices, std::vector<In
 		_bbox.merge(v.position);
 	_dirty = true;
 }
-void Kasumi::UniversalMesh::_update()
+void Kasumi::Mesh::_update()
 {
 	glBindVertexArray(_vao);
 
@@ -207,7 +207,7 @@ void Kasumi::UniversalMesh::_update()
 	glBindVertexArray(0);
 	_dirty = false;
 }
-void Kasumi::UniversalMesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
+void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::Mesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
 {
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(std::string(BackendsModelDir) + primitive_name + ".obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -217,7 +217,7 @@ void Kasumi::UniversalMesh::_load_primitive(const std::string &primitive_name, s
 	auto *mesh = scene->mMeshes[0];
 	for (int i = 0; i < mesh->mNumVertices; ++i)
 	{
-		Kasumi::UniversalMesh::Vertex v;
+		Kasumi::Mesh::Vertex v;
 		v.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
 		v.color = color;
 		if (mesh->HasNormals())
@@ -306,3 +306,53 @@ void Kasumi::Lines::clear()
 }
 
 // ================================================== Lines ==================================================
+
+
+
+// ================================================== InstancedMesh ==================================================
+Kasumi::InstancedMesh::InstancedMesh(Kasumi::MeshPtr mesh) : _mesh(std::move(mesh)), _instanceVBO(0)
+{
+	glGenBuffers(1, &_instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
+
+	glBindVertexArray(_mesh->_vao);
+	glEnableVertexAttribArray(7);
+	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
+	glEnableVertexAttribArray(8);
+	glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
+	glEnableVertexAttribArray(9);
+	glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
+	glEnableVertexAttribArray(10);
+	glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
+
+	glVertexAttribDivisor(7, 1);
+	glVertexAttribDivisor(8, 1);
+	glVertexAttribDivisor(9, 1);
+	glVertexAttribDivisor(10, 1);
+
+	glBindVertexArray(0);
+
+	_mesh->_opt.instanced = true;
+	_mesh->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
+}
+void Kasumi::InstancedMesh::_update()
+{
+	if (!_opt.dirty && _opt.instance_matrices.empty())
+		return;
+
+	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+
+	_opt.dirty = false;
+}
+void Kasumi::InstancedMesh::render(const Kasumi::Shader &shader)
+{
+	if (_opt.instance_matrices.empty())
+		return;
+
+	if (_opt.dirty)
+		_update();
+
+	_mesh->render(shader);
+}
+// ================================================== InstancedMesh ==================================================

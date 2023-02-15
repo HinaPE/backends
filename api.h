@@ -41,12 +41,10 @@ public:
 	ShaderPtr _shader = Shader::DefaultMeshShader;
 
 protected:
-	virtual auto _get_model() -> mMatrix4x4 = 0;
 	virtual auto _get_view() -> mMatrix4x4 final { return Camera::MainCamera->get_view(); }
 	virtual auto _get_projection() -> mMatrix4x4 final { return Camera::MainCamera->get_projection(); }
 	virtual void _update_uniform()
 	{
-		_shader->uniform("model", _get_model());
 		_shader->uniform("view", _get_view());
 		_shader->uniform("projection", _get_projection());
 	}

@@ -9,9 +9,9 @@
 //#include <algorithm>
 //
 //Kasumi::Model::Model(const std::string &model_path) : _path(model_path), _lines(std::make_shared<Lines>()) { _load(model_path); }
-//Kasumi::Model::Model(const std::string &primitive_name, const std::string &texture_name) : _lines(std::make_shared<Lines>()) { _load(std::make_shared<UniversalMesh>(primitive_name, texture_name)); }
-//Kasumi::Model::Model(const std::string &primitive_name, const mVector3 &color) : _lines(std::make_shared<Lines>()) { _load(std::make_shared<UniversalMesh>(primitive_name, color)); }
-//Kasumi::Model::Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _lines(std::make_shared<Lines>()) { _load(std::make_shared<UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures))); }
+//Kasumi::Model::Model(const std::string &primitive_name, const std::string &texture_name) : _lines(std::make_shared<Lines>()) { _load(std::make_shared<Mesh>(primitive_name, texture_name)); }
+//Kasumi::Model::Model(const std::string &primitive_name, const mVector3 &color) : _lines(std::make_shared<Lines>()) { _load(std::make_shared<Mesh>(primitive_name, color)); }
+//Kasumi::Model::Model(std::vector<Mesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _lines(std::make_shared<Lines>()) { _load(std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures))); }
 //Kasumi::Model::Model(Kasumi::LinesPtr lines) : _lines(std::move(lines)) { _load(std::move(lines)); }
 //Kasumi::Model::~Model() { std::cout << "delete model: " << _path << std::endl; }
 //
@@ -185,7 +185,7 @@
 //	_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(l.x(), l.y(), l.z()));
 //	return true;
 //}
-//auto Kasumi::Model::_load(Kasumi::UniversalMeshPtr &&mesh) -> bool
+//auto Kasumi::Model::_load(Kasumi::MeshPtr &&mesh) -> bool
 //{
 //	_meshes.emplace_back(std::move(mesh));
 //
@@ -227,7 +227,7 @@
 //	for (unsigned int i = 0; i < node->mNumChildren; i++)
 //		_process_node(node->mChildren[i], scene);
 //}
-//auto Kasumi::Model::_process_mesh(const aiMesh *mesh, const aiScene *scene) -> Kasumi::UniversalMeshPtr
+//auto Kasumi::Model::_process_mesh(const aiMesh *mesh, const aiScene *scene) -> Kasumi::MeshPtr
 //{
 //	std::vector<Kasumi::Model::Vertex> vertices;
 //	std::vector<Kasumi::Model::Index> indices;
@@ -294,7 +294,7 @@
 //	textures["height"] = load_material(aiTextureType_HEIGHT);
 //	textures["ambient"] = load_material(aiTextureType_AMBIENT);
 //
-//	return std::make_shared<Kasumi::UniversalMesh>(std::move(vertices), std::move(indices), std::move(textures));
+//	return std::make_shared<Kasumi::Mesh>(std::move(vertices), std::move(indices), std::move(textures));
 //}
 //auto Kasumi::Model::center_of_gravity() const -> mVector3
 //{

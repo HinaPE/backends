@@ -10,8 +10,7 @@ layout (location = 7) in mat4 aInstanceMatrix;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform mat4 model;
-
+//uniform mat4 model; we don't need this
 
 out VS_OUT {
     vec3 FragPos;
@@ -23,7 +22,7 @@ out VS_OUT {
 void main()
 {
     vs_out.FragPos = aPos;
-    vs_out.Normal = mat3(transpose(inverse(model))) * aNormal;
+    vs_out.Normal = mat3(transpose(inverse(aInstanceMatrix))) * aNormal;
     vs_out.TexCoords = aTexCoords;
     vs_out.Color = aColor;
     gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);

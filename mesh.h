@@ -4,29 +4,24 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
-// Dependency:
-// - Math Backend
-// - Shader Backend
-// - Texture Backend
-
 #include "common.h"
 #include "shader.h"
 #include "texture.h"
 
 #include <map>
+#include <utility>
 
 namespace Kasumi
 {
-class UniversalMesh final
+class Mesh final
 {
 public:
-	friend class Model;
 	struct Vertex;
 	using Index = unsigned int;
-	UniversalMesh(const std::string &primitive_name, const std::string &texture_name);
-	UniversalMesh(const std::string &primitive_name, const mVector3 &color);
-	UniversalMesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
-	~UniversalMesh();
+	Mesh(const std::string &primitive_name, const std::string &texture_name);
+	Mesh(const std::string &primitive_name, const mVector3 &color);
+	Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
+	~Mesh();
 
 	void render(const Shader &shader);
 	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
@@ -70,10 +65,11 @@ public:
 
 private:
 	void _init(std::vector<Vertex> &&vertices, std::vector<Index> &&indices);
-	void _load_primitive(const std::string &primitive_name, std::vector<Kasumi::UniversalMesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
+	void _load_primitive(const std::string &primitive_name, std::vector<Kasumi::Mesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color = HinaPE::Color::NO_COLORS);
 	void _update();
 
 private:
+	friend class InstancedMesh;
 	unsigned int _vao, _vbo, _ebo;
 	std::vector<Vertex> _verts;
 	std::vector<Index> _idxs;
@@ -84,13 +80,26 @@ private:
 	mVector3 _center_point;
 	mBBox3 _bbox;
 };
-using UniversalMeshPtr = std::shared_ptr<UniversalMesh>;
+using MeshPtr = std::shared_ptr<Mesh>;
 
 class InstancedMesh final
 {
 public:
+	struct Opt
+	{
+		bool dirty = true;
+		std::vector<mMatrix4x4> instance_matrices;
+	} _opt;
+	explicit InstancedMesh(MeshPtr mesh);
 
+	void render(const Shader &shader);
+
+private:
+	void _update();
+	MeshPtr _mesh;
+	unsigned int _instanceVBO;
 };
+using InstancedMeshPtr = std::shared_ptr<InstancedMesh>;
 
 class Lines final : public HinaPE::CopyDisable
 {

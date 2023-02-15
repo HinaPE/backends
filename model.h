@@ -18,8 +18,8 @@
 //class Model
 //{
 //public:
-//	using Vertex = UniversalMesh::Vertex;
-//	using Index = UniversalMesh::Index;
+//	using Vertex = Mesh::Vertex;
+//	using Index = Mesh::Index;
 //
 //	// data
 //	auto vertices(size_t i = 0) -> std::vector<Vertex> &; // the ith mesh's vertices
@@ -33,7 +33,7 @@
 //	void clear_instances();
 //
 //private:
-//	std::vector<UniversalMeshPtr> _meshes;
+//	std::vector<MeshPtr> _meshes;
 //	ShaderPtr _shader;
 //	std::vector<mMatrix4x4> _instance_matrices; // make sure instancing() is called before use this
 //	LinesPtr _lines;
@@ -78,7 +78,7 @@
 //	explicit Model(const std::string &model_path);
 //	Model(const std::string &primitive_name, const std::string &texture_name);
 //	Model(const std::string &primitive_name, const mVector3 &color);
-//	Model(std::vector<UniversalMesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
+//	Model(std::vector<Mesh::Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures = {});
 //	Model(LinesPtr lines); // a lines model
 //
 //public:
@@ -90,10 +90,10 @@
 //
 //private:
 //	auto _load(const std::string &path) -> bool;
-//	auto _load(UniversalMeshPtr &&mesh) -> bool;
+//	auto _load(MeshPtr &&mesh) -> bool;
 //	auto _load(LinesPtr &&lines) -> bool;
 //	void _process_node(const aiNode *node, const aiScene *scene);
-//	auto _process_mesh(const aiMesh *mesh, const aiScene *scene) -> UniversalMeshPtr;
+//	auto _process_mesh(const aiMesh *mesh, const aiScene *scene) -> MeshPtr;
 //};
 //using ModelPtr = std::shared_ptr<Model>;
 //}
