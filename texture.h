@@ -1,11 +1,8 @@
-#ifndef KASUMI_TEXTURE_H
-#define KASUMI_TEXTURE_H
+#ifndef BACKENDS_TEXTURE_H
+#define BACKENDS_TEXTURE_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
-
-// Dependency:
-// - Fully Decoupled
 
 #include <string>
 #include <memory>
@@ -27,6 +24,6 @@ private:
 	int _width, _height, _nr_channels;
 };
 using TexturePtr = std::shared_ptr<Texture>;
-}
+} // namespace Kasumi
 
-#endif //KASUMI_TEXTURE_H
+#endif //BACKENDS_TEXTURE_H

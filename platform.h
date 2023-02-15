@@ -1,11 +1,8 @@
-#ifndef KASUMI_PLATFORM_H
-#define KASUMI_PLATFORM_H
+#ifndef BACKENDS_PLATFORM_H
+#define BACKENDS_PLATFORM_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
-
-// Dependency:
-// - Shader
 
 #include <string>
 #include <utility>
@@ -64,4 +61,5 @@ private:
 };
 using PlatformPtr = std::shared_ptr<Platform>;
 } // namespace Kasumi
-#endif //KASUMI_PLATFORM_H
+
+#endif //BACKENDS_PLATFORM_H

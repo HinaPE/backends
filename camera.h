@@ -1,11 +1,8 @@
-#ifndef KASUMI_CAMERA_H
-#define KASUMI_CAMERA_H
+#ifndef BACKENDS_CAMERA_H
+#define BACKENDS_CAMERA_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
-
-// Dependency:
-// - Math Backend
 
 #include "common.h"
 
@@ -73,4 +70,5 @@ private:
 };
 using CameraPtr = std::shared_ptr<Camera>;
 } // namespace Kasumi
-#endif //KASUMI_CAMERA_H
+
+#endif //BACKENDS_CAMERA_H

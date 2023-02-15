@@ -1,5 +1,5 @@
-//#ifndef KASUMI_MODEL_H
-//#define KASUMI_MODEL_H
+//#ifndef BACKENDS_MODEL_H
+//#define BACKENDS_MODEL_H
 //
 //#include "assimp/Importer.hpp"
 //#include "assimp/scene.h"
@@ -98,4 +98,4 @@
 //using ModelPtr = std::shared_ptr<Model>;
 //}
 //
-//#endif //KASUMI_MODEL_H
+//#endif //BACKENDS_MODEL_H

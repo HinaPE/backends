@@ -1,12 +1,8 @@
-#ifndef KASUMI_FRAMEBUFFER_H
-#define KASUMI_FRAMEBUFFER_H
+#ifndef BACKENDS_FRAMEBUFFER_H
+#define BACKENDS_FRAMEBUFFER_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
-
-// Dependency:
-// - Math Backend
-// - Shader
 
 #include "shader.h"
 
@@ -42,6 +38,6 @@ private:
 	float _top_x = 1.0, _top_y = 1.0;
 };
 using FramebufferPtr = std::shared_ptr<Framebuffer>;
-}
+} // namespace Kasumi
 
-#endif //KASUMI_FRAMEBUFFER_H
+#endif //BACKENDS_FRAMEBUFFER_H

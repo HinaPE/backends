@@ -1,5 +1,5 @@
-#ifndef KASUMI_POSE_H
-#define KASUMI_POSE_H
+#ifndef BACKENDS_POSE_H
+#define BACKENDS_POSE_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -36,5 +36,6 @@ public:
 		sliders("Scale", scale, 0.031f);
 	}
 };
-}
-#endif //KASUMI_POSE_H
+} // namespace Kasumi
+
+#endif //BACKENDS_POSE_H

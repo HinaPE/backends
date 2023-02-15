@@ -1,5 +1,5 @@
-#ifndef KASUMI_MESH_H
-#define KASUMI_MESH_H
+#ifndef BACKENDS_MESH_H
+#define BACKENDS_MESH_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -134,4 +134,5 @@ private:
 };
 using LinesPtr = std::shared_ptr<Lines>;
 } // namespace Kasumi
-#endif //KASUMI_MESH_H
+
+#endif //BACKENDS_MESH_H

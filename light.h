@@ -1,5 +1,5 @@
-#ifndef KASUMI_LIGHT_H
-#define KASUMI_LIGHT_H
+#ifndef BACKENDS_LIGHT_H
+#define BACKENDS_LIGHT_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -29,6 +29,6 @@ public:
 	} _opt;
 };
 using LightPtr = std::shared_ptr<Light>;
-}
+} // namespace Kasumi
 
-#endif //KASUMI_LIGHT_H
+#endif //BACKENDS_LIGHT_H

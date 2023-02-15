@@ -1,11 +1,8 @@
-#ifndef KASUMI_SHADER_H
-#define KASUMI_SHADER_H
+#ifndef BACKENDS_SHADER_H
+#define BACKENDS_SHADER_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
-
-// Dependency:
-// - Math Backend
 
 #include "common.h"
 
@@ -46,6 +43,6 @@ private:
 	static void _validate(unsigned int shader, const std::string &type);
 };
 using ShaderPtr = std::shared_ptr<Shader>;
-}
+} // namespace Kasumi
 
-#endif //KASUMI_SHADER_H
+#endif //BACKENDS_SHADER_H

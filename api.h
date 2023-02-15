@@ -1,5 +1,5 @@
-#ifndef KASUMI_API_H
-#define KASUMI_API_H
+#ifndef BACKENDS_API_H
+#define BACKENDS_API_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -65,4 +65,4 @@ using INSPECTORPtr = std::shared_ptr<INSPECTOR>;
 using RenderablePtr = std::shared_ptr<Renderable>;
 } // namespace Kasumi
 
-#endif //KASUMI_API_H
+#endif //BACKENDS_API_H
