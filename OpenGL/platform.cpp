@@ -211,25 +211,28 @@ void Kasumi::App::ui_menu()
 }
 void Kasumi::App::ui_sidebar()
 {
-	ImGui::SetNextWindowPos({next_x, next_y});
-	ImGui::SetNextWindowSizeConstraints({ImGui::GetIO().DisplaySize.x / 5.75f, ImGui::GetIO().DisplaySize.y - next_y}, {ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - next_y});
+//	ImGui::SetNextWindowPos({next_x, next_y});
+//	ImGui::SetNextWindowSizeConstraints({ImGui::GetIO().DisplaySize.x / 5.75f, ImGui::GetIO().DisplaySize.y - next_y}, {ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y - next_y});
+
+	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.8f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize({ImGui::GetIO().DisplaySize.x * 0.2f, ImGui::GetIO().DisplaySize.y * 0.0f}, ImGuiCond_FirstUseEver);
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
 
 	if (_inspecting != nullptr)
 		_inspecting->INSPECT();
 
-	ImGui::Separator();
-	ImGui::Text("Shortcuts");
-
-	ImGui::BeginDisabled(true);
-	ImGui::Checkbox("Space: start/stop sim", &_opt.running);
-	ImGui::EndDisabled();
-
-	ImGui::BeginDisabled(true);
-	ImGui::Checkbox("W: wireframe mode", &_opt.wireframe);
-	ImGui::EndDisabled();
-
-	ImGui::Separator();
+//	ImGui::Separator();
+//	ImGui::Text("Shortcuts");
+//
+//	ImGui::BeginDisabled(true);
+//	ImGui::Checkbox("Space: start/stop sim", &_opt.running);
+//	ImGui::EndDisabled();
+//
+//	ImGui::BeginDisabled(true);
+//	ImGui::Checkbox("W: wireframe mode", &_opt.wireframe);
+//	ImGui::EndDisabled();
+//
+//	ImGui::Separator();
 
 	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs);
 	next_x += ImGui::GetWindowSize().x;
