@@ -11,7 +11,7 @@
 #define GL_REAL GL_FLOAT
 #endif
 
-Kasumi::Mesh::Mesh(const std::string &primitive_name, const std::string &texture_name) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
+Kasumi::Mesh::Mesh(const std::string &primitive_name, const std::string &texture_name) : _vao(0), _vbo(0), _ebo(0)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
@@ -23,7 +23,7 @@ Kasumi::Mesh::Mesh(const std::string &primitive_name, const std::string &texture
 	_opt.textured = true;
 	_init(std::move(vertices), std::move(indices));
 }
-Kasumi::Mesh::Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
+Kasumi::Mesh::Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0)
 {
 	if (!textures.empty())
 	{
@@ -35,7 +35,7 @@ Kasumi::Mesh::Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices,
 		_opt.textured = false;
 	_init(std::move(vertices), std::move(indices));
 }
-Kasumi::Mesh::Mesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0), _dirty(true)
+Kasumi::Mesh::Mesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0)
 {
 	std::vector<Vertex> vertices;
 	std::vector<Index> indices;
@@ -61,7 +61,7 @@ Kasumi::Mesh::~Mesh()
 
 void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 {
-	if (_dirty)
+	if (_opt.dirty)
 		_update();
 
 	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
@@ -79,72 +79,76 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 	_opt.render_wireframe ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 						  : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	shader.use();
 
-	int texture_index = 0;
-	auto diffuse_textures = _textures["diffuse"];
-	switch (diffuse_textures.size())
+	if (_opt.render_surface)
 	{
-		case 1:
+		shader.use();
+
+		int texture_index = 0;
+		auto diffuse_textures = _textures["diffuse"];
+		switch (diffuse_textures.size())
 		{
-			diffuse_textures[0]->bind(texture_index);
-			shader.uniform("diffuse_texture_num", 1);
-			shader.uniform("texture_diffuse1", texture_index);
-			++texture_index;
+			case 1:
+			{
+				diffuse_textures[0]->bind(texture_index);
+				shader.uniform("diffuse_texture_num", 1);
+				shader.uniform("texture_diffuse1", texture_index);
+				++texture_index;
+			}
+				break;
+			case 2:
+			{
+				diffuse_textures[0]->bind(texture_index);
+				diffuse_textures[1]->bind(texture_index + 1);
+				shader.uniform("diffuse_texture_num", 2);
+				shader.uniform("texture_diffuse1", texture_index);
+				shader.uniform("texture_diffuse2", texture_index + 1);
+				++texture_index;
+				++texture_index;
+			}
+				break;
+			default: // NOT SUPPORT FOR MORE DIFFUSE TEXTURES NOW
+				shader.uniform("diffuse_texture_num", 0);
+				break;
 		}
-			break;
-		case 2:
+		auto specular_textures = _textures["specular"];
+		if (!specular_textures.empty())
 		{
-			diffuse_textures[0]->bind(texture_index);
-			diffuse_textures[1]->bind(texture_index + 1);
-			shader.uniform("diffuse_texture_num", 2);
-			shader.uniform("texture_diffuse1", texture_index);
-			shader.uniform("texture_diffuse2", texture_index + 1);
-			++texture_index;
-			++texture_index;
-		}
-			break;
-		default: // NOT SUPPORT FOR MORE DIFFUSE TEXTURES NOW
-			shader.uniform("diffuse_texture_num", 0);
-			break;
+			specular_textures[0]->bind(texture_index);
+			shader.uniform("specular_texture_num", 1);
+			shader.uniform("texture_specular1", texture_index);
+			texture_index++;
+		} else
+			shader.uniform("specular_texture_num", 0);
+		auto normal_textures = _textures["normal"];
+		if (!normal_textures.empty())
+		{
+			normal_textures[0]->bind(texture_index);
+			shader.uniform("normal_texture_num", 1);
+			shader.uniform("texture_normal1", texture_index);
+			texture_index++;
+		} else
+			shader.uniform("normal_texture_num", 0);
+		auto height_textures = _textures["height"];
+		if (!height_textures.empty())
+		{
+			height_textures[0]->bind(texture_index);
+			shader.uniform("height_texture_num", 1);
+			shader.uniform("texture_height1", texture_index);
+			texture_index++;
+		} else
+			shader.uniform("height_texture_num", 0);
+
+		shader.uniform("is_colored", _opt.colored);
+		shader.uniform("is_textured", _opt.textured);
+
+		glBindVertexArray(_vao);
+		if (_opt.instanced && _opt.instance_count > 0)
+			glDrawElementsInstanced(GL_TRIANGLES, _idxs.size(), GL_UNSIGNED_INT, 0, _opt.instance_count);
+		else
+			glDrawElements(GL_TRIANGLES, (GLuint) _idxs.size(), GL_UNSIGNED_INT, nullptr);
+		glBindVertexArray(0);
 	}
-	auto specular_textures = _textures["specular"];
-	if (!specular_textures.empty())
-	{
-		specular_textures[0]->bind(texture_index);
-		shader.uniform("specular_texture_num", 1);
-		shader.uniform("texture_specular1", texture_index);
-		texture_index++;
-	} else
-		shader.uniform("specular_texture_num", 0);
-	auto normal_textures = _textures["normal"];
-	if (!normal_textures.empty())
-	{
-		normal_textures[0]->bind(texture_index);
-		shader.uniform("normal_texture_num", 1);
-		shader.uniform("texture_normal1", texture_index);
-		texture_index++;
-	} else
-		shader.uniform("normal_texture_num", 0);
-	auto height_textures = _textures["height"];
-	if (!height_textures.empty())
-	{
-		height_textures[0]->bind(texture_index);
-		shader.uniform("height_texture_num", 1);
-		shader.uniform("texture_height1", texture_index);
-		texture_index++;
-	} else
-		shader.uniform("height_texture_num", 0);
-
-	shader.uniform("is_colored", _opt.colored);
-	shader.uniform("is_textured", _opt.textured);
-
-	glBindVertexArray(_vao);
-	if (_opt.instanced && _opt.instance_count > 0)
-		glDrawElementsInstanced(GL_TRIANGLES, _idxs.size(), GL_UNSIGNED_INT, 0, _opt.instance_count);
-	else
-		glDrawElements(GL_TRIANGLES, (GLuint) _idxs.size(), GL_UNSIGNED_INT, nullptr);
-	glBindVertexArray(0);
 
 	if (_opt.render_bbox)
 	{
@@ -189,7 +193,7 @@ void Kasumi::Mesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&in
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 
 	glBindVertexArray(0);
-	_dirty = true;
+	_opt.dirty = true;
 }
 void Kasumi::Mesh::_update()
 {
@@ -217,22 +221,22 @@ void Kasumi::Mesh::_update()
 	auto u = _bbox._upper_corner;
 
 	// bounding box lines
-	_bbox_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(u.x(), l.y(), l.z()));
-	_bbox_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), u.y(), l.z()));
-	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(l.x(), u.y(), l.z()));
-	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), l.y(), l.z()));
+	_bbox_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(u.x(), l.y(), l.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), u.y(), l.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(l.x(), u.y(), l.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), l.y(), l.z()), _opt.bbox_color);
 
-	_bbox_lines->add(mVector3(l.x(), l.y(), u.z()), mVector3(u.x(), l.y(), u.z()));
-	_bbox_lines->add(mVector3(u.x(), l.y(), u.z()), mVector3(u.x(), u.y(), u.z()));
-	_bbox_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(l.x(), u.y(), u.z()));
-	_bbox_lines->add(mVector3(l.x(), u.y(), u.z()), mVector3(l.x(), l.y(), u.z()));
+	_bbox_lines->add(mVector3(l.x(), l.y(), u.z()), mVector3(u.x(), l.y(), u.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(u.x(), l.y(), u.z()), mVector3(u.x(), u.y(), u.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(l.x(), u.y(), u.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(l.x(), u.y(), u.z()), mVector3(l.x(), l.y(), u.z()), _opt.bbox_color);
 
-	_bbox_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(l.x(), l.y(), u.z()));
-	_bbox_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), l.y(), u.z()));
-	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(u.x(), u.y(), u.z()));
-	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), u.y(), u.z()));
+	_bbox_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(l.x(), l.y(), u.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), l.y(), u.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(u.x(), u.y(), u.z()), _opt.bbox_color);
+	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), u.y(), u.z()), _opt.bbox_color);
 
-	_dirty = false;
+	_opt.dirty = false;
 }
 void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::Mesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
 {
@@ -294,7 +298,10 @@ void Kasumi::Lines::render(const Kasumi::Shader &shader)
 		glDisable(GL_LINE_SMOOTH);
 
 	glBindVertexArray(_vao);
-	glDrawArrays(GL_LINES, 0, (GLsizei) _lines.size());
+	if (_opt.instanced && _opt.instance_count > 0)
+		glDrawArraysInstanced(GL_LINES, 0, (GLsizei) _lines.size(), _opt.instance_count);
+	else
+		glDrawArrays(GL_LINES, 0, (GLsizei) _lines.size());
 	glBindVertexArray(0);
 }
 auto Kasumi::Lines::lines() -> std::vector<Vertex> &
@@ -370,6 +377,9 @@ void Kasumi::InstancedMesh::_update()
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
 
+	_mesh->_opt.render_surface = _opt.render_surface;
+	_mesh->_opt.render_wireframe = _opt.render_wireframe;
+	_mesh->_opt.render_bbox = _opt.render_bbox;
 	_mesh->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
 
 	_opt.dirty = false;
@@ -382,8 +392,54 @@ void Kasumi::InstancedMesh::render(const Kasumi::Shader &shader)
 	if (_opt.dirty)
 		_update();
 
-	_mesh->_opt.render_wireframe = _opt.render_wireframe;
-
 	_mesh->render(shader);
 }
 // ================================================== InstancedMesh ==================================================
+
+Kasumi::InstancedLines::InstancedLines(Kasumi::LinesPtr lines) : _lines(std::move(lines)), _instanceVBO(0)
+{
+	glGenBuffers(1, &_instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
+
+	glBindVertexArray(_lines->_vao);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
+
+	glVertexAttribDivisor(2, 1);
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
+
+	glBindVertexArray(0);
+
+	_lines->_opt.instanced = true;
+	_lines->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
+}
+void Kasumi::InstancedLines::render(const Kasumi::Shader &shader)
+{
+	if (_opt.instance_matrices.empty())
+		return;
+
+	if (_opt.dirty)
+		_update();
+
+	_lines->render(shader);
+}
+void Kasumi::InstancedLines::_update()
+{
+	if (!_opt.dirty && _opt.instance_matrices.empty())
+		return;
+
+	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+
+	_lines->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
+
+	_opt.dirty = false;
+}

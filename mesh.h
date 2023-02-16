@@ -27,12 +27,17 @@ public:
 	using Index = unsigned int;
 
 	void render(const Shader &shader);
-	inline auto vertices() -> std::vector<Vertex> & { _dirty = true; return _verts; }
+	inline auto vertices() -> std::vector<Vertex> &
+	{
+		_opt.dirty = true;
+		return _verts;
+	}
 	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
 
 public:
 	struct Opt
 	{
+		bool dirty;
 		bool colored = false;
 		bool textured = false;
 		bool instanced = false;
@@ -48,7 +53,7 @@ public:
 		bool blend = true;
 
 		// bounding box options
-		mVector3 bbox_color = {0.f, 0.f, 0.f};
+		mVector3 bbox_color = HinaPE::Color::PURPLE;
 
 		// line model
 		bool line_model = false;
@@ -69,7 +74,6 @@ private:
 	std::vector<Vertex> _verts;
 	std::vector<Index> _idxs;
 	std::map<std::string, std::vector<TexturePtr>> _textures;
-	bool _dirty;
 
 	// geometry
 	mVector3 _center_point;
@@ -89,6 +93,7 @@ public:
 		bool dirty = true;
 		bool render_surface = true;
 		bool render_wireframe = false;
+		bool render_bbox = false;
 		std::vector<mMatrix4x4> instance_matrices;
 	} _opt;
 	explicit InstancedMesh(MeshPtr mesh);
@@ -100,7 +105,7 @@ private:
 };
 using InstancedMeshPtr = std::shared_ptr<InstancedMesh>;
 
-class Lines final : public HinaPE::CopyDisable
+class Lines : public HinaPE::CopyDisable
 {
 public:
 	struct Vertex
@@ -120,6 +125,9 @@ public:
 		bool smooth = true;
 		float thickness = 1.0f; // NO USE FOR OpenGL 3.0
 		float _opacity = 1.0;
+
+		bool instanced = false;
+		int instance_count;
 	} _opt;
 	Lines();
 
@@ -128,10 +136,30 @@ private:
 	void _update();
 
 private:
+	friend class InstancedLines;
 	unsigned int _vao, _vbo;
 	std::vector<Vertex> _lines; // start, end
 };
 using LinesPtr = std::shared_ptr<Lines>;
+
+class InstancedLines final
+{
+public:
+	void render(const Shader &shader);
+
+public:
+	struct Opt
+	{
+		bool dirty = true;
+		std::vector<mMatrix4x4> instance_matrices;
+	} _opt;
+	explicit InstancedLines(LinesPtr lines);
+
+private:
+	void _update();
+	LinesPtr _lines;
+	unsigned int _instanceVBO;
+};
 
 class Points final : public HinaPE::CopyDisable
 {
