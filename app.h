@@ -1,5 +1,5 @@
-#ifndef HINAPE_APP_H
-#define HINAPE_APP_H
+#ifndef BACKENDS_APP_H
+#define BACKENDS_APP_H
 
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
@@ -47,4 +47,4 @@ public:
 };
 } // namespace Kasumi
 
-#endif //HINAPE_APP_H
+#endif //BACKENDS_APP_H
