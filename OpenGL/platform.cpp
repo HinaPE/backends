@@ -218,6 +218,8 @@ void Kasumi::App::ui_sidebar()
 	ImGui::SetNextWindowSize({ImGui::GetIO().DisplaySize.x * 0.2f, ImGui::GetIO().DisplaySize.y * 0.0f}, ImGuiCond_FirstUseEver);
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
 
+	ImGui::Text("Physics Update: %.0f ms", (_last_update_time * 1000));
+
 	if (_inspecting != nullptr)
 		_inspecting->INSPECT();
 
