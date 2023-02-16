@@ -8,9 +8,6 @@
 #include "shader.h"
 #include "texture.h"
 
-#include <map>
-#include <utility>
-
 namespace Kasumi
 {
 class Lines;
@@ -44,7 +41,7 @@ public:
 		// rendering options
 		bool render_surface = true;
 		bool render_wireframe = false;
-		bool render_bbox = true;
+		bool render_bbox = false;
 		bool depth_test = true;
 		bool stencil_test = false;
 		bool cull_face = false;
