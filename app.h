@@ -45,6 +45,7 @@ public:
 	PlatformPtr _platform;
 	INSPECTORPtr _inspecting;
 
+	HinaPE::Util::Timer _timer;
 	float _last_update_time = 0.f;
 };
 } // namespace Kasumi

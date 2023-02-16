@@ -58,6 +58,8 @@ private:
 	std::vector<std::function<void(int, int, int)>> _mouse_callbacks;
 	std::vector<std::function<void(double, double)>> _scroll_callbacks;
 	std::vector<std::function<void(double, double)>> _cursor_callbacks;
+
+	float _last_update_time = 0.f;
 };
 using PlatformPtr = std::shared_ptr<Platform>;
 } // namespace Kasumi
