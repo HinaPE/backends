@@ -89,6 +89,8 @@ public:
 	struct Opt
 	{
 		bool dirty = true;
+		bool render_surface = true;
+		bool render_wireframe = false;
 		std::vector<mMatrix4x4> instance_matrices;
 	} _opt;
 	explicit InstancedMesh(MeshPtr mesh);

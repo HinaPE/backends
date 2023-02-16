@@ -355,6 +355,8 @@ void Kasumi::InstancedMesh::render(const Kasumi::Shader &shader)
 	if (_opt.dirty)
 		_update();
 
+	_mesh->_opt.render_wireframe = _opt.render_wireframe;
+
 	_mesh->render(shader);
 }
 // ================================================== InstancedMesh ==================================================

@@ -36,7 +36,7 @@ public:
 		bool running = false;
 		bool wireframe = false;
 
-		int width = 1920, height = 1080;
+		int width = 1024, height = 768;
 	} _opt;
 	App();
 
