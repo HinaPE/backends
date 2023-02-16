@@ -38,7 +38,6 @@ public:
 
 	virtual void render() final
 	{
-		_shader->use();
 		_update_uniform();
 		_draw();
 	}
@@ -48,10 +47,17 @@ public:
 protected:
 	virtual void _update_uniform()
 	{
+		_shader->use();
 		_shader->uniform("view", Camera::MainCamera->get_view());
 		_shader->uniform("projection", Camera::MainCamera->get_projection());
 		_shader->uniform("lightPos", Light::MainLight->_opt.light_pos);
 		_shader->uniform("viewPos", Light::MainLight->_opt.view_pos);
+
+		Shader::DefaultLineShader->use();
+		Shader::DefaultLineShader->uniform("view", Camera::MainCamera->get_view());
+		Shader::DefaultLineShader->uniform("projection", Camera::MainCamera->get_projection());
+		Shader::DefaultLineShader->uniform("lightPos", Light::MainLight->_opt.light_pos);
+		Shader::DefaultLineShader->uniform("viewPos", Light::MainLight->_opt.view_pos);
 	}
 	virtual void _draw() = 0;
 };

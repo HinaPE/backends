@@ -13,6 +13,7 @@
 
 namespace Kasumi
 {
+class Lines;
 class Mesh final
 {
 public:
@@ -43,7 +44,7 @@ public:
 		// rendering options
 		bool render_surface = true;
 		bool render_wireframe = false;
-		bool render_bbox = false;
+		bool render_bbox = true;
 		bool depth_test = true;
 		bool stencil_test = false;
 		bool cull_face = false;
@@ -76,6 +77,7 @@ private:
 	// geometry
 	mVector3 _center_point;
 	mBBox3 _bbox;
+	std::shared_ptr<Lines> _bbox_lines;
 };
 using MeshPtr = std::shared_ptr<Mesh>;
 

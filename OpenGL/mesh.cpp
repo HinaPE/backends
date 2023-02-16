@@ -145,6 +145,11 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 	else
 		glDrawElements(GL_TRIANGLES, (GLuint) _idxs.size(), GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
+
+	if (_opt.render_bbox)
+	{
+		_bbox_lines->render(*Shader::DefaultLineShader);
+	}
 }
 // ================================================== Public Methods ==================================================
 
@@ -156,6 +161,7 @@ void Kasumi::Mesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&in
 {
 	_verts = std::move(vertices);
 	_idxs = std::move(indices);
+	_bbox_lines = std::make_shared<Kasumi::Lines>();
 
 	glGenVertexArrays(1, &_vao);
 	glGenBuffers(1, &_vbo);
@@ -183,15 +189,6 @@ void Kasumi::Mesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&in
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 
 	glBindVertexArray(0);
-
-	_center_point = mVector3(0.0f, 0.0f, 0.0f);
-	for (auto &v: _verts)
-		_center_point += v.position;
-	_center_point /= static_cast<float>(_verts.size());
-
-	_bbox.reset();
-	for (auto &v: _verts)
-		_bbox.merge(v.position);
 	_dirty = true;
 }
 void Kasumi::Mesh::_update()
@@ -205,6 +202,36 @@ void Kasumi::Mesh::_update()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Index) * _idxs.size(), &_idxs[0], GL_DYNAMIC_DRAW);
 
 	glBindVertexArray(0);
+
+	_center_point = mVector3(0.0f, 0.0f, 0.0f);
+	for (auto &v: _verts)
+		_center_point += v.position;
+	_center_point /= static_cast<float>(_verts.size());
+
+	_bbox.reset();
+	for (auto &v: _verts)
+		_bbox.merge(v.position);
+
+	_bbox_lines->clear();
+	auto l = _bbox._lower_corner;
+	auto u = _bbox._upper_corner;
+
+	// bounding box lines
+	_bbox_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(u.x(), l.y(), l.z()));
+	_bbox_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), u.y(), l.z()));
+	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(l.x(), u.y(), l.z()));
+	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), l.y(), l.z()));
+
+	_bbox_lines->add(mVector3(l.x(), l.y(), u.z()), mVector3(u.x(), l.y(), u.z()));
+	_bbox_lines->add(mVector3(u.x(), l.y(), u.z()), mVector3(u.x(), u.y(), u.z()));
+	_bbox_lines->add(mVector3(u.x(), u.y(), u.z()), mVector3(l.x(), u.y(), u.z()));
+	_bbox_lines->add(mVector3(l.x(), u.y(), u.z()), mVector3(l.x(), l.y(), u.z()));
+
+	_bbox_lines->add(mVector3(l.x(), l.y(), l.z()), mVector3(l.x(), l.y(), u.z()));
+	_bbox_lines->add(mVector3(u.x(), l.y(), l.z()), mVector3(u.x(), l.y(), u.z()));
+	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(u.x(), u.y(), u.z()));
+	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), u.y(), u.z()));
+
 	_dirty = false;
 }
 void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::Mesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
