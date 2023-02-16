@@ -29,9 +29,8 @@ public:
 	using Index = unsigned int;
 
 	void render(const Shader &shader);
-	inline auto vertices() -> std::vector<Vertex> & { return _verts; }
+	inline auto vertices() -> std::vector<Vertex> & { _dirty = true; return _verts; }
 	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
-	inline void mark_dirty() { _dirty = true; }
 
 public:
 	struct Opt
