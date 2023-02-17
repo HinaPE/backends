@@ -11,7 +11,7 @@ static bool is_right_button_first_click = true;
 static double last_mouse_pos_x = 0;
 static double last_mouse_pos_y = 0;
 
-Kasumi::Camera::Camera() { _sync_opt(); }
+Kasumi::Camera::Camera() { _rebuild_(); }
 
 std::shared_ptr<Kasumi::Camera> Kasumi::Camera::MainCamera = nullptr;
 void Kasumi::Camera::Init() { MainCamera = std::make_shared<Camera>(); }
@@ -64,7 +64,7 @@ void Kasumi::Camera::mouse_scroll(double x_offset, double y_offset)
 {
 	_opt.radius -= static_cast<real>(y_offset) * _opt.radius_sens;
 	_opt.radius = std::max(_opt.radius, 2.0f * _opt.near_plane);
-	_sync_opt();
+	_rebuild_();
 }
 void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 {
@@ -96,7 +96,7 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 			auto t_front = _front();
 			auto t_right = t_front.cross(t_up).normalized();
 			_opt.rotation = mQuaternion(t_up, up_rot) * mQuaternion(t_right, right_rot) * _opt.rotation;
-			_sync_opt();
+			_rebuild_();
 		} else
 			is_middle_button_first_click = false;
 		last_mouse_pos_x = x_pos;
@@ -111,7 +111,7 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 			auto t_front = _front();
 			auto t_right = t_front.cross(t_up).normalized();
 			_opt.look_at += -delta_x * t_right * _opt.move_sens + t_up * delta_y * _opt.move_sens;
-			_sync_opt();
+			_rebuild_();
 		} else
 			is_right_button_first_click = false;
 		last_mouse_pos_x = x_pos;
@@ -119,7 +119,7 @@ void Kasumi::Camera::mouse_cursor(double x_pos, double y_pos)
 	}
 }
 
-void Kasumi::Camera::_sync_opt()
+void Kasumi::Camera::_rebuild_()
 {
 	_opt.position = _opt.look_at + _opt.rotation * mVector3(0, 0, _opt.radius);
 	_projection = Camera::project_matrix(_opt.vertical_fov, _opt.aspect_ratio, _opt.near_plane, _opt.far_plane);

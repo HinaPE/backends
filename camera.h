@@ -57,7 +57,7 @@ public:
 		bool is2D = false;
 	} _opt;
 	Camera();
-	void _sync_opt();
+	void _rebuild_();
 
 private:
 	auto _up() const -> mVector3;
