@@ -28,6 +28,14 @@ class INSPECTOR
 public:
 	friend class App;
 	virtual void INSPECT() = 0;
+
+protected:
+	virtual void INSPECT_REAL(real &data, const std::string &str) final { ImGui::DragScalar(str.c_str(), ImGuiDataType_Real, &data, 0.1, &REAL_MIN, &REAL_MAX, "%.2f"); }
+	virtual void INSPECT_VEC3(mVector3 &data, const std::string &str) final { ImGui::DragScalarN(str.c_str(), ImGuiDataType_Real, &data, 3, 0.1, &REAL_MIN, &REAL_MAX, "%.2f"); }
+
+protected:
+	real REAL_MIN = -std::numeric_limits<real>::max();
+	real REAL_MAX = std::numeric_limits<real>::max();
 };
 
 class Renderable

@@ -12,7 +12,7 @@ class App
 {
 public:
 	virtual void launch() final;
-	virtual void inspect(const INSPECTORPtr &ptr) final { _inspecting = ptr; }
+	virtual void inspect(const INSPECTORPtr &ptr) final { _inspecting = ptr; } // inspect a INSPECTOR class
 
 protected:
 	// main methods
