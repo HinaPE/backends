@@ -12,6 +12,7 @@
 #include "mesh.h"
 #include "pose.h"
 #include "framebuffer.h"
+#include "timer.h"
 
 #include "imgui.h"
 
@@ -31,12 +32,10 @@ public:
 
 protected:
 	virtual void INSPECT_BOOL(bool &data, const std::string &str) final { ImGui::Checkbox(str.c_str(), &data); }
-	virtual void INSPECT_REAL(real &data, const std::string &str) final { ImGui::DragScalar(str.c_str(), ImGuiDataType_Real, &data, 0.1, &REAL_MIN, &REAL_MAX, "%.2f"); }
-	virtual void INSPECT_VEC3(mVector3 &data, const std::string &str) final { ImGui::DragScalarN(str.c_str(), ImGuiDataType_Real, &data, 3, 0.1, &REAL_MIN, &REAL_MAX, "%.2f"); }
-
-protected:
-	real REAL_MIN = -std::numeric_limits<real>::max();
-	real REAL_MAX = std::numeric_limits<real>::max();
+	virtual void INSPECT_INT(int &data, const std::string &str) final { ImGui::DragScalar(str.c_str(), ImGuiDataType_S32, &data, 0.1, &HinaPE::Constant::I_INT_MIN, &HinaPE::Constant::I_INT_MAX, "%d"); }
+	virtual void INSPECT_SIZE(size_t &data, const std::string &str) final { ImGui::DragScalar(str.c_str(), ImGuiDataType_U32, &data, 0.1, &HinaPE::Constant::I_SIZE_MIN, &HinaPE::Constant::I_SIZE_MAX, "%u"); }
+	virtual void INSPECT_REAL(real &data, const std::string &str) final { ImGui::DragScalar(str.c_str(), ImGuiDataType_Real, &data, 0.1, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f"); }
+	virtual void INSPECT_VEC3(mVector3 &data, const std::string &str) final { ImGui::DragScalarN(str.c_str(), ImGuiDataType_Real, &data, 3, 0.1, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f"); }
 };
 
 class Renderable
@@ -107,9 +106,6 @@ public:
 	friend class Platform;
 	PlatformPtr _platform;
 	std::shared_ptr<INSPECTOR> _inspecting;
-
-	HinaPE::Util::Timer _timer;
-	float _last_update_time = 0.f;
 };
 
 template<class SrcType>

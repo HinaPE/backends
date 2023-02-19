@@ -22,7 +22,7 @@ file(GLOB UNIVERSE_FILES
         shader.h
         texture.h
         api.h
-        app.h
+        timer.h
         )
 
 if (OpenGL)
@@ -35,6 +35,7 @@ if (OpenGL)
             OpenGL/platform.cpp
             OpenGL/shader.cpp
             OpenGL/texture.cpp
+            OpenGL/timer.cpp
             )
     set(Imgui_OpenGL
             deps/imgui/imgui.h
