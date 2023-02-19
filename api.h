@@ -98,7 +98,7 @@ public:
 		bool running = false;
 		bool wireframe = false;
 
-		int width = 1024, height = 768;
+		int width = 1500, height = 900;
 	} _opt;
 	App();
 

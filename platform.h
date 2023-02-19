@@ -32,6 +32,10 @@ public:
 		int MSAA_sample = 4;
 
 		std::array<float, 3> background_color = {1.f, 1.f, 1.f};
+
+		// param
+		bool show_color_picker = false;
+		bool show_benchmark = false;
 	} _opt;
 	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
 
@@ -48,6 +52,10 @@ private:
 	void _clear_window();
 	void _begin_frame();
 	void _end_frame();
+	void _menu(App &app);
+	void _benchmark() const;
+	void _monitor(App &app);
+	void _color_picker();
 
 private:
 	bool _inited;

@@ -7,10 +7,10 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 #include "../font.dat"
+#include "backends/platform.h"
+
 
 #include <stdexcept>
-
-static float next_x = 0.f, next_y = 0.f;
 
 Kasumi::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
@@ -24,6 +24,10 @@ void Kasumi::Platform::launch(App &app)
 								{
 									if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 										glfwSetWindowShouldClose(_current_window, true);
+									if (key == GLFW_KEY_C && action == GLFW_PRESS)
+										_opt.show_color_picker = !_opt.show_color_picker;
+									if (key == GLFW_KEY_T && action == GLFW_PRESS)
+										_opt.show_benchmark = !_opt.show_benchmark;
 								});
 	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods)
 								{
@@ -109,6 +113,11 @@ void Kasumi::Platform::_new_window(int width, int height, const std::string &tit
 		ImGui::GetIO().Fonts->Clear();
 		ImGui::GetIO().Fonts->AddFontFromMemoryTTF(font_ttf, static_cast<int>(font_ttf_len), 14.0f, &config);
 		ImGui::GetIO().Fonts->Build();
+
+//		ImGui::StyleColorsLight();
+//		ImPlot::StyleColorsLight();
+		ImGui::StyleColorsDark();
+		ImPlot::StyleColorsDark();
 		_inited = true;
 	}
 }
@@ -118,12 +127,10 @@ void Kasumi::Platform::_rendering_loop(App &app)
 	while (!glfwWindowShouldClose(_current_window) || app.quit())
 	{
 		_begin_frame();
-		app.ui_menu();
-		ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.8f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize({ImGui::GetIO().DisplaySize.x * 0.2f, ImGui::GetIO().DisplaySize.y * 0.0f}, ImGuiCond_FirstUseEver);
-		ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing);
-		app.ui_sidebar();
-		ImGui::End();
+		_color_picker();
+		_benchmark();
+		_menu(app);
+		_monitor(app);
 		app.update(0.02);
 		_end_frame();
 	}
@@ -159,6 +166,58 @@ void Kasumi::Platform::_end_frame()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	glfwSwapBuffers(_current_window);
 	glfwPollEvents();
+}
+void Kasumi::Platform::_menu(Kasumi::App &app)
+{
+	app.ui_menu();
+}
+void Kasumi::Platform::_benchmark() const
+{
+	if (!_opt.show_benchmark)
+		return;
+
+	Timer::t += ImGui::GetIO().DeltaTime;
+	Timer::offset = (Timer::offset + 1) % Timer::max_size;
+
+	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.6f, ImGui::GetIO().DisplaySize.y * 0.015f}, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize({ImGui::GetIO().DisplaySize.x * 0.4f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
+	ImGui::Begin("Benchmark", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+	static float history = 10.0f;
+	static ImPlotAxisFlags flags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_Opposite;
+	if (ImPlot::BeginPlot("##Benchmark", ImVec2(-1, -1)))
+	{
+		ImPlot::SetupAxes(nullptr, nullptr, flags, flags);
+		ImPlot::SetupAxisLimits(ImAxis_X1, Timer::t - history, Timer::t, ImGuiCond_Always);
+		ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+		for (auto &bm: Timer::bench_marker)
+		{
+			auto &title = bm.first;
+			auto &data = bm.second;
+			ImPlot::PlotShaded(title.c_str(), &data[0].x, &data[0].y, data.size(), (real) -INFINITY, 0, Timer::offset, 2 * sizeof(float));
+//			ImPlot::PlotLine(title.c_str(), &data[0].x, &data[0].y, data.size(), 0, Timer::offset, 2 * sizeof(float));
+		}
+		ImPlot::EndPlot();
+	}
+	ImGui::End();
+}
+void Kasumi::Platform::_monitor(App &app)
+{
+	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.8f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
+	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysAutoResize);
+	app.ui_sidebar();
+	ImGui::End();
+}
+void Kasumi::Platform::_color_picker()
+{
+	if (!_opt.show_color_picker)
+		return;
+
+	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.05f, ImGui::GetIO().DisplaySize.y * 0.1f}, ImGuiCond_FirstUseEver);
+	ImGui::Begin("BackgroundColor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysAutoResize);
+//	ImGui::PushItemWidth(100);
+	ImGui::ColorPicker3("", _opt.background_color.data(), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel | ImGuiColorEditFlags_NoSidePreview);
+//	ImGui::PopItemWidth();
+	ImGui::End();
 }
 
 Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _opt.height))
@@ -207,123 +266,11 @@ void Kasumi::App::ui_menu()
 		}
 
 		ImGui::Text("FPS: %.0f", ImGui::GetIO().Framerate);
-		next_x = 0.f;
-		next_y = ImGui::GetWindowSize().y;
 		ImGui::EndMainMenuBar();
 	}
 }
-// utility structure for realtime plot
-struct ScrollingBuffer
-{
-	int MaxSize;
-	int Offset;
-	ImVector<ImVec2> Data;
-	ScrollingBuffer(int max_size = 2000)
-	{
-		MaxSize = max_size;
-		Offset = 0;
-		Data.reserve(MaxSize);
-	}
-	void AddPoint(float x, float y)
-	{
-		if (Data.size() < MaxSize)
-			Data.push_back(ImVec2(x, y));
-		else
-		{
-			Data[Offset] = ImVec2(x, y);
-			Offset = (Offset + 1) % MaxSize;
-		}
-	}
-	void Erase()
-	{
-		if (Data.size() > 0)
-		{
-			Data.shrink(0);
-			Offset = 0;
-		}
-	}
-};
-// utility structure for realtime plot
-struct RollingBuffer
-{
-	float Span;
-	ImVector<ImVec2> Data;
-	RollingBuffer()
-	{
-		Span = 10.0f;
-		Data.reserve(2000);
-	}
-	void AddPoint(float x, float y)
-	{
-		float xmod = fmodf(x, Span);
-		if (!Data.empty() && xmod < Data.back().x)
-			Data.shrink(0);
-		Data.push_back(ImVec2(xmod, y));
-	}
-};
 void Kasumi::App::ui_sidebar()
 {
 	if (_inspecting != nullptr)
 		_inspecting->INSPECT();
-
-	ImGui::BulletText("Benchmark");
-
-	static float history = 10.0f;
-	if (ImPlot::BeginPlot("##Benchmark", ImVec2(-1, 150)))
-	{
-		ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoTickLabels, ImPlotAxisFlags_NoTickLabels);
-		ImPlot::SetupAxisLimits(ImAxis_X1, Timer::t - history, Timer::t, ImGuiCond_Always);
-		ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
-		for (auto &bm: Timer::bench_marker)
-		{
-			auto &title = bm.first;
-			auto &data = bm.second;
-			ImPlot::PlotShaded(title.c_str(), &data[0].x, &data[0].y, data.size(), (real)-INFINITY, 0, Timer::offset, 2 * sizeof(float));
-			ImPlot::PlotLine(title.c_str(), &data[0].x, &data[0].y, data.size(), 0, Timer::offset, 2 * sizeof(float));
-		}
-		ImPlot::EndPlot();
-	}
-
-
-//	ImGui::BulletText("Move your mouse to change the data!");
-//	ImGui::BulletText("This example assumes 60 FPS. Higher FPS requires larger buffer size.");
-//	static ScrollingBuffer sdata1, sdata2;
-//	static RollingBuffer rdata1, rdata2;
-//	ImVec2 mouse = ImGui::GetMousePos();
-//	static float t = 0;
-//	t += ImGui::GetIO().DeltaTime;
-//	sdata1.AddPoint(t, mouse.x * 0.0005f);
-//	rdata1.AddPoint(t, mouse.x * 0.0005f);
-//	sdata2.AddPoint(t, mouse.y * 0.0005f);
-//	rdata2.AddPoint(t, mouse.y * 0.0005f);
-//
-//	static float history = 10.0f;
-//	ImGui::SliderFloat("History", &history, 1, 30, "%.1f s");
-//	rdata1.Span = history;
-//	rdata2.Span = history;
-//
-//	static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
-//
-//	if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1, 150)))
-//	{
-//		ImPlot::SetupAxes(NULL, NULL, flags, flags);
-//		ImPlot::SetupAxisLimits(ImAxis_X1, t - history, t, ImGuiCond_Always);
-//		ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
-//		ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
-//		ImPlot::PlotShaded("Mouse X", &sdata1.Data[0].x, &sdata1.Data[0].y, sdata1.Data.size(), -INFINITY, 0, sdata1.Offset, 2 * sizeof(float));
-//		ImPlot::PlotLine("Mouse Y", &sdata2.Data[0].x, &sdata2.Data[0].y, sdata2.Data.size(), 0, sdata2.Offset, 2 * sizeof(float));
-//		ImPlot::EndPlot();
-//	}
-//	if (ImPlot::BeginPlot("##Rolling", ImVec2(-1, 150)))
-//	{
-//		ImPlot::SetupAxes(NULL, NULL, flags, flags);
-//		ImPlot::SetupAxisLimits(ImAxis_X1, 0, history, ImGuiCond_Always);
-//		ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
-//		ImPlot::PlotLine("Mouse X", &rdata1.Data[0].x, &rdata1.Data[0].y, rdata1.Data.size(), 0, 0, 2 * sizeof(float));
-//		ImPlot::PlotLine("Mouse Y", &rdata2.Data[0].x, &rdata2.Data[0].y, rdata2.Data.size(), 0, 0, 2 * sizeof(float));
-//		ImPlot::EndPlot();
-//	}
-
-	ImGui::ColorPicker3("Background", _platform->_opt.background_color.data(), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
-	next_x += ImGui::GetWindowSize().x;
 }

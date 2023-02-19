@@ -30,6 +30,7 @@ public:
 	static int offset;
 	static int max_size;
 	static float t;
+	static bool full;
 };
 using TimerPtr = std::shared_ptr<Timer>;
 }
