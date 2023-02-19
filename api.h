@@ -30,6 +30,7 @@ public:
 	virtual void INSPECT() = 0;
 
 protected:
+	virtual void INSPECT_BOOL(bool &data, const std::string &str) final { ImGui::Checkbox(str.c_str(), &data); }
 	virtual void INSPECT_REAL(real &data, const std::string &str) final { ImGui::DragScalar(str.c_str(), ImGuiDataType_Real, &data, 0.1, &REAL_MIN, &REAL_MAX, "%.2f"); }
 	virtual void INSPECT_VEC3(mVector3 &data, const std::string &str) final { ImGui::DragScalarN(str.c_str(), ImGuiDataType_Real, &data, 3, 0.1, &REAL_MIN, &REAL_MAX, "%.2f"); }
 
