@@ -35,7 +35,7 @@ public:
 
 		// param
 		bool show_color_picker = false;
-		bool show_benchmark = false;
+		bool show_benchmark = true;
 	} _opt;
 	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
 

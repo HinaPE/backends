@@ -179,7 +179,7 @@ void Kasumi::Platform::_benchmark() const
 	Timer::t += ImGui::GetIO().DeltaTime;
 	Timer::offset = (Timer::offset + 1) % Timer::max_size;
 
-	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.6f, ImGui::GetIO().DisplaySize.y * 0.015f}, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.6f, ImGui::GetIO().DisplaySize.y * 0.0f}, ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize({ImGui::GetIO().DisplaySize.x * 0.4f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
 	ImGui::Begin("Benchmark", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 	static float history = 10.0f;
@@ -193,8 +193,8 @@ void Kasumi::Platform::_benchmark() const
 		{
 			auto &title = bm.first;
 			auto &data = bm.second;
-			ImPlot::PlotShaded(title.c_str(), &data[0].x, &data[0].y, data.size(), (real) -INFINITY, 0, Timer::offset, 2 * sizeof(float));
-//			ImPlot::PlotLine(title.c_str(), &data[0].x, &data[0].y, data.size(), 0, Timer::offset, 2 * sizeof(float));
+//			ImPlot::PlotShaded(title.c_str(), &data[0].x, &data[0].y, data.size(), (real) -INFINITY, 0, Timer::offset, 2 * sizeof(float));
+			ImPlot::PlotLine(title.c_str(), &data[0].x, &data[0].y, data.size(), 0, Timer::offset, 2 * sizeof(float));
 		}
 		ImPlot::EndPlot();
 	}
