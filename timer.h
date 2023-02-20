@@ -19,10 +19,6 @@ namespace Kasumi
 class Timer final
 {
 public:
-	template<class Function>
-	static void TRACK(Function f, const std::string& name);
-
-public:
 	explicit Timer(std::string name);
 	void record() const;
 	auto duration() const -> float;
@@ -38,14 +34,7 @@ private:
 	std::chrono::steady_clock::time_point _starting_point;
 
 };
-template<class Function>
-void Kasumi::Timer::TRACK(Function f, const std::string &name)
-{
-	Timer timer(name);
-	f();
-	timer.record();
-}
 using TimerPtr = std::shared_ptr<Timer>;
 }
-#define HINA_TRACK(f, name) Kasumi::Timer::TRACK([&]() { f; }, name)
+#define HINA_TRACK(f, name) { Kasumi::Timer timer(name); f; timer.record(); }
 #endif //KASUMI_TIMER_H
