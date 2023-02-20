@@ -10,7 +10,6 @@ Kasumi::Timer::Timer(std::string unit) : _unit(std::move(unit)) { _starting_poin
 void Kasumi::Timer::record() const
 {
 	float duration = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _starting_point).count()) / 1000000.f;
-	duration *= 100;
 	if (!full)
 	{
 		if (bench_marker[_unit].size() < max_size)

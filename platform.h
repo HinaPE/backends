@@ -31,7 +31,7 @@ public:
 		bool MSAA = true;
 		int MSAA_sample = 4;
 
-		std::array<float, 3> background_color = {1.f, 1.f, 1.f};
+		std::array<float, 3> background_color = {0, 0, 0};
 
 		// param
 		bool show_color_picker = false;

@@ -98,7 +98,11 @@ public:
 		bool running = false;
 		bool wireframe = false;
 
+#ifdef APPLE
 		int width = 1500, height = 900;
+#else
+		int width = 1024, height = 768;
+#endif
 	} _opt;
 	App();
 
