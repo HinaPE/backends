@@ -56,6 +56,7 @@ private:
 	void _benchmark() const;
 	void _monitor(App &app);
 	void _color_picker();
+	void _update(App &app);
 
 private:
 	bool _inited;

@@ -131,7 +131,7 @@ void Kasumi::Platform::_rendering_loop(App &app)
 		_benchmark();
 		_menu(app);
 		_monitor(app);
-		app.update(0.02);
+		_update(app);
 		_end_frame();
 	}
 }
@@ -219,6 +219,10 @@ void Kasumi::Platform::_color_picker()
 //	ImGui::PopItemWidth();
 	ImGui::End();
 }
+void Kasumi::Platform::_update(Kasumi::App &app)
+{
+	app.update(0.02);
+}
 
 Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _opt.height))
 {
@@ -231,8 +235,6 @@ Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _o
 void Kasumi::App::launch() { _platform->launch(*this); }
 void Kasumi::App::key(int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-		_opt.running = !_opt.running;
 }
 auto Kasumi::App::quit() -> bool { return false; }
 void Kasumi::App::mouse_button(int button, int action, int mods) {}

@@ -95,9 +95,6 @@ protected:
 public:
 	struct Opt
 	{
-		bool running = false;
-		bool wireframe = false;
-
 #ifdef APPLE
 		int width = 1500, height = 900;
 #else
