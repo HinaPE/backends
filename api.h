@@ -74,7 +74,7 @@ class App
 {
 public:
 	virtual void launch() final;
-	virtual void inspect(const std::shared_ptr<INSPECTOR> &ptr) final { _inspecting = ptr; } // inspect a INSPECTOR class
+	virtual void inspect(INSPECTOR *ptr) final { _inspecting = ptr; } // inspect a INSPECTOR class
 
 protected:
 	// main methods
@@ -106,7 +106,7 @@ public:
 public:
 	friend class Platform;
 	PlatformPtr _platform;
-	std::shared_ptr<INSPECTOR> _inspecting;
+	INSPECTOR * _inspecting = nullptr;
 };
 
 template<class SrcType>
