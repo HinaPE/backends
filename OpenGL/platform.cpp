@@ -16,6 +16,10 @@ Kasumi::Platform::Platform(int width, int height, const std::string &title) : _i
 {
 	_new_window(_width, _height, title);
 }
+Kasumi::Platform::~Platform()
+{
+	glfwTerminate();
+}
 
 void Kasumi::Platform::launch(App &app)
 {

@@ -38,11 +38,11 @@ public:
 		bool show_benchmark = true;
 	} _opt;
 	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
+	~Platform();
 
 public:
 	Platform(const Platform &) = delete;
 	Platform(Platform &&) = delete;
-	~Platform() = default;
 	auto operator=(const Platform &) -> Platform & = delete;
 	auto operator=(Platform &&) -> Platform & = delete;
 
