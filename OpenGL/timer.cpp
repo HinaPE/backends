@@ -2,7 +2,7 @@
 
 std::map<std::string, ImVector<ImVec2>> Kasumi::Timer::bench_marker;
 int Kasumi::Timer::offset = 0;
-int Kasumi::Timer::max_size = 200;
+int Kasumi::Timer::max_size = 800;
 float Kasumi::Timer::t = 0;
 bool Kasumi::Timer::full = false;
 
