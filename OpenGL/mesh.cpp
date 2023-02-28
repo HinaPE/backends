@@ -485,8 +485,10 @@ void Kasumi::Points::render(const Kasumi::Shader &shader)
 	if (_opt.dirty)
 		_update();
 
+	glPointSize(10);
+
 	glBindVertexArray(_vao);
-	glDrawArrays(GL_LINES, 0, (GLsizei) _points.size());
+	glDrawArrays(GL_POINTS, 0, (GLsizei) _points.size());
 	glBindVertexArray(0);
 }
 void Kasumi::Points::clear()
