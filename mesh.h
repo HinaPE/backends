@@ -163,7 +163,33 @@ private:
 
 class Points final : public HinaPE::CopyDisable
 {
+public:
+	struct Vertex
+	{
+		mVector3 position;
+		mVector3 color;
+	};
+	auto points() -> std::vector<Vertex> &;
+
+public:
+	struct Opt
+	{
+		bool dirty = true;
+	} _opt;
+	Points();
+	void add(const mVector3 &p, const mVector3 &color = HinaPE::Color::PURPLE);
+	void render(const Shader &shader);
+	void clear();
+
+private:
+	void _init();
+	void _update();
+
+private:
+	unsigned int _vao, _vbo;
+	std::vector<Vertex> _points;
 };
+using PointsPtr = std::shared_ptr<Points>;
 } // namespace Kasumi
 
 #endif //BACKENDS_MESH_H

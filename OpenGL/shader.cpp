@@ -93,8 +93,8 @@ void Kasumi::Shader::Init()
 		DefaultInstanceShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_shader_fragment.glsl");
 	if (DefaultLineShader == nullptr)
 		DefaultLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
-//		if (DefaultPointShader == nullptr)
-//			DefaultPointShader = std::make_shared<Shader>(std::string(BuiltinShaderDir) + "default_point_shader_vertex.glsl", std::string(BuiltinShaderDir) + "default_point_shader_fragment.glsl");
+	if (DefaultPointShader == nullptr) // we can use the same shader for point and line
+		DefaultPointShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
 	if (DefaultFrameShader == nullptr)
 		DefaultFrameShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "screen_vertex.glsl", std::string(BackendsShaderDir) + "screen_fragment.glsl");
 	if (Default2DShader == nullptr)
@@ -127,12 +127,48 @@ void Kasumi::Shader::_validate(unsigned int shader, const std::string &type)
 	}
 }
 
-void Kasumi::Shader::uniform(const std::string &name, bool value) const { use(); glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value)); }
-void Kasumi::Shader::uniform(const std::string &name, int value) const { use(); glUniform1i(glGetUniformLocation(ID, name.c_str()), value); }
-void Kasumi::Shader::uniform(const std::string &name, unsigned int value) const { use(); glUniform1ui(glGetUniformLocation(ID, name.c_str()), value); }
-void Kasumi::Shader::uniform(const std::string &name, float value) const { use(); glUniform1f(glGetUniformLocation(ID, name.c_str()), value); }
-void Kasumi::Shader::uniform(const std::string &name, const mVector2 &value) const { use(); glUniform2f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y())); }
-void Kasumi::Shader::uniform(const std::string &name, const mVector3 &value) const { use(); glUniform3f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z())); }
-void Kasumi::Shader::uniform(const std::string &name, const mVector4 &value) const { use(); glUniform4f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z()), static_cast<float>(value.w())); }
-void Kasumi::Shader::uniform(const std::string &name, const mMatrix3x3 &value) const { use(); glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.as_float().data()); }
-void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4 &value) const { use(); glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.as_float().data()); }
+void Kasumi::Shader::uniform(const std::string &name, bool value) const
+{
+	use();
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value));
+}
+void Kasumi::Shader::uniform(const std::string &name, int value) const
+{
+	use();
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Kasumi::Shader::uniform(const std::string &name, unsigned int value) const
+{
+	use();
+	glUniform1ui(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Kasumi::Shader::uniform(const std::string &name, float value) const
+{
+	use();
+	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Kasumi::Shader::uniform(const std::string &name, const mVector2 &value) const
+{
+	use();
+	glUniform2f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()));
+}
+void Kasumi::Shader::uniform(const std::string &name, const mVector3 &value) const
+{
+	use();
+	glUniform3f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z()));
+}
+void Kasumi::Shader::uniform(const std::string &name, const mVector4 &value) const
+{
+	use();
+	glUniform4f(glGetUniformLocation(ID, name.c_str()), static_cast<float>(value.x()), static_cast<float>(value.y()), static_cast<float>(value.z()), static_cast<float>(value.w()));
+}
+void Kasumi::Shader::uniform(const std::string &name, const mMatrix3x3 &value) const
+{
+	use();
+	glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.as_float().data());
+}
+void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4 &value) const
+{
+	use();
+	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.as_float().data());
+}

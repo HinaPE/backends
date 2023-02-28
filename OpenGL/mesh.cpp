@@ -304,6 +304,11 @@ void Kasumi::Lines::render(const Kasumi::Shader &shader)
 		glDrawArrays(GL_LINES, 0, (GLsizei) _lines.size());
 	glBindVertexArray(0);
 }
+void Kasumi::Lines::clear()
+{
+	_lines.clear();
+	_opt.dirty = true;
+}
 auto Kasumi::Lines::lines() -> std::vector<Vertex> &
 {
 	_opt.dirty = true;
@@ -332,11 +337,6 @@ void Kasumi::Lines::_update()
 	glBindVertexArray(0);
 
 	_opt.dirty = false;
-}
-void Kasumi::Lines::clear()
-{
-	_lines.clear();
-	_opt.dirty = true;
 }
 
 // ================================================== Lines ==================================================
@@ -442,4 +442,55 @@ void Kasumi::InstancedLines::_update()
 	_lines->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
 
 	_opt.dirty = false;
+}
+Kasumi::Points::Points() : _vao(0), _vbo(0) { _init(); }
+auto Kasumi::Points::points() -> std::vector<Vertex> & { return _points; }
+void Kasumi::Points::_init()
+{
+	glGenVertexArrays(1, &_vao);
+	glGenBuffers(1, &_vbo);
+	glBindVertexArray(_vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	glVertexAttribPointer(0, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, position)); // location = 0, position
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_REAL, GL_FALSE, sizeof(Vertex), (GLvoid *) offsetof(Vertex, color)); // location = 1, color
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+}
+void Kasumi::Points::_update()
+{
+	glBindVertexArray(_vao);
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _points.size(), &_points[0], GL_DYNAMIC_DRAW);
+	glBindVertexArray(0);
+
+	_opt.dirty = false;
+}
+void Kasumi::Points::add(const mVector3 &p, const mVector3 &color)
+{
+	_points.emplace_back(Vertex{p, color});
+	_opt.dirty = true;
+}
+void Kasumi::Points::render(const Kasumi::Shader &shader)
+{
+	if (_points.empty())
+		return;
+
+	shader.use();
+	shader.uniform("opacity", 1.f);
+
+	if (_opt.dirty)
+		_update();
+
+	glBindVertexArray(_vao);
+	glDrawArrays(GL_LINES, 0, (GLsizei) _points.size());
+	glBindVertexArray(0);
+}
+void Kasumi::Points::clear()
+{
+	_points.clear();
+	_opt.dirty = true;
 }
