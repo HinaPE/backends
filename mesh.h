@@ -83,9 +83,9 @@ private:
 #ifdef HINA_EIGEN
 private:
 	friend class ObjectMesh3D;
-	Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> _verts_eigen3;
-	Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> _verts_eigen4;
-	Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic> _idxs_eigen;
+	Eigen::Matrix<real, Eigen::Dynamic, 3> _verts_eigen3;
+	Eigen::Matrix<real, Eigen::Dynamic, 4> _verts_eigen4;
+	Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> _idxs_eigen;
 #endif
 };
 using MeshPtr = std::shared_ptr<Mesh>;
