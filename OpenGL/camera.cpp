@@ -135,7 +135,7 @@ auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real
 {
 	// get projection matrix
 	mMatrix4x4 projection;
-	float tan_half_fov = std::tanf(fov / static_cast<real>(2));
+	float tan_half_fov = std::tan(fov / static_cast<real>(2));
 	projection(0, 0) = static_cast<real>(1) / (aspect_ratio * tan_half_fov);
 	projection(1, 1) = static_cast<real>(1) / (tan_half_fov);
 	projection(2, 2) = -(far + near) / (far - near);
