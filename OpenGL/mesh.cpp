@@ -196,10 +196,28 @@ void Kasumi::Mesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&in
 	_opt.dirty = true;
 
 	// prepare for Eigen
-	_verts_simple.reserve(_verts.size());
-	for (auto &v: _verts)
-		_verts_simple.push_back(v.position);
+	_verts_eigen3.resize((Index) _verts.size(), 3);
+	_verts_eigen4.resize((Index) _verts.size(), 4);
+	for (Index i = 0; i < _verts_eigen4.rows(); ++i)
+	{
+		_verts_eigen3(i, 0) = _verts[i].position.x();
+		_verts_eigen3(i, 1) = _verts[i].position.y();
+		_verts_eigen3(i, 2) = _verts[i].position.z();
+
+		_verts_eigen4(i, 0) = _verts[i].position.x();
+		_verts_eigen4(i, 1) = _verts[i].position.y();
+		_verts_eigen4(i, 2) = _verts[i].position.z();
+		_verts_eigen4(i, 3) = 1;
+	}
+	_idxs_eigen.resize((Index) _idxs.size() / 3, 3);
+	for (Index i = 0; i < _idxs_eigen.rows(); ++i)
+	{
+		_idxs_eigen(i, 0) = _idxs[i * 3];
+		_idxs_eigen(i, 1) = _idxs[i * 3 + 1];
+		_idxs_eigen(i, 2) = _idxs[i * 3 + 2];
+	}
 }
+
 void Kasumi::Mesh::_update()
 {
 	glBindVertexArray(_vao);
@@ -272,7 +290,6 @@ void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vecto
 		for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
 			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
 }
-auto Kasumi::Mesh::asEigenMatrixXMap() -> Eigen::Map<EigenMatrixType> { return {_verts_simple.data()->data(), (Index) _verts_simple.size(), 3}; }
 
 // ================================================== Private Methods ==================================================
 

@@ -83,13 +83,9 @@ private:
 #ifdef HINA_EIGEN
 private:
 	friend class ObjectMesh3D;
-#ifdef HINAPE_DOUBLE
-	using EigenMatrixType = Eigen::MatrixXd;
-#else
-	using EigenMatrixType = Eigen::MatrixXf;
-#endif
-	std::vector<mVector3> _verts_simple;
-	auto asEigenMatrixXMap() -> Eigen::Map<EigenMatrixType>;
+	Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> _verts_eigen3;
+	Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> _verts_eigen4;
+	Eigen::Matrix<unsigned int, Eigen::Dynamic, Eigen::Dynamic> _idxs_eigen;
 #endif
 };
 using MeshPtr = std::shared_ptr<Mesh>;
