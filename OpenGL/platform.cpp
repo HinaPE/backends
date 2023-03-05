@@ -9,7 +9,6 @@
 #include "../font.dat"
 #include "backends/platform.h"
 
-
 #include <stdexcept>
 
 Kasumi::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
@@ -239,9 +238,7 @@ Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _o
 	Light::Init();
 }
 void Kasumi::App::launch() { _platform->launch(*this); }
-void Kasumi::App::key(int key, int scancode, int action, int mods)
-{
-}
+void Kasumi::App::key(int key, int scancode, int action, int mods) {}
 auto Kasumi::App::quit() -> bool { return false; }
 void Kasumi::App::mouse_button(int button, int action, int mods) {}
 void Kasumi::App::mouse_scroll(double x_offset, double y_offset) {}
