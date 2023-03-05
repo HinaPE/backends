@@ -135,7 +135,7 @@ auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real
 {
 	// get projection matrix
 	mMatrix4x4 projection;
-	float tan_half_fov = std::tan(fov / static_cast<real>(2));
+	float tan_half_fov = std::tanf(fov / static_cast<real>(2));
 	projection(0, 0) = static_cast<real>(1) / (aspect_ratio * tan_half_fov);
 	projection(1, 1) = static_cast<real>(1) / (tan_half_fov);
 	projection(2, 2) = -(far + near) / (far - near);
@@ -145,3 +145,12 @@ auto Kasumi::Camera::project_matrix(real fov, real aspect_ratio, real near, real
 }
 
 auto Kasumi::Camera::view_matrix(const mVector3 &position, const mQuaternion &rotation) -> mMatrix4x4 { return (mMatrix4x4::make_translation_matrix(position) * rotation.matrix4x4()).inversed(); }
+auto Kasumi::Camera::get_ray(const mVector2 &screen_pos) const -> mRay3
+{
+	mVector3 ray_nds = mVector3(screen_pos.x(), screen_pos.y(), 1);
+	mVector4 ray_clip = mVector4(ray_nds.x(), ray_nds.y(), -1, 1);
+	mVector4 ray_eye = _projection.inversed() * ray_clip;
+	ray_eye = mVector4(ray_eye.x(), ray_eye.y(), -1, 0);
+	mVector3 ray_wor = (_view.inversed() * ray_eye).xyz().normalized();
+	return {_opt.position, ray_wor};
+}

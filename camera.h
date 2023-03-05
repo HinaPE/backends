@@ -21,6 +21,7 @@ public:
 	auto get_projection() const -> mMatrix4x4;
 	auto get_view() const -> mMatrix4x4;
 	auto screen_to_world(const mVector2 &screen_pos) const -> mVector3; // NOT COMPLETE YET
+	auto get_ray(const mVector2 &screen_pos) const -> mRay3; // NOT COMPLETE YET
 
 	// callbacks
 	void key(int key, int scancode, int action, int mods);
