@@ -20,13 +20,15 @@ namespace Kasumi
 {
 class VALID_CHECKER
 {
-public:
+protected:
+	friend class Scene2D;
+	friend class Scene3D;
 	virtual void VALID_CHECK() const {}
 };
 
 class INSPECTOR
 {
-public:
+protected:
 	friend class App;
 	virtual void INSPECT() = 0;
 
