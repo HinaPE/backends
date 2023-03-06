@@ -76,7 +76,6 @@ class App
 {
 public:
 	virtual void launch() final;
-	virtual void inspect(INSPECTOR *ptr) final { _inspecting = ptr; } // inspect a INSPECTOR class
 
 protected:
 	// main methods
@@ -105,7 +104,8 @@ public:
 	} _opt;
 	App();
 
-public:
+protected:
+	virtual void inspect(INSPECTOR *ptr) final { _inspecting = ptr; }
 	friend class Platform;
 	PlatformPtr _platform;
 	INSPECTOR * _inspecting = nullptr;
