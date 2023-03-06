@@ -23,6 +23,11 @@ file(GLOB UNIVERSE_FILES
         texture.h
         api.h
         timer.h
+
+        objects/object3D.cpp objects/object3D.h
+        objects/sphere.cpp objects/sphere.h
+        objects/cube.cpp objects/cube.h
+        objects/plane.cpp objects/plane.h
         )
 
 if (OpenGL)
