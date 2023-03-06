@@ -168,6 +168,7 @@ private:
 	LinesPtr _lines;
 	unsigned int _instanceVBO;
 };
+using InstancedLinesPtr = std::shared_ptr<InstancedLines>;
 
 class Points final : public HinaPE::CopyDisable
 {
