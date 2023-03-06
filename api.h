@@ -40,6 +40,41 @@ protected:
 	virtual void INSPECT_VEC3(mVector3 &data, const std::string &str) final { ImGui::DragScalarN(str.c_str(), ImGuiDataType_Real, &data, 3, 0.1, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f"); }
 };
 
+class IDBase
+{
+public:
+	IDBase() : ID(ID_GLOBAL++) {}
+
+	static unsigned int ID_GLOBAL;
+	const unsigned int ID;
+};
+
+class NameBase
+{
+public:
+	std::string NAME = "Untitled";
+};
+
+class PoseBase : public INSPECTOR
+{
+public:
+	Pose POSE;
+	bool _dirty = false;
+
+	void INSPECT() override
+	{
+		ImGui::Text("Transform");
+		auto sliders = [&](const std::string &label, mVector3 &data, float sens)
+		{
+			if (ImGui::DragScalarN(label.c_str(), ImGuiDataType_Real, &data[0], 3, sens, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f"))
+				_dirty = true;
+		};
+		sliders("Position", POSE.position, 0.1f);
+		sliders("Rotation", POSE.euler, 0.1f);
+		sliders("Scale", POSE.scale, 0.031f);
+	}
+};
+
 class Renderable
 {
 public:
@@ -108,7 +143,7 @@ protected:
 	virtual void inspect(INSPECTOR *ptr) final { _inspecting = ptr; }
 	friend class Platform;
 	PlatformPtr _platform;
-	INSPECTOR * _inspecting = nullptr;
+	INSPECTOR *_inspecting = nullptr;
 };
 
 template<class SrcType>
