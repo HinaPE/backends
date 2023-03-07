@@ -4,6 +4,8 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
+#include <utility>
+
 #include "backends/api.h"
 #include "geom/collider3.h"
 
@@ -106,8 +108,9 @@ protected:
 	void _update();
 	void _draw() final;
 	void _update_uniform() final;
+	virtual void _update_poses() {}
 
-private:
+protected:
 	InstancedMeshPtr _mesh;
 	std::vector<Pose> _poses;
 	bool _dirty = true;

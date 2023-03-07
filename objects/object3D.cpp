@@ -124,6 +124,7 @@ void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string
 void Kasumi::ObjectParticles3D::_draw()
 {
 	if (_mesh == nullptr) return;
+	_update_poses();
 	if (_dirty) _update();
 	_mesh->render(*_shader);
 }
