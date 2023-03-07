@@ -57,7 +57,7 @@ void Kasumi::ObjectMesh3D::INSPECT()
 void Kasumi::ObjectMesh3D::VALID_CHECK() const
 {
 	if (_mesh == nullptr) throw std::runtime_error("Mesh is nullptr");
-	if (_surface == nullptr) throw std::runtime_error("Surface is nullptr");
+//	if (_surface == nullptr) throw std::runtime_error("Surface is nullptr");
 }
 
 // ==================== ObjectLines3D ====================
@@ -107,15 +107,7 @@ Kasumi::ObjectParticles3D::ObjectParticles3D()
 {
 	NAME = "Particles";
 	_shader = Shader::DefaultInstanceShader;
-	_init("cube", "");
-	Pose pose;
-	_poses.push_back(pose);
-	pose.position = mVector3(1, 0, 0);
-	_poses.push_back(pose);
-	pose.position = mVector3(0, 1, 0);
-	_poses.push_back(pose);
-	pose.position = mVector3(0, 0, 1);
-	_poses.push_back(pose);
+	_init("sphere_simple", "");
 }
 void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
 {

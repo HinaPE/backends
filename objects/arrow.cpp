@@ -8,7 +8,7 @@ Kasumi::ArrowObject::ArrowObject()
 }
 void Kasumi::ArrowObject::_update_surface()
 {
-	if (!_dirty)
+	if (_dirty)
 	{
 		_origin = POSE.position;
 		_direction = mQuaternion(POSE.euler) * mVector3::UnitY();

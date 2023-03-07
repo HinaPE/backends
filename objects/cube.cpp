@@ -9,7 +9,7 @@ Kasumi::CubeObject::CubeObject()
 }
 void Kasumi::CubeObject::_update_surface()
 {
-	if (!_dirty)
+	if (_dirty)
 	{
 		_transform = mTransform3(POSE.position, mQuaternion(POSE.euler));
 		_bound = mBBox3(-POSE.scale, POSE.scale);

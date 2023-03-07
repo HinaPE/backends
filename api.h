@@ -74,7 +74,7 @@ public:
 	}
 
 protected:
-	bool _dirty = false;
+	bool _dirty = true;
 };
 
 class Renderable
