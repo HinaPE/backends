@@ -28,6 +28,7 @@ file(GLOB UNIVERSE_FILES
         objects/sphere.cpp objects/sphere.h
         objects/cube.cpp objects/cube.h
         objects/plane.cpp objects/plane.h
+        objects/arrow.cpp objects/arrow.h
         )
 
 if (OpenGL)
