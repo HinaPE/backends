@@ -11,12 +11,13 @@ namespace Kasumi
 class ArrowObject : public ObjectMesh3D
 {
 public:
-	mVector3 _origin = mVector3::Zero();
-	mVector3 _direction = mVector3::UnitZ();
 	ArrowObject();
 
 protected:
 	void _update_surface() final;
+
+	mVector3 _origin = mVector3::Zero();
+	mVector3 _direction = mVector3::UnitZ();
 };
 using ArrowObjectPtr = std::shared_ptr<ArrowObject>;
 } // namespace Kasumi
