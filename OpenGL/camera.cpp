@@ -128,6 +128,12 @@ void Kasumi::Camera::_rebuild_()
 
 auto Kasumi::Camera::_up() const -> mVector3 { return {0, 1, 0}; }
 auto Kasumi::Camera::_front() const -> mVector3 { return (_opt.look_at - _opt.position).normalized(); }
+auto Kasumi::Camera::_right() const -> mVector3
+{
+	auto t_up = _opt.rotation * _up();
+	auto t_front = _front();
+	return t_front.cross(t_up).normalized();
+}
 auto Kasumi::Camera::_distance() const -> real { return (_opt.look_at - _opt.position).length(); }
 void Kasumi::Camera::_loot_at(const mVector3 &focus_point) { _opt.look_at = focus_point; } //TODO: not completed
 

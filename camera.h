@@ -60,9 +60,10 @@ public:
 	Camera();
 	void _rebuild_();
 
-private:
+public:
 	auto _up() const -> mVector3;
 	auto _front() const -> mVector3;
+	auto _right() const -> mVector3;
 	auto _distance() const -> real;
 	void _loot_at(const mVector3 &focus_point);
 

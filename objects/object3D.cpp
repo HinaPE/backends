@@ -23,6 +23,7 @@ auto Kasumi::ObjectMesh3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::Sur
 	{
 		res.point = ray._origin + static_cast<real>(hit.t) * ray._direction;
 		res.distance = (static_cast<real>(hit.t) * ray._direction).length();
+		res.ID = this->ID;
 		return res;
 	}
 	return res;
