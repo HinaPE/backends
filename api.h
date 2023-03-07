@@ -110,6 +110,7 @@ class App
 {
 public:
 	virtual void launch() final;
+	virtual void inspect(INSPECTOR *ptr) final;
 
 protected:
 	// main methods
@@ -139,10 +140,9 @@ public:
 	App();
 
 protected:
-	virtual void inspect(INSPECTOR *ptr) final { _inspecting = ptr; }
 	friend class Platform;
 	PlatformPtr _platform;
-	INSPECTOR *_inspecting = nullptr;
+	std::vector<INSPECTOR *> _inspectors;
 };
 
 template<class SrcType>

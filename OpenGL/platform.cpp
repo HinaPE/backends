@@ -238,6 +238,7 @@ Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _o
 	Light::Init();
 }
 void Kasumi::App::launch() { _platform->launch(*this); }
+void Kasumi::App::inspect(Kasumi::INSPECTOR *ptr) { _inspectors.emplace_back(ptr); }
 void Kasumi::App::key(int key, int scancode, int action, int mods) {}
 auto Kasumi::App::quit() -> bool { return false; }
 void Kasumi::App::mouse_button(int button, int action, int mods) {}
@@ -276,6 +277,6 @@ void Kasumi::App::ui_menu()
 }
 void Kasumi::App::ui_sidebar()
 {
-	if (_inspecting != nullptr)
-		_inspecting->INSPECT();
+	for (auto &inspector: _inspectors)
+		inspector->INSPECT();
 }
