@@ -25,6 +25,7 @@ protected:
 	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::CYAN);
 	void _draw() final;
 	void _update_uniform() final;
+	virtual void _update_surface() {}
 
 	friend class Scene3D;
 	void _switch_surface() const { _mesh->_opt.dirty = true;_mesh->_opt.render_surface = !_mesh->_opt.render_surface; }

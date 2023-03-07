@@ -11,6 +11,9 @@ class CubeObject : public ObjectMesh3D, public HinaPE::Geom::Box3
 {
 public:
 	CubeObject();
+
+protected:
+	void _update_surface() final;
 };
 using CubeObjectPtr = std::shared_ptr<CubeObject>;
 } // namespace Kasumi

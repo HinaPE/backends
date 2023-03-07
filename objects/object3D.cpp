@@ -31,6 +31,7 @@ auto Kasumi::ObjectMesh3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::Sur
 void Kasumi::ObjectMesh3D::_draw()
 {
 	if (_mesh == nullptr) return;
+	_update_surface();
 	_mesh->render(*_shader);
 }
 void Kasumi::ObjectMesh3D::_update_uniform()

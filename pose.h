@@ -17,6 +17,7 @@ struct Pose
 	inline auto get_model_matrix() const -> mMatrix4x4 { return mMatrix4x4::make_translation_matrix(position) * mQuaternion(euler.x(), euler.y(), euler.z()).matrix4x4() * mMatrix4x4::make_scale_matrix(scale); }
 };
 
+// TODO: support 2D Pose
 struct Pose2D
 {
 };

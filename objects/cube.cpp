@@ -7,3 +7,9 @@ Kasumi::CubeObject::CubeObject()
 	_init("cube", "");
 	load_surface(this);
 }
+void Kasumi::CubeObject::_update_surface()
+{
+	_transform = mTransform3(POSE.position, mQuaternion(POSE.euler));
+	_bound = mBBox3(-POSE.scale, POSE.scale);
+	_extent = {POSE.scale.x(), POSE.scale.y(), POSE.scale.z()};
+}
