@@ -2,25 +2,45 @@
     "mesh_objects": [
         {
             "name": "Cube",
-            "material": "Material",
-            "mesh": "Cube"
+            "mesh": "cube",
+            "pose": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         },
         {
-            "name": "Plane",
-            "material": "Material",
-            "mesh": "Plane"
+            "name": "Sphere",
+            "mesh": "sphere",
+            "pose": {
+                "position": [
+                    0.0,
+                    5.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         }
-    ],
-    "camera": {
-        "position": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "rotation": [
-            0.0,
-            0.0,
-            0.0
-        ]
-    },
+    ]
 }
