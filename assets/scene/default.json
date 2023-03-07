@@ -1,0 +1,26 @@
+{
+    "mesh_objects": [
+        {
+            "name": "Cube",
+            "material": "Material",
+            "mesh": "Cube"
+        },
+        {
+            "name": "Plane",
+            "material": "Material",
+            "mesh": "Plane"
+        }
+    ],
+    "camera": {
+        "position": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+}
