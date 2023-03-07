@@ -55,10 +55,8 @@ void Kasumi::ObjectMesh3D::INSPECT()
 }
 void Kasumi::ObjectMesh3D::VALID_CHECK() const
 {
-	if (_mesh == nullptr)
-		throw std::runtime_error("Mesh is nullptr");
-	if (_surface == nullptr)
-		throw std::runtime_error("Surface is nullptr");
+	if (_mesh == nullptr) throw std::runtime_error("Mesh is nullptr");
+	if (_surface == nullptr) throw std::runtime_error("Surface is nullptr");
 }
 
 // ==================== ObjectLines3D ====================
