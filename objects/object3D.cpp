@@ -71,12 +71,47 @@ void Kasumi::ObjectLines3D::clear() { _lines->clear(); }
 void Kasumi::ObjectLines3D::_draw()
 {
 	if (_lines == nullptr) return;
+	if (_lines->lines().empty()) return;
 	_lines->render(*_shader);
 }
 void Kasumi::ObjectLines3D::_update_uniform()
 {
 	Renderable::_update_uniform();
 	_shader->uniform("model", POSE.get_model_matrix());
+}
+
+//
+Kasumi::ObjectLines3DInstanced::ObjectLines3DInstanced()
+{
+	NAME = "Grid";
+	_shader = Shader::DefaultInstanceLineShader;
+	_init();
+}
+void Kasumi::ObjectLines3DInstanced::_init()
+{
+	auto init_lines = std::make_shared<Lines>();
+	init_lines->add(mVector3(0, 0, 0), mVector3(1, 0, 0));
+	_lines = std::make_shared<InstancedLines>(init_lines);
+}
+void Kasumi::ObjectLines3DInstanced::add(const mVector3 &start, const mVector3 &end, const mVector3 &color)
+{
+	mQuaternion q(mVector3::UnitX(), end - start);
+	Pose pose;
+	pose.position = start;
+	pose.euler = q.euler();
+	pose.scale.x() = (end - start).length();
+	_poses.push_back(pose);
+	_lines->_opt.instance_matrices.push_back(pose.get_model_matrix());
+	_lines->_opt.dirty = true;
+}
+void Kasumi::ObjectLines3DInstanced::clear()
+{
+	_poses.clear();
+}
+void Kasumi::ObjectLines3DInstanced::_draw()
+{
+	if (_lines == nullptr) return;
+	_lines->render(*_shader);
 }
 
 // ==================== ObjectPoints3D ====================
@@ -148,17 +183,19 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 
 		std::vector<igl::Hit> hits;
 		res.is_intersecting = igl::ray_mesh_intersect(ray._origin._v, ray._direction._v, verts_world_3, idxs, hits);
-		for (auto const &hit: hits)
-		{
-			auto distance = (static_cast<real>(hit.t) * ray._direction).length();
-			if (distance < res.distance)
+		if (res.is_intersecting)
+			for (auto const &hit: hits)
 			{
-				res.distance = distance;
-				res.point = ray._origin + static_cast<real>(hit.t) * ray._direction;
-				res.ID = this->ID;
-				res.particleID = i;
+				auto distance = (static_cast<real>(hit.t) * ray._direction).length();
+				if (distance < res.distance)
+				{
+					res.distance = distance;
+					res.point = ray._origin + static_cast<real>(hit.t) * ray._direction;
+					res.ID = this->ID;
+					res.particleID = i;
+					break;
+				}
 			}
-		}
 	}
 	return res;
 }
@@ -172,6 +209,8 @@ Kasumi::ObjectGrid3D::ObjectGrid3D()
 }
 void Kasumi::ObjectGrid3D::_init()
 {
+	std::vector<Pose> _poses;
+
 	int scale = 15;
 	for (int i = -scale; i < scale; ++i)
 	{

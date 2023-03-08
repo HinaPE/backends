@@ -67,6 +67,28 @@ private:
 };
 
 
+class ObjectLines3DInstanced :
+		public Renderable,
+		public IDBase,
+		public NameBase,
+		public PoseBase,
+		public VALID_CHECKER
+{
+public:
+	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::PURPLE);
+	void clear();
+	ObjectLines3DInstanced();
+
+protected:
+	void _init();
+	void _draw() final;
+
+private:
+	InstancedLinesPtr _lines;
+	std::vector<Pose> _poses;
+};
+
+
 class ObjectPoints3D :
 		public Renderable,
 		public IDBase,
@@ -137,12 +159,12 @@ protected:
 
 private:
 	InstancedLinesPtr _grids;
-	std::vector<Pose> _poses;
 };
 
 
 using ObjectMesh3DPtr = std::shared_ptr<ObjectMesh3D>;
 using ObjectLines3DPtr = std::shared_ptr<ObjectLines3D>;
+using ObjectLines3DInstancedPtr = std::shared_ptr<ObjectLines3DInstanced>;
 using ObjectPoints3DPtr = std::shared_ptr<ObjectPoints3D>;
 using ObjectParticles3DPtr = std::shared_ptr<ObjectParticles3D>;
 using ObjectGrid3DPtr = std::shared_ptr<ObjectGrid3D>;
