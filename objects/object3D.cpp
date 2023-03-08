@@ -90,7 +90,7 @@ Kasumi::ObjectLines3DInstanced::ObjectLines3DInstanced()
 void Kasumi::ObjectLines3DInstanced::_init()
 {
 	auto init_lines = std::make_shared<Lines>();
-	init_lines->add(mVector3(0, 0, 0), mVector3(1, 0, 0));
+	init_lines->add(mVector3(0, 0, 0), mVector3(1, 0, 0), HinaPE::Color::MIKU);
 	_lines = std::make_shared<InstancedLines>(init_lines);
 }
 void Kasumi::ObjectLines3DInstanced::add(const mVector3 &start, const mVector3 &end, const mVector3 &color)
