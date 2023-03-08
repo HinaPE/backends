@@ -139,6 +139,7 @@ protected:
 protected:
 	InstancedMeshPtr _mesh;
 	std::vector<Pose> _poses;
+	int _inst_id;
 	bool _dirty = true;
 };
 

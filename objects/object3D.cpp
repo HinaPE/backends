@@ -80,17 +80,17 @@ void Kasumi::ObjectLines3D::_update_uniform()
 	_shader->uniform("model", POSE.get_model_matrix());
 }
 
-//
+// ==================== ObjectLines3DInstanced ====================
 Kasumi::ObjectLines3DInstanced::ObjectLines3DInstanced()
 {
-	NAME = "Grid";
+	NAME = "Lines";
 	_shader = Shader::DefaultInstanceLineShader;
 	_init();
 }
 void Kasumi::ObjectLines3DInstanced::_init()
 {
 	auto init_lines = std::make_shared<Lines>();
-	init_lines->add(mVector3(0, 0, 0), mVector3(1, 0, 0), HinaPE::Color::MIKU);
+	init_lines->add(mVector3(0, 0, 0), mVector3(1, 0, 0), HinaPE::Color::MAGENTA);
 	_lines = std::make_shared<InstancedLines>(init_lines);
 }
 void Kasumi::ObjectLines3DInstanced::add(const mVector3 &start, const mVector3 &end, const mVector3 &color)
@@ -107,6 +107,9 @@ void Kasumi::ObjectLines3DInstanced::add(const mVector3 &start, const mVector3 &
 void Kasumi::ObjectLines3DInstanced::clear()
 {
 	_poses.clear();
+	_lines->_opt.instance_matrices.clear();
+	_dirty = true;
+	_lines->_opt.dirty = true;
 }
 void Kasumi::ObjectLines3DInstanced::_draw()
 {
@@ -140,6 +143,7 @@ Kasumi::ObjectParticles3D::ObjectParticles3D()
 {
 	NAME = "Particles";
 	_shader = Shader::DefaultInstanceShader;
+	_inst_id = -1;
 	_init("cube", "");
 }
 void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
@@ -166,6 +170,8 @@ void Kasumi::ObjectParticles3D::_update()
 void Kasumi::ObjectParticles3D::_update_uniform()
 {
 	Renderable::_update_uniform();
+
+	_shader->uniform("inst_id", _inst_id);
 }
 auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {
@@ -182,10 +188,11 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 		Eigen::MatrixXd verts_world_3 = verts_world.block(0, 0, verts_world.rows(), 3);
 
 		std::vector<igl::Hit> hits;
-		res.is_intersecting = igl::ray_mesh_intersect(ray._origin._v, ray._direction._v, verts_world_3, idxs, hits);
-		if (res.is_intersecting)
+		bool intersected = igl::ray_mesh_intersect(ray._origin._v, ray._direction._v, verts_world_3, idxs, hits);
+		if (intersected)
 			for (auto const &hit: hits)
 			{
+				res.is_intersecting = true;
 				auto distance = (static_cast<real>(hit.t) * ray._direction).length();
 				if (distance < res.distance)
 				{

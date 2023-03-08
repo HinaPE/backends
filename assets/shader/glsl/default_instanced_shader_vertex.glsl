@@ -12,6 +12,8 @@ uniform mat4 projection;
 uniform mat4 view;
 //uniform mat4 model; we don't need this
 
+uniform int inst_id;
+
 out VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -26,4 +28,9 @@ void main()
     vs_out.TexCoords = aTexCoords;
     vs_out.Color = aColor;
     gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+
+    if (inst_id == gl_InstanceID)
+    {
+        vs_out.Color = vec3(1.0, 0.3, 0.3);
+    }
 }
