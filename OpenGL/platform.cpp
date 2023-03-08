@@ -145,9 +145,7 @@ void Kasumi::Platform::_rendering_loop(App &app)
 		_menu(app);
 		_monitor(app);
 		_update(app);
-		Kasumi::Timer timer("Total");
 		_end_frame();
-		timer.record();
 	}
 }
 
