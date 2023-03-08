@@ -25,6 +25,7 @@ public:
 
 protected:
 	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::CYAN);
+	void _init(std::vector<Mesh::Vertex> &&vertices, std::vector<Mesh::Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures);
 	void _draw() final;
 	void _update_uniform() final;
 	virtual void _update_surface() {}

@@ -40,10 +40,8 @@ void Kasumi::ObjectMesh3D::_update_uniform()
 	_shader->uniform("model", POSE.get_model_matrix());
 	Shader::DefaultLineShader->uniform("model", POSE.get_model_matrix());
 }
-void Kasumi::ObjectMesh3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
-{
-	_mesh = TEXTURE.empty() ? std::make_shared<Mesh>(MESH, COLOR) : _mesh = std::make_shared<Mesh>(MESH, TEXTURE);
-}
+void Kasumi::ObjectMesh3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR) { _mesh = TEXTURE.empty() ? std::make_shared<Mesh>(MESH, COLOR) : _mesh = std::make_shared<Mesh>(MESH, TEXTURE); }
+void Kasumi::ObjectMesh3D::_init(std::vector<Mesh::Vertex> &&vertices, std::vector<Mesh::Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) { _mesh = std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures)); }
 void Kasumi::ObjectMesh3D::INSPECT()
 {
 	PoseBase::INSPECT();

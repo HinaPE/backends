@@ -1,4 +1,5 @@
 #include "sphere.h"
+
 Kasumi::SphereObject::SphereObject()
 {
 	NAME = "Sphere";
