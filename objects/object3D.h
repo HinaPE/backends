@@ -24,7 +24,7 @@ public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
 
 protected:
-	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::CYAN);
+	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::MAGENTA);
 	void _init(std::vector<Mesh::Vertex> &&vertices, std::vector<Mesh::Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures);
 	void _draw() final;
 	void _update_uniform() final;
@@ -75,7 +75,7 @@ class ObjectLines3DInstanced :
 		public VALID_CHECKER
 {
 public:
-	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::PURPLE);
+	void add(const mVector3 &start, const mVector3 &end, const mVector3 &color = HinaPE::Color::ORANGE);
 	void clear();
 	ObjectLines3DInstanced();
 
@@ -126,7 +126,7 @@ public:
 	ObjectParticles3D();
 
 protected:
-	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::CYAN);
+	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::ORANGE);
 	void _update();
 	void _draw() final;
 	void _update_uniform() final;
