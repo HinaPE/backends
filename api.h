@@ -134,7 +134,7 @@ protected:
 public:
 	struct Opt
 	{
-#ifdef APPLE
+#ifdef __APPLE__
 		int width = 1500, height = 900;
 #else
 		int width = 1024, height = 768;

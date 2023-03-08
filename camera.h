@@ -39,6 +39,8 @@ public:
 		real radius = 10;
 
 		// for projection
+		real width = 1024;
+		real height = 768;
 		real vertical_fov = 45;
 		real aspect_ratio = 1024.f / 768.f;
 		real near_plane = 0.01;
