@@ -83,6 +83,7 @@ private:
 #ifdef HINA_EIGEN
 private:
 	friend class ObjectMesh3D;
+	friend class ObjectParticles3D;
 	Eigen::Matrix<real, Eigen::Dynamic, 3> _verts_eigen3;
 	Eigen::Matrix<real, Eigen::Dynamic, 4> _verts_eigen4;
 	Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> _idxs_eigen;
@@ -107,6 +108,7 @@ public:
 	explicit InstancedMesh(MeshPtr mesh);
 
 private:
+	friend class ObjectParticles3D;
 	void _update();
 	MeshPtr _mesh;
 	unsigned int _instanceVBO;

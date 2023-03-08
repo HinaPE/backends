@@ -397,6 +397,7 @@ void Kasumi::InstancedMesh::_update()
 	if (!_opt.dirty && _opt.instance_matrices.empty())
 		return;
 
+	glBindVertexArray(_mesh->_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
 

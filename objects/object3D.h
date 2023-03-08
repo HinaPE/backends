@@ -99,9 +99,7 @@ class ObjectParticles3D :
 		public VALID_CHECKER
 {
 public:
-	void _switch_surface() const { _mesh->_opt.dirty = true; _mesh->_opt.render_surface = !_mesh->_opt.render_surface; }
-	void _switch_wireframe() const { _mesh->_opt.dirty = true; _mesh->_opt.render_wireframe = !_mesh->_opt.render_wireframe; }
-	void _switch_bbox() const { _mesh->_opt.dirty = true; _mesh->_opt.render_bbox = !_mesh->_opt.render_bbox; }
+	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
 	ObjectParticles3D();
 
 protected:
@@ -110,6 +108,11 @@ protected:
 	void _draw() final;
 	void _update_uniform() final;
 	virtual void _update_poses() {}
+
+	friend class Scene3D;
+	void _switch_surface() const { _mesh->_opt.dirty = true; _mesh->_opt.render_surface = !_mesh->_opt.render_surface; }
+	void _switch_wireframe() const { _mesh->_opt.dirty = true; _mesh->_opt.render_wireframe = !_mesh->_opt.render_wireframe; }
+	void _switch_bbox() const { _mesh->_opt.dirty = true; _mesh->_opt.render_bbox = !_mesh->_opt.render_bbox; }
 
 protected:
 	InstancedMeshPtr _mesh;

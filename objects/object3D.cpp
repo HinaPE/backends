@@ -132,6 +132,36 @@ void Kasumi::ObjectParticles3D::_update_uniform()
 {
 	Renderable::_update_uniform();
 }
+auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
+{
+	HinaPE::Geom::SurfaceRayIntersection3 res;
+	const auto &verts_local = _mesh->_mesh->_verts_eigen4;
+	const auto &idxs = _mesh->_mesh->_idxs_eigen;
+
+	for (size_t i = 0; i < _poses.size(); ++i)
+	{
+		auto model = _poses[i].get_model_matrix()._m;
+		auto t = (model * verts_local.transpose());
+		Eigen::MatrixXd verts_world = t.transpose();
+
+		Eigen::MatrixXd verts_world_3 = verts_world.block(0, 0, verts_world.rows(), 3);
+
+		std::vector<igl::Hit> hits;
+		res.is_intersecting = igl::ray_mesh_intersect(ray._origin._v, ray._direction._v, verts_world_3, idxs, hits);
+		for (auto const &hit: hits)
+		{
+			auto distance = (static_cast<real>(hit.t) * ray._direction).length();
+			if (distance < res.distance)
+			{
+				res.distance = distance;
+				res.point = ray._origin + static_cast<real>(hit.t) * ray._direction;
+				res.ID = this->ID;
+				res.particleID = i;
+			}
+		}
+	}
+	return res;
+}
 
 // ==================== ObjectGrid3D ====================
 Kasumi::ObjectGrid3D::ObjectGrid3D()
