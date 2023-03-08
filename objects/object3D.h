@@ -122,6 +122,7 @@ class ObjectParticles3D :
 {
 public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
+	int _inst_id;
 	ObjectParticles3D();
 
 protected:
@@ -139,7 +140,6 @@ protected:
 protected:
 	InstancedMeshPtr _mesh;
 	std::vector<Pose> _poses;
-	int _inst_id;
 	bool _dirty = true;
 };
 

@@ -46,6 +46,8 @@ public:
 	Platform(Platform &&) = delete;
 	auto operator=(const Platform &) -> Platform & = delete;
 	auto operator=(Platform &&) -> Platform & = delete;
+	static class GLFWwindow *WINDOW;
+	static auto GetCursorPos() -> std::pair<double, double>;
 
 private:
 	void _new_window(int width, int height, const std::string &title);

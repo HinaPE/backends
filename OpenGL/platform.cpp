@@ -11,9 +11,18 @@
 
 #include <stdexcept>
 
+GLFWwindow *Kasumi::Platform::WINDOW = nullptr;
 Kasumi::Platform::Platform(int width, int height, const std::string &title) : _inited(false), _width(width), _height(height), _current_window(nullptr)
 {
 	_new_window(_width, _height, title);
+}
+auto Kasumi::Platform::GetCursorPos() -> std::pair<double, double>
+{
+	if (Platform::WINDOW == nullptr)
+		return {};
+	double pos_x, pos_y;
+	glfwGetCursorPos(Platform::WINDOW, &pos_x, &pos_y);
+	return {pos_x, pos_y};
 }
 Kasumi::Platform::~Platform()
 {
@@ -66,6 +75,7 @@ void Kasumi::Platform::_new_window(int width, int height, const std::string &tit
 	}
 
 	_current_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+	Platform::WINDOW = _current_window;
 	_current_window_name = title;
 	if (_current_window == nullptr)
 		throw std::runtime_error("Failed to create GLFW window");
