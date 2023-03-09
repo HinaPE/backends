@@ -54,10 +54,21 @@ if (OpenGL)
             deps/imgui/imstb_rectpack.h
             deps/imgui/imstb_textedit.h
             deps/imgui/imstb_truetype.h
-            deps/imgui/implot.h
             deps/imgui/implot.cpp
+            deps/imgui/implot.h
             deps/imgui/implot_items.cpp
             deps/imgui/implot_internal.h
+            deps/imgui/GraphEditor.cpp
+            deps/imgui/GraphEditor.h
+            deps/imgui/ImCurveEdit.cpp
+            deps/imgui/ImCurveEdit.h
+            deps/imgui/ImGradient.cpp
+            deps/imgui/ImGradient.h
+            deps/imgui/ImGuizmo.cpp
+            deps/imgui/ImGuizmo.h
+            deps/imgui/ImSequencer.cpp
+            deps/imgui/ImSequencer.h
+            deps/imgui/ImZoomSlider.h
             deps/imgui/backends/imgui_impl_opengl3.cpp
             deps/imgui/backends/imgui_impl_opengl3.h
             deps/imgui/backends/imgui_impl_glfw.cpp
