@@ -73,13 +73,11 @@ Kasumi::Shader::Shader(const char *vertex_src, const char *fragment_src, const c
 	glDeleteShader(v);
 	glDeleteShader(f);
 }
-#include <iostream>
+
 Kasumi::Shader::~Shader()
 {
 	glUseProgram(0);
 	glDeleteProgram(ID);
-
-	std::cout << "delete shader " << std::endl;
 }
 void Kasumi::Shader::use() const
 {
