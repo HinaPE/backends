@@ -60,7 +60,9 @@ class PoseBase : public INSPECTOR
 public:
 	Pose POSE;
 	mVector3 *track_pos = nullptr;
-	virtual void track(mVector3 *pos) final { track_pos = pos; }
+	mVector3 *track_euler = nullptr;
+	mVector3 *track_scale = nullptr;
+	void track(mVector3 *pos, mVector3 *euler = nullptr, mVector3 *scale = nullptr) { track_pos = pos; track_euler = euler; track_scale = scale; }
 	explicit PoseBase(mVector3 position = {0, 0, 0}, mVector3 euler = {0, 0, 0}, mVector3 scale = {1, 1, 1}) : POSE(std::move(position), std::move(euler), std::move(scale)) {}
 
 protected:
@@ -76,11 +78,17 @@ protected:
 		sliders("Rotation", POSE.euler, 0.1f);
 		sliders("Scale", POSE.scale, 0.031f);
 
-		if (track_pos == nullptr)
-			return;
+		if (track_pos != nullptr)
+			if (!HinaPE::Math::similar(*track_pos, POSE.position))
+				POSE.position = *track_pos;
 
-		if (!HinaPE::Math::similar(*track_pos, POSE.position))
-			POSE.position = *track_pos;
+		if (track_euler != nullptr)
+			if (!HinaPE::Math::similar(*track_euler, POSE.euler))
+				POSE.euler = *track_euler;
+
+		if (track_scale != nullptr)
+			if (!HinaPE::Math::similar(*track_scale, POSE.scale))
+				POSE.scale = *track_scale;
 	}
 	bool _dirty = true;
 };
