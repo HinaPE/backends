@@ -60,20 +60,19 @@ class PoseBase : public INSPECTOR
 public:
 	Pose POSE;
 
+protected:
 	void INSPECT() override
 	{
 		ImGui::Text("Transform");
 		auto sliders = [&](const std::string &label, mVector3 &data, float sens)
 		{
 			if (ImGui::DragScalarN(label.c_str(), ImGuiDataType_Real, &data[0], 3, sens, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f")) {}
-				_dirty = true;
+			_dirty = true;
 		};
 		sliders("Position", POSE.position, 0.1f);
 		sliders("Rotation", POSE.euler, 0.1f);
 		sliders("Scale", POSE.scale, 0.031f);
 	}
-
-protected:
 	bool _dirty = true;
 };
 
