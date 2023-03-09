@@ -8,7 +8,7 @@
 
 namespace Kasumi
 {
-class SphereObject final : public ObjectMesh3D, public HinaPE::Geom::Sphere3
+class SphereObject : public ObjectMesh3D, public HinaPE::Geom::Sphere3
 {
 public:
 	SphereObject();

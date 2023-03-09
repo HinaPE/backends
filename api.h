@@ -59,6 +59,9 @@ class PoseBase : public INSPECTOR
 {
 public:
 	Pose POSE;
+	mVector3 *track_pos = nullptr;
+	virtual void track(mVector3 *pos) final { track_pos = pos; }
+	explicit PoseBase(mVector3 position = {0, 0, 0}, mVector3 euler = {0, 0, 0}, mVector3 scale = {1, 1, 1}) : POSE(std::move(position), std::move(euler), std::move(scale)) {}
 
 protected:
 	void INSPECT() override
@@ -66,12 +69,18 @@ protected:
 		ImGui::Text("Transform");
 		auto sliders = [&](const std::string &label, mVector3 &data, float sens)
 		{
-			if (ImGui::DragScalarN(label.c_str(), ImGuiDataType_Real, &data[0], 3, sens, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f")) {}
-			_dirty = true;
+			if (ImGui::DragScalarN(label.c_str(), ImGuiDataType_Real, &data[0], 3, sens, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f"))
+				_dirty = true;
 		};
 		sliders("Position", POSE.position, 0.1f);
 		sliders("Rotation", POSE.euler, 0.1f);
 		sliders("Scale", POSE.scale, 0.031f);
+
+		if (track_pos == nullptr)
+			return;
+
+		if (!HinaPE::Math::similar(*track_pos, POSE.position))
+			POSE.position = *track_pos;
 	}
 	bool _dirty = true;
 };
