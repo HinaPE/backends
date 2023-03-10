@@ -153,19 +153,17 @@ void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string
 void Kasumi::ObjectParticles3D::_draw()
 {
 	if (_mesh == nullptr) return;
-	_update_poses();
-	if (_dirty) _update();
+	if (_poses_dirty) _update();
 	_mesh->render(*_shader);
 }
 void Kasumi::ObjectParticles3D::_update()
 {
 	_mesh->_opt.instance_matrices.clear();
-	_mesh->_opt.instance_matrices.reserve(_poses.size());
+	_mesh->_opt.instance_matrices.reserve(POSES.size());
 
-	for (auto &pose: _poses)
+	for (auto &pose: POSES)
 		_mesh->_opt.instance_matrices.push_back(pose.get_model_matrix());
 	_mesh->_opt.dirty = true;
-	_dirty = false;
 }
 void Kasumi::ObjectParticles3D::_update_uniform()
 {
@@ -179,9 +177,9 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 	const auto &verts_local = _mesh->_mesh->_verts_eigen4;
 	const auto &idxs = _mesh->_mesh->_idxs_eigen;
 
-	for (size_t i = 0; i < _poses.size(); ++i)
+	for (size_t i = 0; i < POSES.size(); ++i)
 	{
-		auto model = _poses[i].get_model_matrix()._m;
+		auto model = POSES[i].get_model_matrix()._m;
 		auto t = (model * verts_local.transpose());
 		Eigen::MatrixXd verts_world = t.transpose();
 

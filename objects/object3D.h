@@ -130,7 +130,6 @@ protected:
 	void _update();
 	void _draw() final;
 	void _update_uniform() final;
-	virtual void _update_poses() {}
 
 	friend class Scene3D;
 	void _switch_surface() const { _mesh->_opt.dirty = true; _mesh->_opt.render_surface = !_mesh->_opt.render_surface; }
@@ -139,8 +138,6 @@ protected:
 
 protected:
 	InstancedMeshPtr _mesh;
-	std::vector<Pose> _poses;
-	bool _dirty = true;
 };
 
 

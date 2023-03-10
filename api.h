@@ -55,13 +55,17 @@ public:
 	std::string NAME = "Untitled";
 };
 
-class PoseBase : public INSPECTOR
+class UPDATE_PER_FRAME
+{
+protected:
+	friend class App;
+	virtual void UPDATE() = 0;
+};
+
+class PoseBase : public INSPECTOR, UPDATE_PER_FRAME
 {
 public:
 	Pose POSE;
-	mVector3 *track_pos = nullptr;
-	mVector3 *track_euler = nullptr;
-	mVector3 *track_scale = nullptr;
 	void track(mVector3 *pos, mVector3 *euler = nullptr, mVector3 *scale = nullptr)
 	{
 		track_pos = pos;
@@ -82,7 +86,10 @@ protected:
 		sliders("Position", POSE.position, 0.1f);
 		sliders("Rotation", POSE.euler, 0.1f);
 		sliders("Scale", POSE.scale, 0.031f);
+	}
 
+	void UPDATE() override
+	{
 		if (track_pos != nullptr)
 			if (!HinaPE::Math::similar(*track_pos, POSE.position))
 				POSE.position = *track_pos;
@@ -95,16 +102,22 @@ protected:
 			if (!HinaPE::Math::similar(*track_scale, POSE.scale))
 				POSE.scale = *track_scale;
 	}
+
 	bool _dirty = true;
+
+private:
+	mVector3 *track_pos = nullptr;
+	mVector3 *track_euler = nullptr;
+	mVector3 *track_scale = nullptr;
 };
 
 class InstancePosesBase : public PoseBase
 {
 public:
 	std::vector<Pose> POSES;
-	std::vector<mVector3> *track_poss = nullptr;
-	std::vector<mVector3> *track_eulers = nullptr;
-	std::vector<mVector3> *track_scales = nullptr;
+	mVector3 DEFAULT_POSITION = {0, 0, 0};
+	mVector3 DEFAULT_EULER = {0, 0, 0};
+	mVector3 DEFAULT_SCALE = {1, 1, 1};
 	void track(std::vector<mVector3> *pos, std::vector<mVector3> *euler = nullptr, std::vector<mVector3> *scale = nullptr)
 	{
 		track_poss = pos;
@@ -114,9 +127,9 @@ public:
 	explicit InstancePosesBase() { POSES.clear(); }
 
 protected:
-	void INSPECT() override
+	void UPDATE() override
 	{
-//		PoseBase::INSPECT(); // TODO: temporarily disable this
+		PoseBase::UPDATE();
 
 		if (track_poss == nullptr)
 			return;
@@ -131,13 +144,22 @@ protected:
 			POSES[i].position = (*track_poss)[i];
 			if (track_eulers != nullptr)
 				POSES[i].euler = (*track_eulers)[i];
+			else
+				POSES[i].euler = DEFAULT_EULER;
 			if (track_scales != nullptr)
 				POSES[i].scale = (*track_scales)[i];
+			else
+				POSES[i].scale = DEFAULT_SCALE;
 		}
-		_poses_dirty = false;
+//		_poses_dirty = false; // TODO: temporarily disable this
 	}
 
 	bool _poses_dirty = true;
+
+private:
+	std::vector<mVector3> *track_poss = nullptr;
+	std::vector<mVector3> *track_eulers = nullptr;
+	std::vector<mVector3> *track_scales = nullptr;
 };
 
 class Renderable
