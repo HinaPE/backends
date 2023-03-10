@@ -185,18 +185,22 @@ void Kasumi::Platform::launch(App &app)
 								});
 	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods)
 								{
+									Kasumi::Camera::MainCamera->key(key, scancode, action, mods);
 									app.key(key, scancode, action, mods);
 								});
 	_mouse_callbacks.emplace_back([&](int button, int action, int mods)
 								  {
+									  Kasumi::Camera::MainCamera->mouse_button(button, action, mods);
 									  app.mouse_button(button, action, mods);
 								  });
 	_scroll_callbacks.emplace_back([&](double x_offset, double y_offset)
 								   {
+									   Kasumi::Camera::MainCamera->mouse_scroll(x_offset, y_offset);
 									   app.mouse_scroll(x_offset, y_offset);
 								   });
 	_cursor_callbacks.emplace_back([&](double x_pos, double y_pos)
 								   {
+									   Kasumi::Camera::MainCamera->mouse_cursor(x_pos, y_pos);
 									   app.mouse_cursor(x_pos, y_pos);
 								   });
 	_rendering_loop(app);
@@ -373,6 +377,9 @@ void Kasumi::Platform::_benchmark() const
 }
 void Kasumi::Platform::_monitor(App &app)
 {
+	if (!_opt.show_inspector)
+		return;
+
 	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.0f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
 	ImGui::Begin("Monitor", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize);
 	app.ui_sidebar();

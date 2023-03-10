@@ -8,10 +8,11 @@
 #include "shader.h"
 #include "texture.h"
 
+// @formatter:off
 namespace Kasumi
 {
 class Lines;
-class Mesh final
+class Mesh final : public HinaPE::CopyDisable
 {
 public:
 	struct Vertex
@@ -27,17 +28,13 @@ public:
 	using Index = unsigned int;
 
 	void render(const Shader &shader);
-	inline auto vertices() -> std::vector<Vertex> &
-	{
-		_opt.dirty = true;
-		return _verts;
-	}
+	inline auto vertices() -> std::vector<Vertex> & { _opt.dirty = true; return _verts; }
 	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
 
 public:
 	struct Opt
 	{
-		bool dirty;
+		bool dirty = true;
 		bool colored = false;
 		bool textured = false;
 		bool instanced = false;
@@ -76,6 +73,7 @@ private:
 	std::map<std::string, std::vector<TexturePtr>> _textures;
 
 	// geometry
+	friend class Model;
 	mVector3 _center_point;
 	mBBox3 _bbox;
 	std::shared_ptr<Lines> _bbox_lines;
@@ -91,7 +89,7 @@ private:
 };
 using MeshPtr = std::shared_ptr<Mesh>;
 
-class InstancedMesh final
+class InstancedMesh final : public HinaPE::CopyDisable
 {
 public:
 	void render(const Shader &shader);
@@ -152,7 +150,7 @@ private:
 };
 using LinesPtr = std::shared_ptr<Lines>;
 
-class InstancedLines final
+class InstancedLines final : public HinaPE::CopyDisable
 {
 public:
 	void render(const Shader &shader);
@@ -202,5 +200,6 @@ private:
 };
 using PointsPtr = std::shared_ptr<Points>;
 } // namespace Kasumi
+// @formatter:on
 
 #endif //BACKENDS_MESH_H

@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "light.h"
 #include "mesh.h"
+#include "model.h"
 #include "pose.h"
 #include "framebuffer.h"
 #include "timer.h"
@@ -215,6 +216,12 @@ protected:
 	// UI
 	virtual void ui_menu();
 	virtual void ui_sidebar();
+
+	// options
+	void light_mode() { _platform->_opt.background_color = {1, 1, 1}; }
+	void dark_mode() { _platform->_opt.background_color = {0.1, 0.1, 0.1}; }
+	void close_inspector() { _platform->_opt.show_inspector = false; }
+	void close_benchmark() { _platform->_opt.show_benchmark = false; }
 
 public:
 	struct Opt
