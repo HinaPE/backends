@@ -117,7 +117,7 @@ class ObjectParticles3D :
 		public Renderable,
 		public IDBase,
 		public NameBase,
-		public PoseBase,
+		public InstancePosesBase,
 		public VALID_CHECKER
 {
 public:

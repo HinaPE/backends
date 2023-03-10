@@ -62,7 +62,12 @@ public:
 	mVector3 *track_pos = nullptr;
 	mVector3 *track_euler = nullptr;
 	mVector3 *track_scale = nullptr;
-	void track(mVector3 *pos, mVector3 *euler = nullptr, mVector3 *scale = nullptr) { track_pos = pos; track_euler = euler; track_scale = scale; }
+	void track(mVector3 *pos, mVector3 *euler = nullptr, mVector3 *scale = nullptr)
+	{
+		track_pos = pos;
+		track_euler = euler;
+		track_scale = scale;
+	}
 	explicit PoseBase(mVector3 position = {0, 0, 0}, mVector3 euler = {0, 0, 0}, mVector3 scale = {1, 1, 1}) : POSE(std::move(position), std::move(euler), std::move(scale)) {}
 
 protected:
@@ -91,6 +96,48 @@ protected:
 				POSE.scale = *track_scale;
 	}
 	bool _dirty = true;
+};
+
+class InstancePosesBase : public PoseBase
+{
+public:
+	std::vector<Pose> POSES;
+	std::vector<mVector3> *track_poss = nullptr;
+	std::vector<mVector3> *track_eulers = nullptr;
+	std::vector<mVector3> *track_scales = nullptr;
+	void track(std::vector<mVector3> *pos, std::vector<mVector3> *euler = nullptr, std::vector<mVector3> *scale = nullptr)
+	{
+		track_poss = pos;
+		track_eulers = euler;
+		track_scales = scale;
+	}
+	explicit InstancePosesBase() { POSES.clear(); }
+
+protected:
+	void INSPECT() override
+	{
+//		PoseBase::INSPECT(); // TODO: temporarily disable this
+
+		if (track_poss == nullptr)
+			return;
+
+		if (!_poses_dirty)
+			return;
+
+		auto size = (*track_poss).size();
+		POSES.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			POSES[i].position = (*track_poss)[i];
+			if (track_eulers != nullptr)
+				POSES[i].euler = (*track_eulers)[i];
+			if (track_scales != nullptr)
+				POSES[i].scale = (*track_scales)[i];
+		}
+		_poses_dirty = false;
+	}
+
+	bool _poses_dirty = true;
 };
 
 class Renderable
