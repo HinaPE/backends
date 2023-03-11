@@ -13,15 +13,15 @@ Kasumi::Model::~Model() { std::cout << "delete model: " << _path << std::endl; }
 
 void Kasumi::Model::render()
 {
-	Shader::DefaultMeshShader->use();
-	Shader::DefaultMeshShader->uniform("model", mMatrix4x4::Identity());
-	Shader::DefaultMeshShader->uniform("view", Camera::MainCamera->get_view());
-	Shader::DefaultMeshShader->uniform("projection", Camera::MainCamera->get_projection());
-	Shader::DefaultMeshShader->uniform("lightPos", Light::MainLight->_opt.light_pos);
-	Shader::DefaultMeshShader->uniform("viewPos", Light::MainLight->_opt.view_pos);
+	Shader::DefaultSimpleMeshShader->use();
+	Shader::DefaultSimpleMeshShader->uniform("model", mMatrix4x4::Identity());
+	Shader::DefaultSimpleMeshShader->uniform("view", Camera::MainCamera->get_view());
+	Shader::DefaultSimpleMeshShader->uniform("projection", Camera::MainCamera->get_projection());
+	Shader::DefaultSimpleMeshShader->uniform("lightPos", Light::MainLight->_opt.light_pos);
+	Shader::DefaultSimpleMeshShader->uniform("viewPos", Light::MainLight->_opt.view_pos);
 
 	for (auto &mesh: _meshes)
-		mesh->render(*Shader::DefaultMeshShader);
+		mesh->render(*Shader::DefaultSimpleMeshShader);
 
 	Shader::DefaultLineShader->use();
 	Shader::DefaultLineShader->uniform("model", mMatrix4x4::Identity());
