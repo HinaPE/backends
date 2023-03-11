@@ -145,6 +145,7 @@ Kasumi::ObjectParticles3D::ObjectParticles3D()
 	_shader = Shader::DefaultInstanceShader;
 	_inst_id = -1;
 	_init("cube", "");
+//	_init("sphere_simple", "");
 }
 void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
 {
