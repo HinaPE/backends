@@ -17,7 +17,7 @@
 
 #include "imgui.h"
 
-namespace Kasumi
+namespace Kasumi 
 {
 class VALID_CHECKER
 {
