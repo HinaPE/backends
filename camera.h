@@ -36,7 +36,7 @@ public:
 		mVector3 position; // auto calculated: _opt.position = _opt.look_at + _opt.rotation * mVector3(0, 0, _opt.radius);
 		mQuaternion rotation = mQuaternion{1, 0, 0, 0};
 		mVector3 look_at = mVector3(0, 0, 0);
-		real radius = 10;
+		real radius = 5;
 
 		// for projection
 		real width = 1024;
