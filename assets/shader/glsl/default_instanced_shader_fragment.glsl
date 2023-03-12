@@ -61,7 +61,7 @@ void main()
     float alpha = 1.0f;
     if (is_framebuffer) alpha = 0.5;
 
-    if (highlight_mode) alpha = 0.02;
+    if (highlight_mode) out_color *= 2;
 
     FragColor = vec4(out_color, alpha);
 }

@@ -146,32 +146,9 @@ Kasumi::ObjectParticles3D::ObjectParticles3D()
 	_inst_id = -1;
 	_init("cube", "");
 //	_init("sphere_simple", "");
-}
-void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
-{
-	_mesh = TEXTURE.empty() ? std::make_shared<InstancedMesh>(std::make_shared<Mesh>(MESH, COLOR)) : std::make_shared<InstancedMesh>(std::make_shared<Mesh>(MESH, TEXTURE));
-}
-void Kasumi::ObjectParticles3D::_draw()
-{
-	if (_mesh == nullptr) return;
-	if (_poses_dirty) _update();
-	_mesh->render(*_shader);
-}
-void Kasumi::ObjectParticles3D::_update()
-{
-	_mesh->_opt.instance_matrices.clear();
-	_mesh->_opt.instance_matrices.reserve(POSES.size());
-
-	for (auto &pose: POSES)
-		_mesh->_opt.instance_matrices.push_back(pose.get_model_matrix());
-
-	_mesh->_opt.dirty = true;
-}
-void Kasumi::ObjectParticles3D::_update_uniform()
-{
-	Renderable::_update_uniform();
-
-	_shader->uniform("inst_id", _inst_id);
+	DEFAULT_POSITION = mVector3::Zero();
+	DEFAULT_EULER = mVector3::Zero();
+	DEFAULT_SCALE = 0.01 * mVector3::One();
 }
 auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {
@@ -205,6 +182,34 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 			}
 	}
 	return res;
+}
+void Kasumi::ObjectParticles3D::hide(bool value) { _hidden = value; }
+void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
+{
+	_mesh = TEXTURE.empty() ? std::make_shared<InstancedMesh>(std::make_shared<Mesh>(MESH, COLOR)) : std::make_shared<InstancedMesh>(std::make_shared<Mesh>(MESH, TEXTURE));
+}
+void Kasumi::ObjectParticles3D::_draw()
+{
+	if (_hidden) return;
+	if (_mesh == nullptr) return;
+	if (_poses_dirty) _update();
+	_mesh->render(*_shader);
+}
+void Kasumi::ObjectParticles3D::_update()
+{
+	_mesh->_opt.instance_matrices.clear();
+	_mesh->_opt.instance_matrices.reserve(POSES.size());
+
+	for (auto &pose: POSES)
+		_mesh->_opt.instance_matrices.push_back(pose.get_model_matrix());
+
+	_mesh->_opt.dirty = true;
+}
+void Kasumi::ObjectParticles3D::_update_uniform()
+{
+	Renderable::_update_uniform();
+
+	_shader->uniform("inst_id", _inst_id);
 }
 
 // ==================== ObjectGrid3D ====================
