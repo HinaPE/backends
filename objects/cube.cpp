@@ -6,6 +6,10 @@ Kasumi::CubeObject::CubeObject()
 	_shader = Shader::DefaultMeshShader;
 	_init("cube", "");
 	load_surface(this);
+
+	_transform = mTransform3(POSE.position, mQuaternion(POSE.euler));
+	_bound = mBBox3(-POSE.scale, POSE.scale);
+	_extent = {POSE.scale.x(), POSE.scale.y(), POSE.scale.z()};
 }
 void Kasumi::CubeObject::_update_surface()
 {

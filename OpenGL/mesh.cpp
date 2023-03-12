@@ -64,6 +64,8 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 	if (_opt.dirty)
 		_update();
 
+	shader.use();
+
 	_opt.depth_test ? glEnable(GL_DEPTH_TEST)
 					: glDisable(GL_DEPTH_TEST);
 
@@ -83,7 +85,6 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 
 	if (_opt.render_surface)
 	{
-		shader.use();
 
 		int texture_index = 0;
 		auto diffuse_textures = _textures["diffuse"];

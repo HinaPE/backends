@@ -206,10 +206,6 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 	}
 	return res;
 }
-void Kasumi::ObjectParticles3D::highlight(const std::vector<unsigned int> &ids)
-{
-	_shader->uniform("highlight_points", ids, 64);
-}
 
 // ==================== ObjectGrid3D ====================
 Kasumi::ObjectGrid3D::ObjectGrid3D()

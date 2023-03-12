@@ -122,7 +122,6 @@ class ObjectParticles3D :
 {
 public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
-	void highlight(const std::vector<unsigned int>& ids);
 	int _inst_id;
 	ObjectParticles3D();
 
