@@ -73,6 +73,7 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 	_opt.cull_face ? glEnable(GL_CULL_FACE)
 				   : glDisable(GL_CULL_FACE);
 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	_opt.blend ? glEnable(GL_BLEND)
 			   : glDisable(GL_BLEND);
 
@@ -387,6 +388,11 @@ Kasumi::InstancedMesh::InstancedMesh(Kasumi::MeshPtr mesh) : _mesh(std::move(mes
 	glVertexAttribDivisor(9, 1);
 	glVertexAttribDivisor(10, 1);
 
+	glGenBuffers(1, &_highlightVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _highlightVBO);
+	glEnableVertexAttribArray(11);
+	glVertexAttribPointer(11, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void *) 0);
+
 	glBindVertexArray(0);
 
 	_mesh->_opt.instanced = true;
@@ -400,6 +406,8 @@ void Kasumi::InstancedMesh::_update()
 	glBindVertexArray(_mesh->_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, _highlightVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.highlight_ids.size() * sizeof(float), &_opt.highlight_ids[0], GL_DYNAMIC_DRAW);
 
 	_mesh->_opt.render_surface = _opt.render_surface;
 	_mesh->_opt.render_wireframe = _opt.render_wireframe;

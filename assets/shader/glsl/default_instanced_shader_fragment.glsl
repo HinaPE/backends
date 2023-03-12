@@ -23,6 +23,7 @@ in VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec3 Color;
+    float Highlight;
 } fs_in;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -57,6 +58,7 @@ void main()
 
     float alpha = 1.0f;
     if (is_framebuffer) alpha = 0.5;
+    if (fs_in.Highlight == 1.0) alpha = 0.01;
 
     FragColor = vec4(out_color, alpha);
 }

@@ -89,7 +89,7 @@ void Kasumi::Shader::Init()
 	if (DefaultMeshShader == nullptr)
 		DefaultMeshShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_shader_fragment.glsl");
 	if (DefaultInstanceShader == nullptr)
-		DefaultInstanceShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_shader_fragment.glsl");
+		DefaultInstanceShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_instanced_shader_fragment.glsl");
 	if (DefaultLineShader == nullptr)
 		DefaultLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
 	if (DefaultPointShader == nullptr) // we can use the same shader for point and line
