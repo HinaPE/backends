@@ -173,3 +173,14 @@ void Kasumi::Shader::uniform(const std::string &name, const mMatrix4x4 &value) c
 	use();
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.as_float().data());
 }
+void Kasumi::Shader::uniform(const std::string &name, const std::vector<unsigned int> &value, size_t size) const
+{
+	std::vector<GLfloat> v;
+	v.resize(size);
+	std::fill(v.begin(), v.end(), 0);
+	for (int i = 0; i < value.size(); ++i)
+		v[i] = static_cast<GLfloat>(value[i]);
+	
+	use();
+	glUniform1fv(glGetUniformLocation(ID, name.c_str()), static_cast<GLsizei>(size), v.data());
+}

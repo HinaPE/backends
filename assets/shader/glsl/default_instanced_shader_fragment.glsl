@@ -23,10 +23,13 @@ in VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec3 Color;
-    float Highlight;
 } fs_in;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+
+uniform bool highlight_mode;
+flat in int instanceID;
+uniform float highlight_points[64];
 
 void main()
 {
@@ -58,7 +61,20 @@ void main()
 
     float alpha = 1.0f;
     if (is_framebuffer) alpha = 0.5;
-    if (fs_in.Highlight == 1.0) alpha = 0.01;
+
+    if (highlight_mode) {
+        alpha = 0.02;
+        int iter = 0;
+        float id = highlight_points[0];
+        while (id != 0){
+            if (instanceID == id){
+                alpha = 1;
+                break;
+            }
+            ++iter;
+            id = highlight_points[iter];
+        }
+    }
 
     FragColor = vec4(out_color, alpha);
 }

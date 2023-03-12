@@ -165,7 +165,6 @@ void Kasumi::ObjectParticles3D::_update()
 	for (auto &pose: POSES)
 		_mesh->_opt.instance_matrices.push_back(pose.get_model_matrix());
 
-	_mesh->_opt.highlight_ids.resize(POSES.size(), false);
 	_mesh->_opt.dirty = true;
 }
 void Kasumi::ObjectParticles3D::_update_uniform()
@@ -209,16 +208,7 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 }
 void Kasumi::ObjectParticles3D::highlight(const std::vector<unsigned int> &ids)
 {
-	if (ids.empty())
-	{
-		_mesh->_opt.highlight_ids.resize(POSES.size(), 1);
-	} else
-	{
-		_mesh->_opt.highlight_ids.resize(POSES.size(), 0);
-		for (auto highlight_id: ids)
-			_mesh->_opt.highlight_ids[highlight_id] = 1;
-	}
-	_mesh->_opt.dirty = true;
+	_shader->uniform("highlight_points", ids, 64);
 }
 
 // ==================== ObjectGrid3D ====================

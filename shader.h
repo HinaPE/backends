@@ -39,6 +39,7 @@ public:
 	void uniform(const std::string &name, const mVector4 &value) const;
 	void uniform(const std::string &name, const mMatrix3x3 &value) const;
 	void uniform(const std::string &name, const mMatrix4x4 &value) const;
+	void uniform(const std::string &name, const std::vector<unsigned int> &value, size_t size) const;
 
 	void use() const;
 

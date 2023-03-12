@@ -7,7 +7,6 @@ layout (location = 4) in vec3 aTengent;
 layout (location = 5) in vec3 aBiTengent;
 layout (location = 6) in uint id;
 layout (location = 7) in mat4 aInstanceMatrix;
-layout (location = 11) in float aHighlight;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -20,8 +19,9 @@ out VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec3 Color;
-    float Highlight;
 } vs_out;
+
+flat out int instanceID;
 
 void main()
 {
@@ -29,8 +29,9 @@ void main()
     vs_out.Normal = mat3(transpose(inverse(aInstanceMatrix))) * aNormal;
     vs_out.TexCoords = aTexCoords;
     vs_out.Color = aColor;
-    vs_out.Highlight = aHighlight;
     gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+
+    instanceID = gl_InstanceID;
 
     if (inst_id == gl_InstanceID)
     {
