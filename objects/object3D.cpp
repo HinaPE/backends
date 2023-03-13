@@ -193,6 +193,7 @@ void Kasumi::ObjectParticles3D::_draw()
 	if (_hidden) return;
 	if (_mesh == nullptr) return;
 	if (_poses_dirty) _update();
+	_shader->uniform("is_random_color", _random_color);
 	_mesh->render(*_shader);
 }
 void Kasumi::ObjectParticles3D::_update()

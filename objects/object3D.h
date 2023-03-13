@@ -140,6 +140,7 @@ protected:
 protected:
 	InstancedMeshPtr _mesh;
 	bool _hidden = false;
+	bool _random_color = false;
 };
 
 
