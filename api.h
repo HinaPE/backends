@@ -201,6 +201,12 @@ public:
 	virtual void launch() final;
 	virtual void inspect(INSPECTOR *ptr) final;
 
+	// options
+	void light_mode() { _platform->_opt.background_color = {1, 1, 1}; }
+	void dark_mode() { _platform->_opt.background_color = {0.1, 0.1, 0.1}; }
+	void close_inspector() { _platform->_opt.show_inspector = false; }
+	void close_benchmark() { _platform->_opt.show_benchmark = false; }
+
 protected:
 	// main methods
 	virtual void prepare() {}
@@ -216,12 +222,6 @@ protected:
 	// UI
 	virtual void ui_menu();
 	virtual void ui_sidebar();
-
-	// options
-	void light_mode() { _platform->_opt.background_color = {1, 1, 1}; }
-	void dark_mode() { _platform->_opt.background_color = {0.1, 0.1, 0.1}; }
-	void close_inspector() { _platform->_opt.show_inspector = false; }
-	void close_benchmark() { _platform->_opt.show_benchmark = false; }
 
 public:
 	struct Opt
