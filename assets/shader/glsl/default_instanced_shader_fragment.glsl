@@ -6,6 +6,7 @@ in vec3 Color;
 uniform bool is_colored;
 uniform bool is_textured;
 uniform bool is_framebuffer;
+uniform bool is_random_color;
 
 uniform int diffuse_texture_num;
 uniform int specular_texture_num;
@@ -62,6 +63,8 @@ void main()
     if (is_framebuffer) alpha = 0.5;
 
     if (highlight_mode) out_color *= 2;
+
+    if (is_random_color) out_color = vec3((instanceID * 3 + 1) % 256 / 256.f, (instanceID * 5 + 1) % 256 / 256.f, (instanceID * 7 + 1) % 256 / 256.f);
 
     FragColor = vec4(out_color, alpha);
 }
