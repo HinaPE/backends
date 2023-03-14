@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.24)
 project(Kasumi_Backends VERSION 2.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
 
 option(OpenGL "Enable OpenGL backend" ON)
@@ -112,10 +112,10 @@ if (OpenGL)
     target_compile_definitions(
             Kasumi_Backends
             PUBLIC
-            -DBackendsSceneDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            BackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
@@ -163,9 +163,9 @@ if (Vulkan)
     target_compile_definitions(
             VulkanApp
             PUBLIC
-            -DBackendsSceneDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            -DBackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
