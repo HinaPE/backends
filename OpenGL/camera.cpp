@@ -16,18 +16,6 @@ Kasumi::Camera::Camera() { _rebuild_(); }
 std::shared_ptr<Kasumi::Camera> Kasumi::Camera::MainCamera = nullptr;
 void Kasumi::Camera::Init() { MainCamera = std::make_shared<Camera>(); }
 
-// NOT COMPLETE YET
-auto Kasumi::Camera::screen_to_world(const mVector2 &screen_pos) const -> mVector3
-{
-	auto VP = get_projection();
-	auto invVP = VP.inversed();
-
-	auto screen_pos_3d = mVector4((screen_pos.x() - 750.f) / 750.f, (350.f - screen_pos.y()) / 350.f, 0, 1);
-	auto world_pos_3d = invVP * screen_pos_3d;
-	world_pos_3d /= world_pos_3d.w();
-	return {world_pos_3d.x(), world_pos_3d.y(), world_pos_3d.z()};
-}
-
 auto Kasumi::Camera::get_projection() const -> mMatrix4x4 { return _projection; }
 auto Kasumi::Camera::get_view() const -> mMatrix4x4 { return _view; }
 
@@ -159,4 +147,16 @@ auto Kasumi::Camera::get_ray(const mVector2 &screen_pos) const -> mRay3
 	ray_eye = mVector4(ray_eye.x(), ray_eye.y(), -1, 0);
 	mVector3 ray_wor = (_view.inversed() * ray_eye).xyz().normalized();
 	return {_opt.position, ray_wor};
+}
+
+// NOT COMPLETE YET
+auto Kasumi::Camera::screen_to_world(const mVector2 &screen_pos) const -> mVector3
+{
+	auto VP = get_projection();
+	auto invVP = VP.inversed();
+
+	auto screen_pos_3d = mVector4((screen_pos.x() - 750.f) / 750.f, (350.f - screen_pos.y()) / 350.f, 0, 1);
+	auto world_pos_3d = invVP * screen_pos_3d;
+	world_pos_3d /= world_pos_3d.w();
+	return {world_pos_3d.x(), world_pos_3d.y(), world_pos_3d.z()};
 }

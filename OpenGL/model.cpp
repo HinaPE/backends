@@ -1,5 +1,3 @@
-#include <utility>
-
 #include "glad/glad.h"
 #include "../model.h"
 #include "../camera.h"

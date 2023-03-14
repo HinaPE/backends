@@ -32,7 +32,6 @@ public:
 private:
 	std::string _name;
 	std::chrono::steady_clock::time_point _starting_point;
-
 };
 using TimerPtr = std::shared_ptr<Timer>;
 }
