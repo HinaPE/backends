@@ -148,7 +148,7 @@ Kasumi::ObjectParticles3D::ObjectParticles3D()
 //	_init("sphere_simple", "");
 	DEFAULT_POSITION = mVector3::Zero();
 	DEFAULT_EULER = mVector3::Zero();
-	DEFAULT_SCALE = 0.008 * mVector3::One();
+	DEFAULT_SCALE = 0.01 * mVector3::One();
 }
 auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {
