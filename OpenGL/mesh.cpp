@@ -391,6 +391,14 @@ Kasumi::InstancedMesh::InstancedMesh(Kasumi::MeshPtr mesh) : _mesh(std::move(mes
 
 	glBindVertexArray(0);
 
+	glGenBuffers(1, &_colorVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _colorVBO);
+	glBindVertexArray(_mesh->_vao);
+	glEnableVertexAttribArray(11);
+	glVertexAttribPointer(11, 4, GL_REAL, GL_FALSE, sizeof(mVector4), (void *) 0);
+	glVertexAttribDivisor(11, 1);
+	glBindVertexArray(0);
+
 	_mesh->_opt.instanced = true;
 	_mesh->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
 }
@@ -399,9 +407,16 @@ void Kasumi::InstancedMesh::_update()
 	if (!_opt.dirty && _opt.instance_matrices.empty())
 		return;
 
+	if (_opt.colors.empty())
+		_opt.colors.resize(_opt.instance_matrices.size(), mVector4(HinaPE::Color::ORANGE.x(), HinaPE::Color::ORANGE.y(), HinaPE::Color::ORANGE.z(), 1.0));
+	else if (_opt.colors.size() != _opt.instance_matrices.size())
+		throw std::runtime_error("Instance count and color count mismatch");
+
 	glBindVertexArray(_mesh->_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, _colorVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.colors.size() * sizeof(mVector4), &_opt.colors[0], GL_DYNAMIC_DRAW);
 
 	_mesh->_opt.render_surface = _opt.render_surface;
 	_mesh->_opt.render_wireframe = _opt.render_wireframe;

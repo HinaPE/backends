@@ -102,6 +102,7 @@ public:
 		bool render_wireframe = false;
 		bool render_bbox = false;
 		std::vector<mMatrix4x4> instance_matrices;
+		std::vector<mVector4> colors;
 	} _opt;
 	explicit InstancedMesh(MeshPtr mesh);
 
@@ -110,6 +111,7 @@ private:
 	void _update();
 	MeshPtr _mesh;
 	unsigned int _instanceVBO;
+	unsigned int _colorVBO;
 };
 using InstancedMeshPtr = std::shared_ptr<InstancedMesh>;
 
