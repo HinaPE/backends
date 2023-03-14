@@ -12,6 +12,9 @@ class SphereObject : public ObjectMesh3D, public HinaPE::Geom::Sphere3
 {
 public:
 	SphereObject();
+
+protected:
+	void _update_surface() final;
 };
 using SphereObjectPtr = std::shared_ptr<SphereObject>;
 } // namespace Kasumi
