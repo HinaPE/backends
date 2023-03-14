@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.23)
 project(Kasumi_Backends VERSION 2.0.0 DESCRIPTION "Multi-backend Graphics Api" LANGUAGES CXX)
 
 option(OpenGL "Enable OpenGL backend" ON)
@@ -112,10 +112,10 @@ if (OpenGL)
     target_compile_definitions(
             Kasumi_Backends
             PUBLIC
-            -DBackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            -DBackendsSceneDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
@@ -124,12 +124,12 @@ if (Vulkan)
     file(GLOB Vulkan_IMPL
             Vulkan/shader.cpp Vulkan/shader.h
             Vulkan/platform.cpp Vulkan/platform.h
-#            Vulkan/mesh.cpp
-#            Vulkan/texture.cpp
-#            Vulkan/framebuffer.cpp
-#            Vulkan/model.cpp
-#            Vulkan/camera.cpp
-#            Vulkan/instance.cpp
+            #            Vulkan/mesh.cpp
+            #            Vulkan/texture.cpp
+            #            Vulkan/framebuffer.cpp
+            #            Vulkan/model.cpp
+            #            Vulkan/camera.cpp
+            #            Vulkan/instance.cpp
             )
     set(Imgui_Vulkan
             deps/imgui/imgui.h
@@ -163,9 +163,9 @@ if (Vulkan)
     target_compile_definitions(
             VulkanApp
             PUBLIC
-            -DBackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            -DBackendsSceneDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            -DBackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            -DBackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            -DBackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
