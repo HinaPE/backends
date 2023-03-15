@@ -61,7 +61,7 @@ void Kasumi::ObjectMesh3D::VALID_CHECK() const
 // ==================== ObjectLines3D ====================
 Kasumi::ObjectLines3D::ObjectLines3D()
 {
-	NAME = "Line";
+	NAME = "Lines";
 	_shader = Shader::DefaultLineShader;
 	_lines = std::make_shared<Lines>();
 }
@@ -136,6 +136,40 @@ void Kasumi::ObjectPoints3D::_update_uniform()
 {
 	Renderable::_update_uniform();
 	_shader->uniform("model", POSE.get_model_matrix());
+}
+
+// ==================== ObjectPoints3DInstance ====================
+Kasumi::ObjectPoints3DInstance::ObjectPoints3DInstance()
+{
+	NAME = "Points";
+	_shader = Shader::DefaultInstancePointShader;
+	_init();
+}
+void Kasumi::ObjectPoints3DInstance::add(const mVector3 &point, const mVector3 &color)
+{
+	Pose pose;
+	pose.position = point;
+	_poses.push_back(pose);
+	_points->_opt.instance_matrices.push_back(pose.get_model_matrix());
+	_points->_opt.dirty = true;
+}
+void Kasumi::ObjectPoints3DInstance::clear()
+{
+	_poses.clear();
+	_points->_opt.instance_matrices.clear();
+	_dirty = true;
+	_points->_opt.dirty = true;
+}
+void Kasumi::ObjectPoints3DInstance::_init()
+{
+	auto init_points = std::make_shared<Points>();
+	init_points->add(mVector3(0, 0, 0), HinaPE::Color::MAGENTA);
+	_points = std::make_shared<InstancedPoints>(init_points);
+}
+void Kasumi::ObjectPoints3DInstance::_draw()
+{
+	if (_points == nullptr) return;
+	_points->render(*_shader);
 }
 
 // ==================== ObjectParticles3D ====================

@@ -186,6 +186,9 @@ public:
 	struct Opt
 	{
 		bool dirty = true;
+
+		bool instanced = false;
+		int instance_count;
 	} _opt;
 	Points();
 	void add(const mVector3 &p, const mVector3 &color = HinaPE::Color::PURPLE);
@@ -197,10 +200,31 @@ private:
 	void _update();
 
 private:
+	friend class InstancedPoints;
 	unsigned int _vao, _vbo;
 	std::vector<Vertex> _points;
 };
 using PointsPtr = std::shared_ptr<Points>;
+
+class InstancedPoints final : public HinaPE::CopyDisable
+{
+public:
+	void render(const Shader &shader);
+
+public:
+	struct Opt
+	{
+		bool dirty = true;
+		std::vector<mMatrix4x4> instance_matrices;
+	} _opt;
+	explicit InstancedPoints(PointsPtr points);
+
+private:
+	void _update();
+	PointsPtr _points;
+	unsigned int _instanceVBO;
+};
+using InstancedPointsPtr = std::shared_ptr<InstancedPoints>;
 } // namespace Kasumi
 // @formatter:on
 

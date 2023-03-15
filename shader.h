@@ -19,6 +19,7 @@ public:
 	static std::shared_ptr<Shader> DefaultLineShader;
 	static std::shared_ptr<Shader> DefaultInstanceLineShader;
 	static std::shared_ptr<Shader> DefaultPointShader;
+	static std::shared_ptr<Shader> DefaultInstancePointShader;
 	static std::shared_ptr<Shader> DefaultFrameShader;
 	static std::shared_ptr<Shader> Default2DShader;
 	static std::shared_ptr<Shader> DefaultSimpleMeshShader;

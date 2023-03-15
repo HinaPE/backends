@@ -113,6 +113,28 @@ private:
 };
 
 
+class ObjectPoints3DInstance:
+		public Renderable,
+		public IDBase,
+		public NameBase,
+		public InstancePosesBase,
+		public VALID_CHECKER
+{
+public:
+	void add(const mVector3 &point, const mVector3 &color = HinaPE::Color::ORANGE);
+	void clear();
+	ObjectPoints3DInstance();
+
+protected:
+	void _init();
+	void _draw() final;
+
+private:
+	InstancedPointsPtr _points;
+	std::vector<Pose> _poses;
+};
+
+
 class ObjectParticles3D :
 		public Renderable,
 		public IDBase,

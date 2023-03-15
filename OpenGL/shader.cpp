@@ -8,6 +8,7 @@ std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultInstanceShader = nullptr;
 std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultLineShader = nullptr;
 std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultInstanceLineShader = nullptr;
 std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultPointShader = nullptr;
+std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultInstancePointShader = nullptr;
 std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultFrameShader = nullptr;
 std::shared_ptr<Kasumi::Shader> Kasumi::Shader::Default2DShader = nullptr;
 std::shared_ptr<Kasumi::Shader> Kasumi::Shader::DefaultSimpleMeshShader = nullptr;
@@ -92,14 +93,16 @@ void Kasumi::Shader::Init()
 		DefaultInstanceShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_instanced_shader_fragment.glsl");
 	if (DefaultLineShader == nullptr)
 		DefaultLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
+	if (DefaultInstanceLineShader == nullptr)
+		DefaultInstanceLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_instanced_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_instanced_fragment.glsl");
 	if (DefaultPointShader == nullptr) // we can use the same shader for point and line
 		DefaultPointShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
+	if (DefaultInstancePointShader == nullptr)
+		DefaultInstancePointShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_instanced_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_instanced_fragment.glsl");
 	if (DefaultFrameShader == nullptr)
 		DefaultFrameShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "screen_vertex.glsl", std::string(BackendsShaderDir) + "screen_fragment.glsl");
 	if (Default2DShader == nullptr)
 		Default2DShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_2D_vertex.glsl", std::string(BackendsShaderDir) + "default_2D_fragment.glsl");
-	if (DefaultInstanceLineShader == nullptr)
-		DefaultInstanceLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_instanced_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_instanced_fragment.glsl");
 	if (DefaultSimpleMeshShader == nullptr)
 		DefaultSimpleMeshShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_simple_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_simple_shader_fragment.glsl");
 }

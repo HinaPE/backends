@@ -529,11 +529,61 @@ void Kasumi::Points::render(const Kasumi::Shader &shader)
 	glPointSize(15);
 
 	glBindVertexArray(_vao);
-	glDrawArrays(GL_POINTS, 0, (GLsizei) _points.size());
+	if (_opt.instanced && _opt.instance_count > 0)
+		glDrawArraysInstanced(GL_POINTS, 0, (GLsizei) _points.size(), _opt.instance_count);
+	else
+		glDrawArrays(GL_POINTS, 0, (GLsizei) _points.size());
 	glBindVertexArray(0);
 }
 void Kasumi::Points::clear()
 {
 	_points.clear();
 	_opt.dirty = true;
+}
+Kasumi::InstancedPoints::InstancedPoints(Kasumi::PointsPtr points) : _points(std::move(points)), _instanceVBO(0)
+{
+	glGenBuffers(1, &_instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
+
+	glBindVertexArray(_points->_vao);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) 0);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (sizeof(mVector4)));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (2 * sizeof(mVector4)));
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_REAL, GL_FALSE, sizeof(mMatrix4x4), (void *) (3 * sizeof(mVector4)));
+
+	glVertexAttribDivisor(2, 1);
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
+
+	glBindVertexArray(0);
+
+	_points->_opt.instanced = true;
+	_points->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
+}
+void Kasumi::InstancedPoints::render(const Kasumi::Shader &shader)
+{
+	if (_opt.instance_matrices.empty())
+		return;
+
+	if (_opt.dirty)
+		_update();
+
+	_points->render(shader);
+}
+void Kasumi::InstancedPoints::_update()
+{
+	if (!_opt.dirty && _opt.instance_matrices.empty())
+		return;
+
+	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+
+	_points->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
+
+	_opt.dirty = false;
 }
