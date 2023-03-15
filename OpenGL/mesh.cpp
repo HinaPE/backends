@@ -407,10 +407,8 @@ void Kasumi::InstancedMesh::_update()
 	if (!_opt.dirty && _opt.instance_matrices.empty())
 		return;
 
-	if (_opt.colors.empty())
+	if (_opt.colors.size() != _opt.instance_matrices.size())
 		_opt.colors.resize(_opt.instance_matrices.size(), mVector4(HinaPE::Color::ORANGE.x(), HinaPE::Color::ORANGE.y(), HinaPE::Color::ORANGE.z(), 1.0));
-	else if (_opt.colors.size() != _opt.instance_matrices.size())
-		throw std::runtime_error("Instance count and color count mismatch");
 
 	glBindVertexArray(_mesh->_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
