@@ -17,7 +17,7 @@
 
 #include "imgui.h"
 
-namespace Kasumi 
+namespace Kasumi
 {
 class VALID_CHECKER
 {
@@ -175,6 +175,11 @@ public:
 		_update_uniform();
 		_draw();
 	}
+	virtual void render_volume() final
+	{
+		_update_uniform();
+		_draw_volume();
+	}
 
 	ShaderPtr _shader = nullptr;
 
@@ -194,6 +199,7 @@ protected:
 		Shader::DefaultLineShader->uniform("viewPos", Light::MainLight->_opt.view_pos);
 	}
 	virtual void _draw() = 0;
+	virtual void _draw_volume() {}
 };
 
 class App
