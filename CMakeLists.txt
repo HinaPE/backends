@@ -31,8 +31,6 @@ if (OpenGL)
             objects/plane.h
             objects/arrow.h
 
-            volume_render/volume_render.h
-
             deps/imgui/imgui.h
             deps/imgui/imconfig.h
             deps/imgui/imgui_internal.h
@@ -66,8 +64,6 @@ if (OpenGL)
             objects/cube.cpp
             objects/plane.cpp
             objects/arrow.cpp
-
-            volume_render/volume_render.cpp
 
             deps/imgui/imgui.cpp
             deps/imgui/imgui_draw.cpp
@@ -178,7 +174,3 @@ if (Vulkan)
             -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
-
-add_executable(VolumeShaderTest volume_render/main.cpp)
-set_target_properties(VolumeShaderTest PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
-target_link_libraries(VolumeShaderTest PUBLIC Kasumi_Backends)
