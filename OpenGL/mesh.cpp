@@ -526,7 +526,7 @@ void Kasumi::Points::render(const Kasumi::Shader &shader)
 	if (_opt.dirty)
 		_update();
 
-	glPointSize(15);
+	glPointSize(3);
 
 	glBindVertexArray(_vao);
 	if (_opt.instanced && _opt.instance_count > 0)

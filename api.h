@@ -128,6 +128,7 @@ public:
 	explicit InstancePosesBase() { POSES.clear(); }
 
 protected:
+	friend class Scene3D;
 	void UPDATE() override
 	{
 		PoseBase::UPDATE();

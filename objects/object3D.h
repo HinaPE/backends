@@ -113,7 +113,7 @@ private:
 };
 
 
-class ObjectPoints3DInstance:
+class ObjectPoints3DInstanced:
 		public Renderable,
 		public IDBase,
 		public NameBase,
@@ -121,17 +121,26 @@ class ObjectPoints3DInstance:
 		public VALID_CHECKER
 {
 public:
+	[[deprecated("You don't need to use this function anymore, use track(std::vector<mVector3> *pos) instead")]]
 	void add(const mVector3 &point, const mVector3 &color = HinaPE::Color::ORANGE);
+	[[deprecated("You don't need to use this function anymore, use track(std::vector<mVector3> *pos) instead")]]
 	void clear();
-	ObjectPoints3DInstance();
+	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
+	void hide(bool value);
+	int _inst_id;
+	ObjectPoints3DInstanced();
 
 protected:
 	void _init();
+	void _update();
 	void _draw() final;
+	void _update_uniform() final;
 
 private:
 	InstancedPointsPtr _points;
-	std::vector<Pose> _poses;
+	bool _hidden = false;
+	bool _random_color = false;
+	real point_size = 3; // NOT used yet
 };
 
 
@@ -189,6 +198,7 @@ using ObjectMesh3DPtr = std::shared_ptr<ObjectMesh3D>;
 using ObjectLines3DPtr = std::shared_ptr<ObjectLines3D>;
 using ObjectLines3DInstancedPtr = std::shared_ptr<ObjectLines3DInstanced>;
 using ObjectPoints3DPtr = std::shared_ptr<ObjectPoints3D>;
+using ObjectPoints3DInstancedPtr = std::shared_ptr<ObjectPoints3DInstanced>;
 using ObjectParticles3DPtr = std::shared_ptr<ObjectParticles3D>;
 using ObjectGrid3DPtr = std::shared_ptr<ObjectGrid3D>;
 } // namespace Kasumi
