@@ -28,6 +28,11 @@ auto Kasumi::ObjectMesh3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::Sur
 	}
 	return res;
 }
+void Kasumi::ObjectMesh3D::set_color(const mVector3 &color)
+{
+	for (auto &v: _mesh->vertices())
+		v.color = color;
+}
 void Kasumi::ObjectMesh3D::_draw()
 {
 	if (_mesh == nullptr) return;

@@ -22,6 +22,7 @@ class ObjectMesh3D :
 {
 public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
+	void set_color(const mVector3 &color);
 
 protected:
 	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::MIKU);

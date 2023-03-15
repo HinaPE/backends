@@ -209,6 +209,7 @@ public:
 	virtual void inspect(INSPECTOR *ptr) final;
 
 	// options
+	void clean_mode() { close_inspector(); close_benchmark(); }
 	void light_mode() { _platform->_opt.background_color = {1, 1, 1}; }
 	void dark_mode() { _platform->_opt.background_color = {0.1, 0.1, 0.1}; }
 	void close_inspector() { _platform->_opt.show_inspector = false; }
