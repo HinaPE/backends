@@ -12,7 +12,7 @@ if (NOT TARGET HinaPE_Common)
 endif ()
 
 if (OpenGL)
-    file(GLOB OpenGL_HEADER
+    set(OpenGL_HEADER
             camera.h
             framebuffer.h
             light.h
@@ -48,7 +48,7 @@ if (OpenGL)
             deps/imgui/backends/imgui_impl_opengl3.h
             deps/imgui/backends/imgui_impl_glfw.h
             )
-    file(GLOB OPENGL_IMPL
+    set(OPENGL_IMPL
             OpenGL/camera.cpp
             OpenGL/framebuffer.cpp
             OpenGL/light.cpp
@@ -105,7 +105,7 @@ if (OpenGL)
             target_compile_options(assimp PUBLIC -Wno-error)
         endif ()
     endif ()
-    add_library(Kasumi_Backends ${OpenGL_HEADER} ${Imgui_OpenGL})
+    add_library(Kasumi_Backends ${OpenGL_HEADER} ${OPENGL_IMPL})
     set_target_properties(Kasumi_Backends PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
     target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
     target_include_directories(Kasumi_Backends PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
