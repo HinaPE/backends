@@ -11,27 +11,43 @@ if (NOT TARGET HinaPE_Common)
     add_subdirectory(${KASUMI_COMMON_DIR} HinaPE_Common)
 endif ()
 
-file(GLOB UNIVERSE_FILES
-        camera.h
-        framebuffer.h
-        light.h
-        mesh.h
-        model.h
-        platform.h
-        pose.h
-        shader.h
-        texture.h
-        api.h
-        timer.h
-
-        objects/object3D.cpp objects/object3D.h
-        objects/sphere.cpp objects/sphere.h
-        objects/cube.cpp objects/cube.h
-        objects/plane.cpp objects/plane.h
-        objects/arrow.cpp objects/arrow.h
-        )
-
 if (OpenGL)
+    file(GLOB OpenGL_HEADER
+            camera.h
+            framebuffer.h
+            light.h
+            mesh.h
+            model.h
+            platform.h
+            pose.h
+            shader.h
+            texture.h
+            api.h
+            timer.h
+
+            objects/object3D.h
+            objects/sphere.h
+            objects/cube.h
+            objects/plane.h
+            objects/arrow.h
+
+            deps/imgui/imgui.h
+            deps/imgui/imconfig.h
+            deps/imgui/imgui_internal.h
+            deps/imgui/imstb_rectpack.h
+            deps/imgui/imstb_textedit.h
+            deps/imgui/imstb_truetype.h
+            deps/imgui/implot.h
+            deps/imgui/implot_internal.h
+            deps/imgui/GraphEditor.h
+            deps/imgui/ImCurveEdit.h
+            deps/imgui/ImGradient.h
+            deps/imgui/ImGuizmo.h
+            deps/imgui/ImSequencer.h
+            deps/imgui/ImZoomSlider.h
+            deps/imgui/backends/imgui_impl_opengl3.h
+            deps/imgui/backends/imgui_impl_glfw.h
+            )
     file(GLOB OPENGL_IMPL
             OpenGL/camera.cpp
             OpenGL/framebuffer.cpp
@@ -42,37 +58,26 @@ if (OpenGL)
             OpenGL/shader.cpp
             OpenGL/texture.cpp
             OpenGL/timer.cpp
-            )
-    set(Imgui_OpenGL
-            deps/imgui/imgui.h
+
+            objects/object3D.cpp
+            objects/sphere.cpp
+            objects/cube.cpp
+            objects/plane.cpp
+            objects/arrow.cpp
+
             deps/imgui/imgui.cpp
             deps/imgui/imgui_draw.cpp
             deps/imgui/imgui_widgets.cpp
             deps/imgui/imgui_tables.cpp
-            deps/imgui/imconfig.h
-            deps/imgui/imgui_internal.h
-            deps/imgui/imstb_rectpack.h
-            deps/imgui/imstb_textedit.h
-            deps/imgui/imstb_truetype.h
             deps/imgui/implot.cpp
-            deps/imgui/implot.h
             deps/imgui/implot_items.cpp
-            deps/imgui/implot_internal.h
             deps/imgui/GraphEditor.cpp
-            deps/imgui/GraphEditor.h
             deps/imgui/ImCurveEdit.cpp
-            deps/imgui/ImCurveEdit.h
             deps/imgui/ImGradient.cpp
-            deps/imgui/ImGradient.h
             deps/imgui/ImGuizmo.cpp
-            deps/imgui/ImGuizmo.h
             deps/imgui/ImSequencer.cpp
-            deps/imgui/ImSequencer.h
-            deps/imgui/ImZoomSlider.h
             deps/imgui/backends/imgui_impl_opengl3.cpp
-            deps/imgui/backends/imgui_impl_opengl3.h
             deps/imgui/backends/imgui_impl_glfw.cpp
-            deps/imgui/backends/imgui_impl_glfw.h
             )
     if (NOT TARGET glad)
         add_subdirectory(deps/glad)
@@ -100,7 +105,7 @@ if (OpenGL)
             target_compile_options(assimp PUBLIC -Wno-error)
         endif ()
     endif ()
-    add_library(Kasumi_Backends ${UNIVERSE_FILES} ${OPENGL_IMPL} ${Imgui_OpenGL})
+    add_library(Kasumi_Backends ${OpenGL_HEADER} ${Imgui_OpenGL})
     set_target_properties(Kasumi_Backends PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
     target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
     target_include_directories(Kasumi_Backends PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
