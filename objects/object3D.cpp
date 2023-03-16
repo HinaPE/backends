@@ -283,31 +283,36 @@ Kasumi::ObjectGrid3D::ObjectGrid3D()
 	_shader = Shader::DefaultInstanceLineShader;
 	_grids = nullptr;
 }
-void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ScalarGrid3 *grid) { _init(grid->_opt.resolution); }
-void Kasumi::ObjectGrid3D::_init(mSize3 resolution)
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ScalarGrid3 *grid)
 {
-	std::vector<Pose> _poses;
-
-	int start_i = static_cast<int>(-resolution.x);
-	int end_i = static_cast<int>(resolution.x);
-	int start_j = static_cast<int>(-resolution.y);
-	int end_j = static_cast<int>(resolution.y);
-	int start_k = static_cast<int>(-resolution.z);
-	int end_k = static_cast<int>(resolution.z);
-
-	for (int i = start_i; i < end_i; ++i)
-	{
-		for (int j = start_j; j < end_j; ++j)
-		{
-			for (int k = start_k; k < end_k; ++k)
-			{
-				Pose pose;
-				pose.position = 0.1 * mVector3(i, j, k);
-				pose.scale = 0.1 * mVector3::One();
-				_poses.push_back(pose);
-			}
-		}
-	}
+	_grids = grid;
+	_init();
+}
+void Kasumi::ObjectGrid3D::_init()
+{
+//	std::vector<Pose> poses;
+//
+//	auto resolution = _grids->_opt.resolution;
+//	int start_i = static_cast<int>(-resolution.x);
+//	int end_i = static_cast<int>(resolution.x);
+//	int start_j = static_cast<int>(-resolution.y);
+//	int end_j = static_cast<int>(resolution.y);
+//	int start_k = static_cast<int>(-resolution.z);
+//	int end_k = static_cast<int>(resolution.z);
+//
+//	for (int i = start_i; i < end_i; ++i)
+//	{
+//		for (int j = start_j; j < end_j; ++j)
+//		{
+//			for (int k = start_k; k < end_k; ++k)
+//			{
+//				Pose pose;
+//				pose.position = 0.1 * mVector3(i, j, k);
+//				pose.scale = 0.1 * mVector3::One();
+//				poses.push_back(pose);
+//			}
+//		}
+//	}
 
 	std::shared_ptr<Lines> _bbox_lines = std::make_shared<Lines>();
 	_bbox_lines->clear();
@@ -334,9 +339,11 @@ void Kasumi::ObjectGrid3D::_init(mSize3 resolution)
 
 	_boxes = std::make_shared<InstancedLines>(_bbox_lines);
 
-	for (auto &pose: _poses)
-		_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
-	_boxes->_opt.dirty = true;
+//	for (auto &pose: poses)
+//		_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
+//	_boxes->_opt.dirty = true;
+
+	UPDATE();
 }
 void Kasumi::ObjectGrid3D::_draw()
 {
@@ -345,5 +352,22 @@ void Kasumi::ObjectGrid3D::_draw()
 }
 void Kasumi::ObjectGrid3D::UPDATE()
 {
+	if (_grids == nullptr) return;
+	std::vector<Pose> poses;
 
+	(*_grids).for_each_data_point_index([&](int i, int j, int k)
+										{
+											if ((*_grids)(i, j, k) == 0)
+												return;
+
+											Pose pose;
+											pose.position = 0.1 * mVector3(i, j, k);
+											pose.scale = 0.1 * mVector3::One();
+											poses.push_back(pose);
+										});
+
+	_boxes->_opt.instance_matrices.clear();
+	for (auto &pose: poses)
+		_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
+	_boxes->_opt.dirty = true;
 }

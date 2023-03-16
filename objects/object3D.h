@@ -187,7 +187,7 @@ public:
 	void track(HinaPE::Geom::ScalarGrid3* grid);
 
 protected:
-	void _init(mSize3 resolution);
+	void _init();
 	void _draw() final;
 	friend class Scene3D;
 	void UPDATE() final;
