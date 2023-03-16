@@ -4,10 +4,9 @@
 // Copyright (c) 2023 Xayah Hina
 // MPL-2.0 license
 
-#include <utility>
-
 #include "backends/api.h"
 #include "geom/collider3.h"
+#include "geom/grid.h"
 
 namespace Kasumi
 {
@@ -180,18 +179,22 @@ class ObjectGrid3D :
 		public Renderable,
 		public IDBase,
 		public NameBase,
-		public PoseBase,
+ 		public UPDATE_PER_FRAME,
 		public VALID_CHECKER
 {
 public:
 	ObjectGrid3D();
+	void track(HinaPE::Geom::ScalarGrid3* grid);
 
 protected:
-	void _init();
+	void _init(mSize3 resolution);
 	void _draw() final;
+	friend class Scene3D;
+	void UPDATE() final;
 
 private:
-	InstancedLinesPtr _grids;
+	InstancedLinesPtr _boxes;
+	HinaPE::Geom::ScalarGrid3* _grids;
 };
 
 

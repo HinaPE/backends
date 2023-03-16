@@ -281,18 +281,18 @@ Kasumi::ObjectGrid3D::ObjectGrid3D()
 {
 	NAME = "Grid";
 	_shader = Shader::DefaultInstanceLineShader;
-	_init();
+	_grids = nullptr;
 }
-void Kasumi::ObjectGrid3D::_init()
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ScalarGrid3 *grid) { _init(grid->_opt.resolution); }
+void Kasumi::ObjectGrid3D::_init(mSize3 resolution)
 {
 	std::vector<Pose> _poses;
 
-	int scale = 15;
-	for (int i = -scale; i < scale; ++i)
+	for (size_t i = -resolution.x; i < resolution.x; ++i)
 	{
-		for (int j = -scale; j < scale; ++j)
+		for (size_t j = -resolution.y; j < resolution.y; ++j)
 		{
-			for (int k = -scale; k < scale; ++k)
+			for (size_t k = -resolution.z; k < resolution.z; ++k)
 			{
 				Pose pose;
 				pose.position = 0.1 * mVector3(i, j, k);
@@ -324,14 +324,18 @@ void Kasumi::ObjectGrid3D::_init()
 	_bbox_lines->add(mVector3(u.x(), u.y(), l.z()), mVector3(u.x(), u.y(), u.z()), color);
 	_bbox_lines->add(mVector3(l.x(), u.y(), l.z()), mVector3(l.x(), u.y(), u.z()), color);
 
-	_grids = std::make_shared<InstancedLines>(_bbox_lines);
+	_boxes = std::make_shared<InstancedLines>(_bbox_lines);
 
 	for (auto &pose: _poses)
-		_grids->_opt.instance_matrices.push_back(pose.get_model_matrix());
-	_grids->_opt.dirty = true;
+		_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
+	_boxes->_opt.dirty = true;
 }
 void Kasumi::ObjectGrid3D::_draw()
 {
-	if (_grids == nullptr) return;
-	_grids->render(*_shader);
+	if (_boxes == nullptr) return;
+	_boxes->render(*_shader);
+}
+void Kasumi::ObjectGrid3D::UPDATE()
+{
+
 }

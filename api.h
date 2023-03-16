@@ -63,7 +63,7 @@ protected:
 	virtual void UPDATE() = 0;
 };
 
-class PoseBase : public INSPECTOR, UPDATE_PER_FRAME
+class PoseBase : public INSPECTOR, public UPDATE_PER_FRAME
 {
 public:
 	Pose POSE;
