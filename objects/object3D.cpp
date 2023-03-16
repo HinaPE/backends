@@ -288,14 +288,22 @@ void Kasumi::ObjectGrid3D::_init(mSize3 resolution)
 {
 	std::vector<Pose> _poses;
 
-	for (size_t i = -resolution.x; i < resolution.x; ++i)
+	int start_i = static_cast<int>(-resolution.x);
+	int end_i = static_cast<int>(resolution.x);
+	int start_j = static_cast<int>(-resolution.y);
+	int end_j = static_cast<int>(resolution.y);
+	int start_k = static_cast<int>(-resolution.z);
+	int end_k = static_cast<int>(resolution.z);
+
+	for (int i = start_i; i < end_i; ++i)
 	{
-		for (size_t j = -resolution.y; j < resolution.y; ++j)
+		for (int j = start_j; j < end_j; ++j)
 		{
-			for (size_t k = -resolution.z; k < resolution.z; ++k)
+			for (int k = start_k; k < end_k; ++k)
 			{
 				Pose pose;
 				pose.position = 0.1 * mVector3(i, j, k);
+				pose.scale = 0.1 * mVector3::One();
 				_poses.push_back(pose);
 			}
 		}
