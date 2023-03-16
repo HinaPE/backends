@@ -105,7 +105,17 @@ if (OpenGL)
             target_compile_options(assimp PUBLIC -Wno-error)
         endif ()
     endif ()
-    add_library(Kasumi_Backends ${OpenGL_HEADER} ${OPENGL_IMPL})
+    add_library(Kasumi_Backends STATIC)
+    target_sources(Kasumi_Backends
+        PRIVATE
+        ${OPENGL_IMPL}
+
+        PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../
+        FILES
+        ${OpenGL_HEADER}
+    )
     set_target_properties(Kasumi_Backends PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
     target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
     target_include_directories(Kasumi_Backends PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
@@ -174,3 +184,13 @@ if (Vulkan)
             -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
+
+# INSTALL TARGETS
+INSTALL(
+        TARGETS Kasumi_Backends
+        CONFIGURATIONS Release
+        FILE_SET HEADERS
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+)
