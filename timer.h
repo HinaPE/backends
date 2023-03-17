@@ -23,7 +23,7 @@ public:
 	void record() const;
 	auto duration() const -> float;
 
-	static std::map<std::string, ImVector <ImVec2>> bench_marker;
+	static std::map<std::string, ImVector<ImVec2>> bench_marker;
 	static int offset;
 	static int max_size;
 	static float t;

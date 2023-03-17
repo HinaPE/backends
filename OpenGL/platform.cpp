@@ -351,9 +351,6 @@ void Kasumi::Platform::_benchmark() const
 	if (!_opt.show_benchmark)
 		return;
 
-	Timer::t += ImGui::GetIO().DeltaTime;
-	Timer::offset = (Timer::offset + 1) % Timer::max_size;
-
 	ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x * 0.6f, ImGui::GetIO().DisplaySize.y * 0.0f}, ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize({ImGui::GetIO().DisplaySize.x * 0.4f, ImGui::GetIO().DisplaySize.y * 0.2f}, ImGuiCond_FirstUseEver);
 	ImGui::Begin("Benchmark", nullptr, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
@@ -373,9 +370,13 @@ void Kasumi::Platform::_benchmark() const
 		}
 		ImPlot::EndPlot();
 	}
+
+	Timer::t += ImGui::GetIO().DeltaTime;
+	Timer::offset = (Timer::offset + 1) % Timer::max_size;
+	
 	ImGui::End();
 }
-void Kasumi::Platform::_monitor(App &app)
+void Kasumi::Platform::_monitor(App &app) const
 {
 	if (!_opt.show_inspector)
 		return;
