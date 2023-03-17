@@ -344,6 +344,9 @@ void Kasumi::Platform::_end_frame()
 }
 void Kasumi::Platform::_menu(Kasumi::App &app)
 {
+	if (!_opt.show_menu)
+		return;
+
 	app.ui_menu();
 }
 void Kasumi::Platform::_benchmark() const
@@ -373,7 +376,7 @@ void Kasumi::Platform::_benchmark() const
 
 	Timer::t += ImGui::GetIO().DeltaTime;
 	Timer::offset = (Timer::offset + 1) % Timer::max_size;
-	
+
 	ImGui::End();
 }
 void Kasumi::Platform::_monitor(App &app) const
