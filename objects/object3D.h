@@ -154,7 +154,7 @@ class ObjectParticles3D :
 public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
 	void hide(bool value);
-	int _inst_id;
+	int _inst_id; // selected particle id
 	ObjectParticles3D();
 
 protected:

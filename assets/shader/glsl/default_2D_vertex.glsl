@@ -15,6 +15,6 @@ void main()
     vec2 pos_scaled = aPos * scl;
     vec2 pos_rotated = vec2(pos_scaled.x * cos(rot) - pos_scaled.y * sin(rot), pos_scaled.x * sin(rot) + pos_scaled.y * cos(rot));
     vec2 pos_world = pos_rotated + pos;
-    gl_Position = vec4(pos_world.x / iResolution.x, pos_world.y / iResolution.y, 0.0, 1.0);
+    gl_Position = vec4(pos_world.x / iResolution.x * 2, pos_world.y / iResolution.y * 2, 0.0, 1.0);
     Color = aColor;
 }
