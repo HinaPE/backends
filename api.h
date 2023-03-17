@@ -209,7 +209,11 @@ public:
 	virtual void inspect(INSPECTOR *ptr) final;
 
 	// options
-	void clean_mode() { close_inspector(); close_benchmark(); }
+	void clean_mode()
+	{
+		close_inspector();
+		close_benchmark();
+	}
 	void light_mode() { _platform->_opt.background_color = {1, 1, 1}; }
 	void dark_mode() { _platform->_opt.background_color = {0.1, 0.1, 0.1}; }
 	void close_inspector() { _platform->_opt.show_inspector = false; }
@@ -259,6 +263,50 @@ auto as_valid_check(SrcType *src) -> VALID_CHECKER * { return dynamic_cast<VALID
 
 using INSPECTORPtr = std::shared_ptr<INSPECTOR>;
 using RenderablePtr = std::shared_ptr<Renderable>;
+
+
+// ======================== 2D ========================
+class Pose2DBase : public INSPECTOR, public UPDATE_PER_FRAME
+{
+public:
+	Pose2D POSE;
+	bool _dirty = true;
+	void track(mVector2 *pos, float *euler = nullptr, mVector2 *scale = nullptr)
+	{
+		track_pos = pos;
+		track_euler = euler;
+		track_scale = scale;
+	}
+
+protected:
+	void INSPECT() override
+	{
+		ImGui::Text("Transform");
+		ImGui::DragScalarN("Position", ImGuiDataType_Real, &POSE.position[0], 2, 0.1f, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f");
+		ImGui::DragScalarN("Rotation", ImGuiDataType_Real, &POSE.rotation, 1, 0.1f, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f");
+		ImGui::DragScalarN("Scale", ImGuiDataType_Real, &POSE.scale[0], 2, 0.031f, &HinaPE::Constant::I_REAL_MIN, &HinaPE::Constant::I_REAL_MAX, "%.2f");
+	}
+
+	void UPDATE() override
+	{
+		if (track_pos != nullptr)
+			if (!HinaPE::Math::similar(*track_pos, POSE.position))
+				POSE.position = *track_pos;
+
+		if (track_euler != nullptr)
+			if (!HinaPE::Math::similar(*track_euler, POSE.rotation))
+				POSE.rotation = *track_euler;
+
+		if (track_scale != nullptr)
+			if (!HinaPE::Math::similar(*track_scale, POSE.scale))
+				POSE.scale = *track_scale;
+	}
+
+private:
+	mVector2 *track_pos = nullptr;
+	float *track_euler = nullptr;
+	mVector2 *track_scale = nullptr;
+};
 } // namespace Kasumi
 
 #endif //BACKENDS_API_H

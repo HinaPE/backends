@@ -146,9 +146,9 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 
 		glBindVertexArray(_vao);
 		if (_opt.instanced && _opt.instance_count > 0)
-			glDrawElementsInstanced(GL_TRIANGLES, _idxs.size(), GL_UNSIGNED_INT, 0, _opt.instance_count);
+			glDrawElementsInstanced(GL_TRIANGLES, (GLsizei) _idxs.size(), GL_UNSIGNED_INT, 0, _opt.instance_count);
 		else
-			glDrawElements(GL_TRIANGLES, (GLuint) _idxs.size(), GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, (GLsizei) _idxs.size(), GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 	}
 
