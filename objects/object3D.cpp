@@ -32,6 +32,7 @@ void Kasumi::ObjectMesh3D::set_color(const mVector3 &color)
 {
 	for (auto &v: _mesh->vertices())
 		v.color = color;
+	_mesh->_opt.dirty = true;
 }
 void Kasumi::ObjectMesh3D::_draw()
 {

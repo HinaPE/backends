@@ -49,9 +49,6 @@ public:
 		bool cull_face = false;
 		bool blend = true;
 
-		// bounding box options
-		mVector3 bbox_color = HinaPE::Color::PURPLE;
-
 		// line model
 		bool line_model = false;
 	} _opt;
