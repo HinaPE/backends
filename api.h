@@ -69,6 +69,7 @@ class PoseBase : public INSPECTOR, public UPDATE_PER_FRAME
 {
 public:
 	Pose POSE;
+	bool _dirty = true;
 	void track(mVector3 *pos, mVector3 *euler = nullptr, mVector3 *scale = nullptr)
 	{
 		track_pos = pos;
@@ -105,8 +106,6 @@ protected:
 			if (!HinaPE::Math::similar(*track_scale, POSE.scale))
 				POSE.scale = *track_scale;
 	}
-
-	bool _dirty = true;
 
 private:
 	mVector3 *track_pos = nullptr;
