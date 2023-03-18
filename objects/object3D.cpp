@@ -340,8 +340,6 @@ void Kasumi::ObjectGrid3D::UPDATE()
 											if ((*_grids)(i, j, k) == 0)
 												return;
 
-											(*_grids)._opt.grid_spacing;
-
 											Pose pose;
 											pose.position = scale * (mVector3(i, j, k) - center);
 											pose.scale = scale * mVector3::One();
