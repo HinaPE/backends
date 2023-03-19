@@ -178,10 +178,10 @@ if (Vulkan)
     target_compile_definitions(
             VulkanApp
             PUBLIC
-            -DBackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
-            -DBackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            -DBackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            -DBackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            BackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
+            BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
