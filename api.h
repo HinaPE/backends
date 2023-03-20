@@ -216,6 +216,7 @@ public:
 	void close_inspector() { _platform->_opt.show_inspector = false; }
 	void close_benchmark() { _platform->_opt.show_benchmark = false; }
 	void close_menu() { _platform->_opt.show_menu = false; }
+	void update_viewport(int width, int height);
 
 protected:
 	// main methods

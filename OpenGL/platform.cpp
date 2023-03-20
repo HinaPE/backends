@@ -404,6 +404,9 @@ void Kasumi::Platform::_color_picker()
 void Kasumi::Platform::_update(Kasumi::App &app)
 {
 	app.update(0.02);
+	GLint m_viewport[4];
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+	app.update_viewport(m_viewport[2], m_viewport[3]);
 }
 
 Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _opt.height))
@@ -458,4 +461,13 @@ void Kasumi::App::ui_sidebar()
 {
 	for (auto &inspector: _inspectors)
 		inspector->INSPECT();
+}
+void Kasumi::App::update_viewport(int width, int height)
+{
+	_opt.width = width;
+	_opt.height = height;
+	Camera::MainCamera->_opt.width = static_cast<float>(_opt.width);
+	Camera::MainCamera->_opt.height = static_cast<float>(_opt.height);
+	Camera::MainCamera->_opt.aspect_ratio = static_cast<float>(_opt.width) / static_cast<float>(_opt.height);
+	Camera::MainCamera->_rebuild_();
 }
