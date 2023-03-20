@@ -88,23 +88,502 @@ void Kasumi::Shader::use() const
 void Kasumi::Shader::Init()
 {
 	if (DefaultMeshShader == nullptr)
-		DefaultMeshShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_shader_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aColor;
+layout (location = 4) in vec3 aTengent;
+layout (location = 5) in vec3 aBiTengent;
+layout (location = 6) in uint id;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} vs_out;
+
+void main()
+{
+    vs_out.FragPos = aPos;
+    vs_out.Normal = mat3(transpose(inverse(model))) * aNormal;
+    vs_out.TexCoords = aTexCoords;
+    vs_out.Color = aColor;
+    gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec2 TexCoords;
+
+uniform bool is_colored;
+uniform bool is_textured;
+uniform bool is_framebuffer;
+
+uniform int diffuse_texture_num;
+uniform int specular_texture_num;
+uniform int normal_texture_num;
+uniform int height_texture_num;
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_diffuse2;
+uniform sampler2D texture_specular1;
+uniform sampler2D texture_normal1;
+uniform sampler2D texture_height1;
+
+in VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} fs_in;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+void main()
+{
+    vec3 out_color = vec3(0.0f, 0.0f, 0.0f);
+    if (is_colored)
+    {
+        out_color += fs_in.Color;
+    }
+
+    if (is_textured)
+    {
+        out_color += texture(texture_diffuse1, fs_in.TexCoords).rgb;// diffuse map
+    }
+
+    // blinn-phong lighting
+    vec3 ambient = 0.1 * out_color;// ambient
+
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    vec3 norm = normalize(fs_in.Normal);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * out_color;// diffuse
+
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = spec * vec3(0.5, 0.5, 0.5);// specular
+
+    out_color = ambient + diffuse + specular;
+
+    float alpha = 1.0f;
+    if (is_framebuffer) alpha = 0.5;
+
+    FragColor = vec4(out_color, alpha);
+}
+		)";
+		DefaultMeshShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultInstanceShader == nullptr)
-		DefaultInstanceShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_instanced_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_instanced_shader_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aColor; // deprecated
+layout (location = 4) in vec3 aTengent;
+layout (location = 5) in vec3 aBiTengent;
+layout (location = 6) in uint id;
+layout (location = 7) in mat4 aInstanceMatrix;
+layout (location = 11) in vec4 aInstColor;
+
+uniform mat4 projection;
+uniform mat4 view;
+//uniform mat4 model; we don't need this
+
+uniform int inst_id;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} vs_out;
+
+flat out int instanceID;
+
+void main()
+{
+    vs_out.FragPos = aPos;
+    vs_out.Normal = mat3(transpose(inverse(aInstanceMatrix))) * aNormal;
+    vs_out.TexCoords = aTexCoords;
+    vs_out.Color = aColor;
+    gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+
+    instanceID = gl_InstanceID;
+
+    if (inst_id == gl_InstanceID)
+    {
+        vs_out.Color = vec3(1.0, 0.3, 0.3);
+    }
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec2 TexCoords;
+in vec3 Color;
+
+uniform bool is_colored;
+uniform bool is_textured;
+uniform bool is_framebuffer;
+uniform bool is_random_color;
+
+uniform int diffuse_texture_num;
+uniform int specular_texture_num;
+uniform int normal_texture_num;
+uniform int height_texture_num;
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_diffuse2;
+uniform sampler2D texture_specular1;
+uniform sampler2D texture_normal1;
+uniform sampler2D texture_height1;
+
+in VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} fs_in;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+uniform bool highlight_mode;
+flat in int instanceID;
+
+void main()
+{
+    vec3 out_color = vec3(0.0f, 0.0f, 0.0f);
+    if (is_colored)
+    {
+        out_color += fs_in.Color;
+    }
+
+    if (is_textured)
+    {
+        out_color += texture(texture_diffuse1, fs_in.TexCoords).rgb;// diffuse map
+    }
+
+    // blinn-phong lighting
+    vec3 ambient = 0.1 * out_color;// ambient
+
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    vec3 norm = normalize(fs_in.Normal);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * out_color;// diffuse
+
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = spec * vec3(0.5, 0.5, 0.5);// specular
+
+    out_color = ambient + diffuse + specular;
+
+    float alpha = 1.0f;
+    if (is_framebuffer) alpha = 0.5;
+
+    if (highlight_mode) out_color *= 2;
+
+    if (is_random_color) out_color = vec3((instanceID * 3 + 1) % 256 / 256.f, (instanceID * 5 + 1) % 256 / 256.f, (instanceID * 7 + 1) % 256 / 256.f);
+
+    FragColor = vec4(out_color, alpha);
+}
+		)";
+		DefaultInstanceShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultLineShader == nullptr)
-		DefaultLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+out vec3 Color;
+
+void main()
+{
+    Color = aColor;
+    gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec3 Color;
+
+uniform float opacity;
+
+void main()
+{
+    FragColor = vec4(Color, opacity);
+}
+		)";
+		DefaultLineShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultInstanceLineShader == nullptr)
-		DefaultInstanceLineShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_instanced_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_instanced_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+layout (location = 2) in mat4 aInstanceMatrix;
+
+uniform mat4 projection;
+uniform mat4 view;
+
+out vec3 Color;
+
+void main()
+{
+    Color = aColor;
+    gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec3 Color;
+
+uniform float opacity;
+
+void main()
+{
+    FragColor = vec4(Color, opacity);
+}
+		)";
+		DefaultInstanceLineShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultPointShader == nullptr) // we can use the same shader for point and line
-		DefaultPointShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+out vec3 Color;
+
+void main()
+{
+    Color = aColor;
+    gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec3 Color;
+
+uniform float opacity;
+
+void main()
+{
+    FragColor = vec4(Color, opacity);
+}
+		)";
+		DefaultPointShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultInstancePointShader == nullptr)
-		DefaultInstancePointShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_line_shader_instanced_vertex.glsl", std::string(BackendsShaderDir) + "default_line_shader_instanced_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+layout (location = 2) in mat4 aInstanceMatrix;
+
+uniform mat4 projection;
+uniform mat4 view;
+
+out vec3 Color;
+
+void main()
+{
+    Color = aColor;
+    gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec3 Color;
+
+uniform float opacity;
+
+void main()
+{
+    FragColor = vec4(Color, opacity);
+}
+		)";
+		DefaultInstancePointShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultFrameShader == nullptr)
-		DefaultFrameShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "screen_vertex.glsl", std::string(BackendsShaderDir) + "screen_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoords;
+
+out vec2 TexCoords;
+
+void main()
+{
+    gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);
+    TexCoords = aTexCoords;
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoords;
+
+uniform sampler2D screenTexture;
+
+void main()
+{
+    FragColor = texture(screenTexture, TexCoords);
+}
+		)";
+		DefaultFrameShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (Default2DShader == nullptr)
-		Default2DShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_2D_vertex.glsl", std::string(BackendsShaderDir) + "default_2D_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec3 aColor;
+
+out vec3 Color;
+
+uniform vec2 pos;
+uniform float rot;
+uniform vec2 scl;
+
+uniform vec2 iResolution;
+
+void main()
+{
+    vec2 pos_scaled = aPos * scl;
+    vec2 pos_rotated = vec2(pos_scaled.x * cos(rot) - pos_scaled.y * sin(rot), pos_scaled.x * sin(rot) + pos_scaled.y * cos(rot));
+    vec2 pos_world = pos_rotated + pos;
+    gl_Position = vec4(pos_world.x / iResolution.x * 2, pos_world.y / iResolution.y * 2, 0.0, 1.0);
+    Color = aColor;
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+
+in vec3 Color;
+
+void main()
+{
+    FragColor = vec4(Color, 1.0f);
+}
+		)";
+		Default2DShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 	if (DefaultSimpleMeshShader == nullptr)
-		DefaultSimpleMeshShader = std::make_shared<Shader>(std::string(BackendsShaderDir) + "default_simple_shader_vertex.glsl", std::string(BackendsShaderDir) + "default_simple_shader_fragment.glsl");
+	{
+		std::string vertex_src = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aColor;
+layout (location = 4) in vec3 aTengent;
+layout (location = 5) in vec3 aBiTengent;
+layout (location = 6) in uint id;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} vs_out;
+
+void main()
+{
+    vs_out.FragPos = aPos;
+    vs_out.Normal = mat3(transpose(inverse(model))) * aNormal;
+    vs_out.TexCoords = aTexCoords;
+    vs_out.Color = aColor;
+    gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+		)";
+		std::string fragment_src = R"(
+#version 330 core
+out vec4 FragColor;
+in vec2 TexCoords;
+
+uniform bool is_colored;
+uniform bool is_textured;
+uniform bool is_framebuffer;
+
+uniform int diffuse_texture_num;
+uniform int specular_texture_num;
+uniform int normal_texture_num;
+uniform int height_texture_num;
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_diffuse2;
+uniform sampler2D texture_specular1;
+uniform sampler2D texture_normal1;
+uniform sampler2D texture_height1;
+
+in VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Color;
+} fs_in;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+void main()
+{
+    vec3 out_color = vec3(0.0f, 0.0f, 0.0f);
+    if (is_colored)
+    {
+        out_color += fs_in.Color;
+    }
+
+    if (is_textured)
+    {
+        out_color += texture(texture_diffuse1, fs_in.TexCoords).rgb;// diffuse map
+    }
+
+    float alpha = 1.0f;
+    if (is_framebuffer) alpha = 0.5;
+
+    FragColor = vec4(out_color, alpha);
+}
+		)";
+		DefaultSimpleMeshShader = std::make_shared<Shader>(vertex_src.c_str(), fragment_src.c_str());
+	}
 }
 void Kasumi::Shader::_validate(unsigned int shader, const std::string &type)
 {
@@ -183,7 +662,7 @@ void Kasumi::Shader::uniform(const std::string &name, const std::vector<unsigned
 	std::fill(v.begin(), v.end(), 0);
 	for (int i = 0; i < value.size(); ++i)
 		v[i] = static_cast<GLfloat>(value[i]);
-	
+
 	use();
 	glUniform1fv(glGetUniformLocation(ID, name.c_str()), static_cast<GLsizei>(size), v.data());
 }
