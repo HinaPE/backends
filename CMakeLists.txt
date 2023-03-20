@@ -109,7 +109,7 @@ if (OpenGL)
 #            target_compile_options(assimp PRIVATE /W4 /WX)
 set_property(TARGET assimp PROPERTY COMPILE_WARNING_AS_ERROR OFF)
 set_property(TARGET IrrXML PROPERTY COMPILE_WARNING_AS_ERROR OFF)
-            target_compile_definitions(assimp PUBLIC _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+#            target_compile_definitions(assimp PUBLIC _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
         endif ()
     endif ()
     add_library(Kasumi_Backends STATIC)
@@ -134,9 +134,9 @@ set_property(TARGET IrrXML PROPERTY COMPILE_WARNING_AS_ERROR OFF)
     target_compile_definitions(
             Kasumi_Backends
             PUBLIC
-            BackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            BackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            BackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
