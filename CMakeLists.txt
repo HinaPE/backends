@@ -103,19 +103,26 @@ if (OpenGL)
         add_subdirectory(deps/assimp)
         if (APPLE)
             target_compile_options(assimp PUBLIC -Wno-error)
+            target_compile_options(IrrXML PUBLIC -Wno-error)
+        endif ()
+        if (MSVC)
+#            target_compile_options(assimp PRIVATE /W4 /WX)
+set_property(TARGET assimp PROPERTY COMPILE_WARNING_AS_ERROR OFF)
+set_property(TARGET IrrXML PROPERTY COMPILE_WARNING_AS_ERROR OFF)
+            target_compile_definitions(assimp PUBLIC _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
         endif ()
     endif ()
     add_library(Kasumi_Backends STATIC)
     target_sources(Kasumi_Backends
-        PRIVATE
-        ${OPENGL_IMPL}
+            PRIVATE
+            ${OPENGL_IMPL}
 
-        PUBLIC
-        FILE_SET HEADERS
-        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../
-        FILES
-        ${OpenGL_HEADER}
-    )
+            PUBLIC
+            FILE_SET HEADERS
+            BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../
+            FILES
+            ${OpenGL_HEADER}
+            )
     set_target_properties(Kasumi_Backends PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
     target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
     target_include_directories(Kasumi_Backends PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
@@ -127,9 +134,9 @@ if (OpenGL)
     target_compile_definitions(
             Kasumi_Backends
             PUBLIC
-            BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            BackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            BackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            BackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
@@ -177,13 +184,13 @@ if (Vulkan)
     target_compile_definitions(
             VulkanApp
             PUBLIC
-            BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
+            BackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
+            BackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
+            BackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
     )
 endif ()
 
-add_subdirectory(pathtracer)
+#add_subdirectory(pathtracer)
 
 # INSTALL TARGETS
 INSTALL(
