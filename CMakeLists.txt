@@ -127,7 +127,6 @@ if (OpenGL)
     target_compile_definitions(
             Kasumi_Backends
             PUBLIC
-            BackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
             BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
             BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
             BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
@@ -178,7 +177,6 @@ if (Vulkan)
     target_compile_definitions(
             VulkanApp
             PUBLIC
-            BackendsSceneDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/scene/"
             BackendsModelDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
             BackendsShaderDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
             BackendsTextureDir="${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
