@@ -464,6 +464,9 @@ void Kasumi::App::ui_sidebar()
 }
 void Kasumi::App::update_viewport(int width, int height)
 {
+	if (width == _opt.width && height == _opt.height)
+		return;
+
 	_opt.width = width;
 	_opt.height = height;
 	Camera::MainCamera->_opt.width = static_cast<float>(_opt.width);
