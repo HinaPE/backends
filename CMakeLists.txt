@@ -185,6 +185,8 @@ if (Vulkan)
     )
 endif ()
 
+add_subdirectory(pathtracer)
+
 # INSTALL TARGETS
 INSTALL(
         TARGETS Kasumi_Backends
