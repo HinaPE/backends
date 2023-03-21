@@ -406,7 +406,11 @@ void Kasumi::Platform::_update(Kasumi::App &app)
 	app.update(0.02);
 	GLint m_viewport[4];
 	glGetIntegerv(GL_VIEWPORT, m_viewport);
+#ifdef __APPLE__
+	app.update_viewport(2 * m_viewport[2], 2 * m_viewport[3]);
+#else
 	app.update_viewport(m_viewport[2], m_viewport[3]);
+#endif
 }
 
 Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _opt.height))
