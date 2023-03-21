@@ -217,6 +217,8 @@ Kasumi::ObjectParticles3D::ObjectParticles3D()
 auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom::SurfaceRayIntersection3
 {
 	HinaPE::Geom::SurfaceRayIntersection3 res;
+	if (_hidden)
+		return res;
 	const auto &verts_local = _mesh->_mesh->_verts_eigen4;
 	const auto &idxs = _mesh->_mesh->_idxs_eigen;
 
