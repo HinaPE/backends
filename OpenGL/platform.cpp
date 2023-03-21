@@ -406,11 +406,7 @@ void Kasumi::Platform::_update(Kasumi::App &app)
 	app.update(0.02);
 	GLint m_viewport[4];
 	glGetIntegerv(GL_VIEWPORT, m_viewport);
-#ifdef __APPLE__
-	app.update_viewport(2 * m_viewport[2], 2 * m_viewport[3]);
-#else
 	app.update_viewport(m_viewport[2], m_viewport[3]);
-#endif
 }
 
 Kasumi::App::App() : _platform(std::make_shared<Kasumi::Platform>(_opt.width, _opt.height))
@@ -470,9 +466,13 @@ void Kasumi::App::update_viewport(int width, int height)
 {
 	if (width == _opt.width && height == _opt.height)
 		return;
-
+#ifdef __APPLE__
+	_opt.width = width / 2;
+	_opt.height = height / 2;
+#else
 	_opt.width = width;
 	_opt.height = height;
+#endif
 	Camera::MainCamera->_opt.width = static_cast<float>(_opt.width);
 	Camera::MainCamera->_opt.height = static_cast<float>(_opt.height);
 	Camera::MainCamera->_opt.aspect_ratio = static_cast<float>(_opt.width) / static_cast<float>(_opt.height);
