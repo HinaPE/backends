@@ -153,6 +153,7 @@ class ObjectParticles3D :
 {
 public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
+	void track_colormap(std::vector<mVector3>* color_map);
 	void hide(bool value);
 	int _inst_id; // selected particle id
 	ObjectParticles3D();
@@ -170,6 +171,7 @@ protected:
 
 protected:
 	InstancedMeshPtr _mesh;
+	std::vector<mVector3>* _color_map = nullptr;
 	bool _hidden = false;
 	bool _random_color = false;
 };

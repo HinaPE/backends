@@ -218,7 +218,7 @@ void main()
     vs_out.FragPos = aPos;
     vs_out.Normal = mat3(transpose(inverse(aInstanceMatrix))) * aNormal;
     vs_out.TexCoords = aTexCoords;
-    vs_out.Color = aColor;
+    vs_out.Color = aInstColor.xyz;
     gl_Position = projection * view * aInstanceMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);
 
     instanceID = gl_InstanceID;

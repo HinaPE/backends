@@ -247,6 +247,11 @@ auto Kasumi::ObjectParticles3D::ray_cast(const mRay3 &ray) const -> HinaPE::Geom
 	}
 	return res;
 }
+void Kasumi::ObjectParticles3D::track_colormap(std::vector<mVector3> *color_map)
+{
+	_color_map = color_map;
+	_random_color = false;
+}
 void Kasumi::ObjectParticles3D::hide(bool value) { _hidden = value; }
 void Kasumi::ObjectParticles3D::_init(const std::string &MESH, const std::string &TEXTURE, const mVector3 &COLOR)
 {
@@ -267,6 +272,14 @@ void Kasumi::ObjectParticles3D::_update()
 
 	for (auto &pose: POSES)
 		_mesh->_opt.instance_matrices.push_back(pose.get_model_matrix());
+
+	if (_color_map != nullptr)
+	{
+		_mesh->_opt.colors.clear();
+		_mesh->_opt.colors.reserve(_color_map->size());
+		for (auto &color: *_color_map)
+			_mesh->_opt.colors.emplace_back(color.x(), color.y(), color.z(), 1);
+	}
 
 	_mesh->_opt.dirty = true;
 }
