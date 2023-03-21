@@ -140,56 +140,6 @@ set_property(TARGET IrrXML PROPERTY COMPILE_WARNING_AS_ERROR OFF)
     )
 endif ()
 
-if (Vulkan)
-    find_package(Vulkan REQUIRED)
-    file(GLOB Vulkan_IMPL
-            Vulkan/shader.cpp Vulkan/shader.h
-            Vulkan/platform.cpp Vulkan/platform.h
-            #            Vulkan/mesh.cpp
-            #            Vulkan/texture.cpp
-            #            Vulkan/framebuffer.cpp
-            #            Vulkan/model.cpp
-            #            Vulkan/camera.cpp
-            #            Vulkan/instance.cpp
-            )
-    set(Imgui_Vulkan
-            deps/imgui/imgui.h
-            deps/imgui/imgui.cpp
-            deps/imgui/imgui_draw.cpp
-            deps/imgui/imgui_widgets.cpp
-            deps/imgui/imgui_tables.cpp
-            deps/imgui/imconfig.h
-            deps/imgui/imgui_internal.h
-            deps/imgui/imstb_rectpack.h
-            deps/imgui/imstb_textedit.h
-            deps/imgui/imstb_truetype.h
-            deps/imgui/implot.h
-            deps/imgui/implot.cpp
-            deps/imgui/implot_items.cpp
-            deps/imgui/implot_internal.h
-            deps/imgui/backends/imgui_impl_vulkan.cpp
-            deps/imgui/backends/imgui_impl_vulkan.h
-            deps/imgui/backends/imgui_impl_glfw.cpp
-            deps/imgui/backends/imgui_impl_glfw.h
-            )
-    add_executable(VulkanApp Vulkan/main.cpp ${Vulkan_IMPL} ${Imgui_Vulkan})
-    set_target_properties(VulkanApp PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
-    target_include_directories(VulkanApp PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
-    target_include_directories(VulkanApp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-    if (NOT TARGET glfw)
-        add_subdirectory(deps/glfw3)
-    endif ()
-    target_link_libraries(VulkanApp PUBLIC glfw Vulkan::Vulkan)
-    target_link_libraries(VulkanApp PUBLIC HinaPE_Common)
-    target_compile_definitions(
-            VulkanApp
-            PUBLIC
-            BackendsModelDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/model/"
-            BackendsShaderDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/shader/glsl/"
-            BackendsTextureDir= "${CMAKE_CURRENT_SOURCE_DIR}/assets/texture/"
-    )
-endif ()
-
 #add_subdirectory(pathtracer)
 
 # INSTALL TARGETS
