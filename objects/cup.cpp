@@ -1,8 +1,7 @@
-//#include "cup.h"
-//Kasumi::CupObject::CupObject()
-//{
-//	NAME = "Cup";
-//	MESH = "cup";
-//	_shader = Shader::DefaultMeshShader;
-//	_init();
-//}
+#include "cup.h"
+Kasumi::CupObject::CupObject()
+{
+	NAME = "Cup";
+	_shader = Shader::DefaultMeshShader;
+	_init("cup", "");
+}

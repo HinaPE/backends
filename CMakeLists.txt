@@ -30,6 +30,7 @@ if (OpenGL)
             objects/cube.h
             objects/plane.h
             objects/arrow.h
+            objects/cup.h
 
             deps/imgui/imgui.h
             deps/imgui/imconfig.h
@@ -64,6 +65,7 @@ if (OpenGL)
             objects/cube.cpp
             objects/plane.cpp
             objects/arrow.cpp
+            objects/cup.cpp
 
             deps/imgui/imgui.cpp
             deps/imgui/imgui_draw.cpp
