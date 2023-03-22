@@ -140,8 +140,6 @@ set_property(TARGET IrrXML PROPERTY COMPILE_WARNING_AS_ERROR OFF)
     )
 endif ()
 
-#add_subdirectory(pathtracer)
-
 # INSTALL TARGETS
 INSTALL(
         TARGETS Kasumi_Backends
