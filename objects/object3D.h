@@ -188,6 +188,7 @@ public:
 	ObjectGrid3D();
 	void track(HinaPE::Geom::DataGrid3<real> *scalar_grid);
 	void track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid);
+	void track_colormap(std::vector<mVector3>* color_map);
 
 protected:
 	void _init();
@@ -199,6 +200,7 @@ private:
 	InstancedLinesPtr _boxes;
 	HinaPE::Geom::DataGrid3<real> *_scalar_grid;
 	HinaPE::Geom::DataGrid3<mVector3> *_vector_grid;
+	std::vector<mVector3>* _color_map = nullptr;
 };
 
 

@@ -159,6 +159,7 @@ public:
 	{
 		bool dirty = true;
 		std::vector<mMatrix4x4> instance_matrices;
+		std::vector<mVector4> colors;
 	} _opt;
 	explicit InstancedLines(LinesPtr lines);
 
@@ -166,6 +167,7 @@ private:
 	void _update();
 	LinesPtr _lines;
 	unsigned int _instanceVBO;
+	unsigned int _colorVBO;
 };
 using InstancedLinesPtr = std::shared_ptr<InstancedLines>;
 

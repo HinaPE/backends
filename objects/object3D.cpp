@@ -304,11 +304,18 @@ void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<real> *scalar_grid)
 {
 	_scalar_grid = scalar_grid;
 	_init();
+
+	_color_map = new std::vector<mVector3>();
+	_color_map->resize(_scalar_grid->resolution.x * _scalar_grid->resolution.y * _scalar_grid->resolution.z, HinaPE::Color::WHITE);
 }
 void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid)
 {
 	_vector_grid = vector_grid;
 	_init();
+}
+void Kasumi::ObjectGrid3D::track_colormap(std::vector<mVector3> *color_map)
+{
+	_color_map = color_map;
 }
 void Kasumi::ObjectGrid3D::_init()
 {
@@ -364,11 +371,24 @@ void Kasumi::ObjectGrid3D::UPDATE()
 					pose.position = origin + spacing * mVector3(i, j, k);
 					pose.scale = spacing;
 					poses.push_back(pose);
+
+					mVector3 color = HinaPE::Color::WHITE;
+
+					(*_color_map)[i + j * resolution.x + k * resolution.x * resolution.y] = color;
 				});
 
 		_boxes->_opt.instance_matrices.clear();
 		for (auto &pose: poses)
 			_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
 		_boxes->_opt.dirty = true;
+	}
+
+
+	if (_color_map != nullptr)
+	{
+		_boxes->_opt.colors.clear();
+		_boxes->_opt.colors.reserve(_color_map->size());
+		for (auto &color: *_color_map)
+			_boxes->_opt.colors.emplace_back(color.x(), color.y(), color.z(), 1);
 	}
 }

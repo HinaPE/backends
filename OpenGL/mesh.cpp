@@ -461,6 +461,14 @@ Kasumi::InstancedLines::InstancedLines(Kasumi::LinesPtr lines) : _lines(std::mov
 
 	glBindVertexArray(0);
 
+	glGenBuffers(1, &_colorVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _colorVBO);
+	glBindVertexArray(_lines->_vao);
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_REAL, GL_FALSE, sizeof(mVector4), (void *) 0);
+	glVertexAttribDivisor(6, 1);
+	glBindVertexArray(0);
+
 	_lines->_opt.instanced = true;
 	_lines->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
 }
@@ -479,8 +487,13 @@ void Kasumi::InstancedLines::_update()
 	if (!_opt.dirty && _opt.instance_matrices.empty())
 		return;
 
+	if (_opt.colors.size() != _opt.instance_matrices.size())
+		_opt.colors.resize(_opt.instance_matrices.size(), mVector4(HinaPE::Color::PURPLE.x(), HinaPE::Color::PURPLE.y(), HinaPE::Color::PURPLE.z(), 1.0));
+
 	glBindBuffer(GL_ARRAY_BUFFER, _instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, _opt.instance_matrices.size() * sizeof(mMatrix4x4), &_opt.instance_matrices[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, _colorVBO);
+	glBufferData(GL_ARRAY_BUFFER, _opt.colors.size() * sizeof(mVector4), &_opt.colors[0], GL_DYNAMIC_DRAW);
 
 	_lines->_opt.instance_count = static_cast<int>(_opt.instance_matrices.size());
 
