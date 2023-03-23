@@ -186,8 +186,8 @@ class ObjectGrid3D :
 {
 public:
 	ObjectGrid3D();
-	void track(HinaPE::Geom::ValuedGrid3<real> *scalar_grid);
-	void track(HinaPE::Geom::ValuedGrid3<mVector3> *vector_grid);
+	void track(HinaPE::Geom::DataGrid3<real> *scalar_grid);
+	void track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid);
 
 protected:
 	void _init();
@@ -197,8 +197,8 @@ protected:
 
 private:
 	InstancedLinesPtr _boxes;
-	HinaPE::Geom::ValuedGrid3<real> *_scalar_grid;
-	HinaPE::Geom::ValuedGrid3<mVector3> *_vector_grid;
+	HinaPE::Geom::DataGrid3<real> *_scalar_grid;
+	HinaPE::Geom::DataGrid3<mVector3> *_vector_grid;
 };
 
 

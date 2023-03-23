@@ -300,12 +300,12 @@ Kasumi::ObjectGrid3D::ObjectGrid3D()
 	_scalar_grid = nullptr;
 	_vector_grid = nullptr;
 }
-void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ValuedGrid3<real> *scalar_grid)
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<real> *scalar_grid)
 {
 	_scalar_grid = scalar_grid;
 	_init();
 }
-void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ValuedGrid3<mVector3> *vector_grid)
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid)
 {
 	_vector_grid = vector_grid;
 	_init();
