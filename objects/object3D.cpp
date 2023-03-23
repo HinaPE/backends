@@ -297,19 +297,25 @@ Kasumi::ObjectGrid3D::ObjectGrid3D()
 {
 	NAME = "Grid";
 	_shader = Shader::DefaultInstanceLineShader;
-	_grids = nullptr;
+	_scalar_grid = nullptr;
+	_vector_grid = nullptr;
 }
-void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ScalarGrid3 *grid)
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ValuedGrid3<real> *scalar_grid)
 {
-	_grids = grid;
+	_scalar_grid = scalar_grid;
+	_init();
+}
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::ValuedGrid3<mVector3> *vector_grid)
+{
+	_vector_grid = vector_grid;
 	_init();
 }
 void Kasumi::ObjectGrid3D::_init()
 {
 	std::shared_ptr<Lines> _bbox_lines = std::make_shared<Lines>();
 	_bbox_lines->clear();
-	auto l = mVector3{-HinaPE::Constant::Half, -HinaPE::Constant::Half, -HinaPE::Constant::Half};
-	auto u = mVector3{HinaPE::Constant::Half, HinaPE::Constant::Half, HinaPE::Constant::Half};
+	auto l = mVector3::Zero();
+	auto u = mVector3::One();
 
 	mVector3 color = HinaPE::Color::PURPLE;
 
@@ -340,29 +346,29 @@ void Kasumi::ObjectGrid3D::_draw()
 }
 void Kasumi::ObjectGrid3D::UPDATE()
 {
-	if (_grids == nullptr) return;
-	std::vector<Pose> poses;
+	if (_scalar_grid)
+	{
+		std::vector<Pose> poses;
+		const auto resolution = _scalar_grid->resolution;
+		const auto spacing = _scalar_grid->spacing;
+		const auto origin = _scalar_grid->origin;
 
-	auto resolution = _grids->_opt.resolution;
-	auto spacing = _grids->_opt.grid_spacing;
-	mVector3 center = 0.5 * mVector3(static_cast<real>(resolution.x) * spacing.x(),
-									 static_cast<real>(resolution.y) * spacing.y(),
-									 static_cast<real>(resolution.z) * spacing.z());
+		auto &data = _scalar_grid->data_center;
+		data.for_each_index(
+				[&](int i, int j, int k)
+				{
+					if (data(i, j, k) == 0)
+						return;
 
-	auto scale = 0.1;
-	(*_grids).for_each_data_point_index([&](int i, int j, int k)
-										{
-											if ((*_grids)(i, j, k) == 0)
-												return;
+					Pose pose;
+					pose.position = origin + spacing * mVector3(i, j, k);
+					pose.scale = spacing;
+					poses.push_back(pose);
+				});
 
-											Pose pose;
-											pose.position = scale * (mVector3(i, j, k) - center);
-											pose.scale = scale * mVector3::One();
-											poses.push_back(pose);
-										});
-
-	_boxes->_opt.instance_matrices.clear();
-	for (auto &pose: poses)
-		_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
-	_boxes->_opt.dirty = true;
+		_boxes->_opt.instance_matrices.clear();
+		for (auto &pose: poses)
+			_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
+		_boxes->_opt.dirty = true;
+	}
 }

@@ -6,7 +6,6 @@
 
 #include "backends/api.h"
 #include "geom/collider3.h"
-#include "geom/grid.h"
 
 namespace Kasumi
 {
@@ -187,7 +186,8 @@ class ObjectGrid3D :
 {
 public:
 	ObjectGrid3D();
-	void track(HinaPE::Geom::ScalarGrid3* grid);
+	void track(HinaPE::Geom::ValuedGrid3<real> *scalar_grid);
+	void track(HinaPE::Geom::ValuedGrid3<mVector3> *vector_grid);
 
 protected:
 	void _init();
@@ -197,7 +197,8 @@ protected:
 
 private:
 	InstancedLinesPtr _boxes;
-	HinaPE::Geom::ScalarGrid3* _grids;
+	HinaPE::Geom::ValuedGrid3<real> *_scalar_grid;
+	HinaPE::Geom::ValuedGrid3<mVector3> *_vector_grid;
 };
 
 
