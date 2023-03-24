@@ -373,7 +373,7 @@ void Kasumi::ObjectGrid3D::UPDATE()
 					pose.scale = spacing;
 					poses.push_back(pose);
 
-					mVector3 color = HinaPE::Color::WHITE;
+					mVector3 color = data(i, j, k) * HinaPE::Color::WHITE;
 
 					(*_color_map)[i + j * resolution.x + k * resolution.x * resolution.y] = color;
 				});
