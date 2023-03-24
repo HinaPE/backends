@@ -303,14 +303,15 @@ Kasumi::ObjectGrid3D::ObjectGrid3D()
 void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<real> *scalar_grid)
 {
 	_scalar_grid = scalar_grid;
-	_init();
-
 	_color_map = new std::vector<mVector3>();
 	_color_map->resize(_scalar_grid->resolution.x * _scalar_grid->resolution.y * _scalar_grid->resolution.z, HinaPE::Color::WHITE);
+	_init();
 }
 void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid)
 {
 	_vector_grid = vector_grid;
+	_color_map = new std::vector<mVector3>();
+	_color_map->resize(_scalar_grid->resolution.x * _scalar_grid->resolution.y * _scalar_grid->resolution.z, HinaPE::Color::WHITE);
 	_init();
 }
 void Kasumi::ObjectGrid3D::track_colormap(std::vector<mVector3> *color_map)
