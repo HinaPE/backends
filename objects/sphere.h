@@ -12,8 +12,7 @@ class SphereObject : public ObjectMesh3D, public HinaPE::Geom::Sphere3
 {
 public:
 	SphereObject();
-
-protected:
+	auto generate_surface() const -> std::vector<mVector3> override;
 	void _update_surface() final;
 };
 using SphereObjectPtr = std::shared_ptr<SphereObject>;

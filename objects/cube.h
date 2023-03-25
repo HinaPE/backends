@@ -11,8 +11,7 @@ class CubeObject : public ObjectMesh3D, public HinaPE::Geom::Box3
 {
 public:
 	CubeObject();
-
-protected:
+	auto generate_surface() const -> std::vector<mVector3> override;
 	void _update_surface() final;
 };
 using CubeObjectPtr = std::shared_ptr<CubeObject>;
