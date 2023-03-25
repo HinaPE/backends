@@ -40,7 +40,7 @@ void main()
     }
 
     // blinn-phong lighting
-    vec3 ambient = 0.1 * out_color;// ambient
+    vec3 ambient = 0.5 * out_color;// ambient
 
     vec3 lightDir = normalize(lightPos - fs_in.FragPos);
     vec3 norm = normalize(fs_in.Normal);
