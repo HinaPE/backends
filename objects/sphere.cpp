@@ -31,7 +31,7 @@ auto Kasumi::SphereObject::generate_surface() const -> std::vector<mVector3>
 		for (int j = 0; j < 100; ++j)
 		{
 			phi = HinaPE::Constant::PI * j / 100;
-			mVector3 point = _center + _radius * mVector3(sin(phi) * cos(theta), sin(phi) * sin(theta), cos(phi));
+			mVector3 point = mVector3(sin(phi) * cos(theta), sin(phi) * sin(theta), cos(phi));
 			surface_points.push_back(point);
 		}
 	}

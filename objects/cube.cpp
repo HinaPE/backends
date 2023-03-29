@@ -39,16 +39,16 @@ auto Kasumi::CubeObject::generate_surface() const -> std::vector<mVector3>
 	std::vector<mVector3> surface_points;
 	surface_points.clear();
 
-	const auto half_width = _extent.x();
-	const auto half_height = _extent.y();
-	const auto half_depth = _extent.z();
+	const auto half_width = 1;
+	const auto half_height = 1;
+	const auto half_depth = 1;
 
-	const real x1 = POSE.position.x() - half_width;
-	const real x2 = POSE.position.x() + half_width;
-	const real y1 = POSE.position.y() - half_height;
-	const real y2 = POSE.position.y() + half_height;
-	const real z1 = POSE.position.z() - half_depth;
-	const real z2 = POSE.position.z() + half_depth;
+	const real x1 = -half_width;
+	const real x2 = +half_width;
+	const real y1 = -half_height;
+	const real y2 = +half_height;
+	const real z1 = -half_depth;
+	const real z2 = +half_depth;
 
 	add_wall(mVector3(x1, y1, z1), mVector3(x2, y1, z2), 0.029, &surface_points); // floor
 	add_wall(mVector3(x1, y2, z1), mVector3(x2, y2, z2), 0.029, &surface_points); // top
