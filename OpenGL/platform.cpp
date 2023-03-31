@@ -221,37 +221,41 @@ void Kasumi::Platform::_new_window(int width, int height, const std::string &tit
 	}
 
 	_current_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-	Platform::WINDOW = _current_window;
-	_current_window_name = title;
-	if (_current_window == nullptr)
-		throw std::runtime_error("Failed to create GLFW window");
-	glfwMakeContextCurrent(_current_window);
-	glfwSetWindowUserPointer(_current_window, this);
-	glfwSetFramebufferSizeCallback(_current_window, [](GLFWwindow *window, int width, int height) { glViewport(0, 0, width, height); });
-	glfwSetKeyCallback(_current_window, [](GLFWwindow *window, int key, int scancode, int action, int mods)
+	if (_current_window != nullptr)
 	{
-		auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
-		for (auto &callback: platform->_key_callbacks)
-			callback(key, scancode, action, mods);
-	});
-	glfwSetMouseButtonCallback(_current_window, [](GLFWwindow *window, int button, int action, int mods)
+		Platform::WINDOW = _current_window;
+		_current_window_name = title;
+		glfwMakeContextCurrent(_current_window);
+		glfwSetWindowUserPointer(_current_window, this);
+		glfwSetFramebufferSizeCallback(_current_window, [](GLFWwindow *window, int width, int height) { glViewport(0, 0, width, height); });
+		glfwSetKeyCallback(_current_window, [](GLFWwindow *window, int key, int scancode, int action, int mods)
+		{
+			auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
+			for (auto &callback: platform->_key_callbacks)
+				callback(key, scancode, action, mods);
+		});
+		glfwSetMouseButtonCallback(_current_window, [](GLFWwindow *window, int button, int action, int mods)
+		{
+			auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
+			for (auto &callback: platform->_mouse_callbacks)
+				callback(button, action, mods);
+		});
+		glfwSetScrollCallback(_current_window, [](GLFWwindow *window, double xoffset, double yoffset)
+		{
+			auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
+			for (auto &callback: platform->_scroll_callbacks)
+				callback(xoffset, yoffset);
+		});
+		glfwSetCursorPosCallback(_current_window, [](GLFWwindow *window, double xpos, double ypos)
+		{
+			auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
+			for (auto &callback: platform->_cursor_callbacks)
+				callback(xpos, ypos);
+		});
+	} else
 	{
-		auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
-		for (auto &callback: platform->_mouse_callbacks)
-			callback(button, action, mods);
-	});
-	glfwSetScrollCallback(_current_window, [](GLFWwindow *window, double xoffset, double yoffset)
-	{
-		auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
-		for (auto &callback: platform->_scroll_callbacks)
-			callback(xoffset, yoffset);
-	});
-	glfwSetCursorPosCallback(_current_window, [](GLFWwindow *window, double xpos, double ypos)
-	{
-		auto platform = static_cast<Platform *>(glfwGetWindowUserPointer(window));
-		for (auto &callback: platform->_cursor_callbacks)
-			callback(xpos, ypos);
-	});
+		_without_gui = true;
+	}
 
 	if (!_inited)
 	{
@@ -283,15 +287,22 @@ void Kasumi::Platform::_new_window(int width, int height, const std::string &tit
 
 void Kasumi::Platform::_rendering_loop(App &app)
 {
-	while (!glfwWindowShouldClose(_current_window) || app.quit())
+	if (_without_gui)
 	{
-		_begin_frame();
-		_color_picker();
-		_benchmark();
-		_menu(app);
-		_monitor(app);
-		_update(app);
-		_end_frame();
+		while (!app.quit())
+			_update(app);
+	} else
+	{
+		while (!glfwWindowShouldClose(_current_window) && !app.quit())
+		{
+			_begin_frame();
+			_color_picker();
+			_benchmark();
+			_menu(app);
+			_monitor(app);
+			_update(app);
+			_end_frame();
+		}
 	}
 }
 

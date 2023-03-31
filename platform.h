@@ -73,6 +73,7 @@ private:
 	std::vector<std::function<void(double, double)>> _cursor_callbacks;
 
 	float _last_update_time = 0.f;
+	bool _without_gui = false;
 };
 using PlatformPtr = std::shared_ptr<Platform>;
 } // namespace Kasumi
