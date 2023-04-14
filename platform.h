@@ -39,6 +39,8 @@ public:
 		bool show_benchmark = true;
 		bool show_inspector = true;
 		bool show_menu = true;
+
+		bool video_mode = false; // save image every frame
 	} _opt;
 	Platform(int width, int height, const std::string &title = "Kasumi: illumine the endless night");
 	~Platform();

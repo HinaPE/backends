@@ -216,6 +216,7 @@ public:
 	void close_inspector() { _platform->_opt.show_inspector = false; }
 	void close_benchmark() { _platform->_opt.show_benchmark = false; }
 	void close_menu() { _platform->_opt.show_menu = false; }
+	void video_mode(bool enable) { _platform->_opt.video_mode = enable; }
 	void update_viewport(int width, int height);
 
 protected:
