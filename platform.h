@@ -20,6 +20,7 @@ class Platform
 {
 public:
 	void launch(App &app);
+	void save_image(const std::string &filename) const;
 
 public:
 	struct Opt
