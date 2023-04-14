@@ -182,6 +182,8 @@ void Kasumi::Platform::launch(App &app)
 										_opt.show_color_picker = !_opt.show_color_picker;
 									if (key == GLFW_KEY_T && action == GLFW_PRESS)
 										_opt.show_benchmark = !_opt.show_benchmark;
+									if (key == GLFW_KEY_O && action == GLFW_PRESS)
+										save_image("output.png");
 								});
 	_key_callbacks.emplace_back([&](int key, int scancode, int action, int mods)
 								{
