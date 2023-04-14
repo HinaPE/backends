@@ -325,7 +325,10 @@ void Kasumi::Platform::_rendering_loop(App &app)
 			if (_opt.video_mode)
 			{
 				static int frame = 0;
-				save_image("frame_" + std::to_string(frame++) + ".png");
+				std::string frame_str = std::to_string(frame++);
+				while (frame_str.size() < 6)
+					frame_str = "0" + frame_str;
+				save_image("frame_" + frame_str + ".png");
 			}
 		}
 	}
