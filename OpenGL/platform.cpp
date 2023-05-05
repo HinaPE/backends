@@ -463,7 +463,7 @@ void Kasumi::App::inspect(Kasumi::INSPECTOR *ptr) { _inspectors.emplace_back(ptr
 void Kasumi::App::resize(int width, int height)
 {
 	glfwSetWindowSize(_platform->_current_window, width, height);
-//	glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 	update_viewport(width, height);
 }
 void Kasumi::App::key(int key, int scancode, int action, int mods) {}
