@@ -7,6 +7,8 @@
 Kasumi::Framebuffer::Framebuffer(int width, int height, float base_x, float base_y, float top_x, float top_y)
 		: _width(width), _height(height), _base_x(base_x), _base_y(base_y), _top_x(top_x), _top_y(top_y), _fbo(0), _vao(0), _texture(0) { setup(); }
 
+Kasumi::Framebuffer::~Framebuffer() { glDeleteFramebuffers(1, &_fbo); }
+
 void Kasumi::Framebuffer::render() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
@@ -89,4 +91,3 @@ void Kasumi::Framebuffer::setup()
 		throw std::runtime_error("Framebuffer is not complete!");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-Kasumi::Framebuffer::~Framebuffer() { glDeleteFramebuffers(1, &_fbo); }

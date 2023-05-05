@@ -208,6 +208,7 @@ class App
 public:
 	virtual void launch() final;
 	virtual void inspect(INSPECTOR *ptr) final;
+	virtual void resize(int width, int height) final;
 
 	// options
 	void clean_mode() { close_inspector(); close_benchmark(); close_menu(); }

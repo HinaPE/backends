@@ -16,9 +16,9 @@ public:
 	Texture(unsigned char *data, int width, int height, int channels);
 	~Texture();
 
-    void bind(int texture_idx = 0) const;
+	void bind(int texture_idx = 0) const;
 
-private:
+public:
 	unsigned int ID;
 	std::string _path;
 	int _width, _height, _nr_channels;

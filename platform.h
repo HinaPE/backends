@@ -66,6 +66,7 @@ private:
 	void _update(App &app);
 
 private:
+	friend class App;
 	bool _inited;
 	int _width, _height;
 	std::string _current_window_name;

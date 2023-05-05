@@ -3,7 +3,6 @@
 #include "../camera.h"
 #include "../light.h"
 
-//#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 Kasumi::Model::Model(const std::string &model_path, real scale) : _path(model_path), _scale(scale), _bbox_lines(std::make_shared<Lines>()) { _load(model_path); }
