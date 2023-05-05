@@ -77,16 +77,12 @@ void Kasumi::Texture::update()
 auto Kasumi::Texture::get(int x, int y) const -> mVector4
 {
 	// get pixel color from texture data
-	mVector4 color;
-
 	auto red = (int) _data[(_width * y + x) * _nr_channels];
 	auto green = (int) _data[(_width * y + x) * _nr_channels + 1];
 	auto blue = (int) _data[(_width * y + x) * _nr_channels + 2];
 	auto alpha = (int) _data[(_width * y + x) * _nr_channels + 3];
 
-	color = {red, green, blue, alpha};
-
-	return color;
+	return {red, green, blue, alpha};
 }
 void Kasumi::Texture::set(int x, int y, const mVector4 &pixel)
 {
