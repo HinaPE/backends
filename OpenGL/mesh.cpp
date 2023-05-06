@@ -214,7 +214,7 @@ void Kasumi::Mesh::_init(std::vector<Vertex> &&vertices, std::vector<Index> &&in
 	_idxs_eigen.resize((Index) _idxs.size() / 3, 3);
 	for (Index i = 0; i < _idxs_eigen.rows(); ++i)
 	{
-		_idxs_eigen(i, 0) = (int) _idxs[i * 3];
+		_idxs_eigen(i, 0) = (int) _idxs[i * 3 + 0];
 		_idxs_eigen(i, 1) = (int) _idxs[i * 3 + 1];
 		_idxs_eigen(i, 2) = (int) _idxs[i * 3 + 2];
 	}

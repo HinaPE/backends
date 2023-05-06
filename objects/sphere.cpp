@@ -1,11 +1,18 @@
 #include "sphere.h"
 
+#include "common.h"
+
 Kasumi::SphereObject::SphereObject()
 {
 	NAME = "Sphere";
 	_shader = Shader::DefaultMeshShader;
 	_init("sphere", "");
 	load_surface(this);
+
+	std::vector<mVector3> verts;
+	for (auto &v: _mesh->vertices())
+		verts.emplace_back(v.position);
+	HinaPE::Geom::TriangleMeshSurface surface(verts, _mesh->indices());
 }
 void Kasumi::SphereObject::_update_surface()
 {
