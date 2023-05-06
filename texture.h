@@ -14,9 +14,12 @@ namespace Kasumi
 class Texture
 {
 public:
+	using Pixel = Eigen::Matrix<unsigned char, 3, 1>;
 	explicit Texture(const std::string &path);
 	Texture(unsigned char *data, int width, int height, int channels);
 	~Texture();
+
+	auto operator()(int x, int y) -> Eigen::Map<Pixel>;
 
 	void bind(int texture_idx = 0) const;
 	void update(bool init = false);

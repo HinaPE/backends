@@ -66,14 +66,21 @@ void Kasumi::Texture::update(bool init)
 		format = GL_RGBA;
 
 	if (init)
+	{
 		glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, format, GL_UNSIGNED_BYTE, _data);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, ID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, format, GL_UNSIGNED_BYTE, _data);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	} else
+	{
+		glBindTexture(GL_TEXTURE_2D, ID);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, format, GL_UNSIGNED_BYTE, _data);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 auto Kasumi::Texture::get(int x, int y) const -> mVector4
 {
@@ -92,4 +99,9 @@ void Kasumi::Texture::set(int x, int y, const mVector4 &pixel)
 	_data[(_width * y + x) * _nr_channels + 1] = (unsigned char) pixel.y();
 	_data[(_width * y + x) * _nr_channels + 2] = (unsigned char) pixel.z();
 	_data[(_width * y + x) * _nr_channels + 3] = (unsigned char) pixel.w();
+}
+auto Kasumi::Texture::operator()(int x, int y) -> Eigen::Map<Pixel>
+{
+	auto start_ptr = _data + (_width * y + x) * _nr_channels;
+	return Eigen::Map<Pixel>(start_ptr);
 }
