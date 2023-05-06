@@ -14,10 +14,10 @@ Kasumi::Texture::Texture(const std::string &path) : _path(path)
 	_width = _height = _nr_channels = 0;
 	_data = stbi_load(path.c_str(), &_width, &_height, &_nr_channels, 0);
 
-	update();
+	update(true);
 }
 
-Kasumi::Texture::Texture(unsigned char *data, int width, int height, int channels) : _data(data), _width(width), _height(height), _nr_channels(channels) { update(); }
+Kasumi::Texture::Texture(unsigned char *data, int width, int height, int channels) : _data(data), _width(width), _height(height), _nr_channels(channels) { update(true); }
 
 Kasumi::Texture::~Texture()
 {
@@ -52,7 +52,7 @@ void Kasumi::Texture::bind(int texture_idx) const
 	}
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
-void Kasumi::Texture::update()
+void Kasumi::Texture::update(bool init)
 {
 	if (!_data)
 		return;
@@ -65,7 +65,8 @@ void Kasumi::Texture::update()
 	else if (_nr_channels == 4)
 		format = GL_RGBA;
 
-	glGenTextures(1, &ID);
+	if (init)
+		glGenTextures(1, &ID);
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, format, GL_UNSIGNED_BYTE, _data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

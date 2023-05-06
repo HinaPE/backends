@@ -19,7 +19,7 @@ public:
 	~Texture();
 
 	void bind(int texture_idx = 0) const;
-	void update();
+	void update(bool init = false);
 	auto get(int x, int y) const -> mVector4;
 	void set(int x, int y, const mVector4& pixel);
 
