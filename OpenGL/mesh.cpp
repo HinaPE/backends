@@ -157,6 +157,13 @@ void Kasumi::Mesh::render(const Kasumi::Shader &shader)
 		_bbox_lines->render(*Shader::DefaultLineShader);
 	}
 }
+void Kasumi::Mesh::centralize()
+{
+	_update();
+
+	for (auto &v : vertices())
+		v.position -= _center_point;
+}
 // ================================================== Public Methods ==================================================
 
 

@@ -213,7 +213,7 @@ public:
 	// options
 	void clean_mode() { close_inspector(); close_benchmark(); close_menu(); }
 	void light_mode() { _platform->_opt.background_color = {1, 1, 1}; }
-	void dark_mode() { _platform->_opt.background_color = {0.1, 0.1, 0.1}; }
+	void dark_mode() { _platform->_opt.background_color = {0, 0, 0}; }
 	void close_inspector() { _platform->_opt.show_inspector = false; }
 	void close_benchmark() { _platform->_opt.show_benchmark = false; }
 	void close_menu() { _platform->_opt.show_menu = false; }
