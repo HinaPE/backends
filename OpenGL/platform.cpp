@@ -386,7 +386,13 @@ void Kasumi::Platform::_menu(Kasumi::App &app)
 	if (!_opt.show_menu)
 		return;
 
-	app.ui_menu();
+	if (ImGui::BeginMainMenuBar())
+	{
+		app.ui_menu();
+
+		ImGui::Text("FPS: %.0f", ImGui::GetIO().Framerate);
+		ImGui::EndMainMenuBar();
+	}
 }
 void Kasumi::Platform::_benchmark() const
 {
@@ -471,37 +477,7 @@ auto Kasumi::App::quit() -> bool { return false; }
 void Kasumi::App::mouse_button(int button, int action, int mods) {}
 void Kasumi::App::mouse_scroll(double x_offset, double y_offset) {}
 void Kasumi::App::mouse_cursor(double x_pos, double y_pos) {}
-void Kasumi::App::ui_menu()
-{
-	if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Open Scene (Ctrl+o)")) {}
-			if (ImGui::MenuItem("Export Scene (Ctrl+e)")) {}
-			if (ImGui::MenuItem("Save Scene (Ctrl+s)")) {}
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Edit"))
-		{
-			if (ImGui::MenuItem("Undo (Ctrl+z)")) {}
-			if (ImGui::MenuItem("Redo (Ctrl+y)")) {}
-			if (ImGui::MenuItem("Edit Debug Data (Ctrl+d)")) {}
-			if (ImGui::MenuItem("Settings")) {}
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Pathtracer"))
-		{
-			if (ImGui::MenuItem("Load Pathtracer")) {}
-			ImGui::EndMenu();
-		}
-
-		ImGui::Text("FPS: %.0f", ImGui::GetIO().Framerate);
-		ImGui::EndMainMenuBar();
-	}
-}
+void Kasumi::App::ui_menu() {}
 void Kasumi::App::ui_sidebar()
 {
 	for (auto &inspector: _inspectors)
