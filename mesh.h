@@ -29,6 +29,7 @@ public:
 
 	void render(const Shader &shader);
 	void centralize(); // move local model to the center of gravity
+	void voxelize(); // voxelize the mesh
 	inline auto vertices() -> std::vector<Vertex> & { _opt.dirty = true; return _verts; }
 	inline auto indices() const -> const std::vector<Index> & { return _idxs; }
 

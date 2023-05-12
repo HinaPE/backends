@@ -5,6 +5,8 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
+#include "experimental/voxelizer.h"
+
 #ifdef HINAPE_DOUBLE
 #define GL_REAL GL_DOUBLE
 #else
@@ -23,6 +25,7 @@ Kasumi::Mesh::Mesh(const std::string &primitive_name, const std::string &texture
 	_opt.textured = true;
 	_init(std::move(vertices), std::move(indices));
 }
+
 Kasumi::Mesh::Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures) : _vao(0), _vbo(0), _ebo(0)
 {
 	if (!textures.empty())
@@ -35,6 +38,7 @@ Kasumi::Mesh::Mesh(std::vector<Vertex> &&vertices, std::vector<Index> &&indices,
 		_opt.textured = false;
 	_init(std::move(vertices), std::move(indices));
 }
+
 Kasumi::Mesh::Mesh(const std::string &primitive_name, const mVector3 &color) : _vao(0), _vbo(0), _ebo(0)
 {
 	std::vector<Vertex> vertices;
@@ -161,7 +165,7 @@ void Kasumi::Mesh::centralize()
 {
 	_update();
 
-	for (auto &v : vertices())
+	for (auto &v: vertices())
 		v.position -= _center_point;
 }
 // ================================================== Public Methods ==================================================
@@ -274,6 +278,7 @@ void Kasumi::Mesh::_update()
 
 	_opt.dirty = false;
 }
+
 void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vector<Kasumi::Mesh::Vertex> &vertices, std::vector<unsigned int> &indices, const mVector3 &color)
 {
 	Assimp::Importer importer;
@@ -302,6 +307,15 @@ void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vecto
 	for (int i = 0; i < mesh->mNumFaces; ++i)
 		for (int j = 0; j < mesh->mFaces[i].mNumIndices; ++j)
 			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
+}
+
+void Kasumi::Mesh::voxelize()
+{
+	// experimental: voxelize
+	std::vector<mVector3> vs;
+	for (auto v: _verts)
+		vs.push_back(v.position);
+	auto grid = HinaPE::Experimental::Voxelizer::voxelize(vs, _idxs, 0.1 * mVector3::One());
 }
 
 // ================================================== Private Methods ==================================================
