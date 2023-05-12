@@ -22,6 +22,9 @@ public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
 	void set_color(const mVector3 &color);
 
+	// temp
+	auto voxelize() -> HinaPE::Geom::DataGrid3<int> { return _mesh->voxelize(); }
+
 protected:
 	void _init(const std::string& MESH,const std::string& TEXTURE,const mVector3& COLOR = HinaPE::Color::MIKU);
 	void _init(std::vector<Mesh::Vertex> &&vertices, std::vector<Mesh::Index> &&indices, std::map<std::string, std::vector<TexturePtr>> &&textures);
@@ -187,6 +190,7 @@ class ObjectGrid3D :
 public:
 	ObjectGrid3D();
 	void track(HinaPE::Geom::DataGrid3<real> *scalar_grid);
+	void track(HinaPE::Geom::DataGrid3<int> *int_grid);
 	void track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid);
 	void track_colormap(std::vector<mVector3>* color_map);
 
@@ -199,6 +203,7 @@ protected:
 private:
 	InstancedLinesPtr _boxes;
 	HinaPE::Geom::DataGrid3<real> *_scalar_grid;
+	HinaPE::Geom::DataGrid3<int> *_int_grid;
 	HinaPE::Geom::DataGrid3<mVector3> *_vector_grid;
 	std::vector<mVector3>* _color_map = nullptr;
 };

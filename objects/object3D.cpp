@@ -307,6 +307,13 @@ void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<real> *scalar_grid)
 	_color_map->resize(_scalar_grid->resolution.x * _scalar_grid->resolution.y * _scalar_grid->resolution.z, HinaPE::Color::WHITE);
 	_init();
 }
+void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<int> *int_grid)
+{
+	_int_grid = int_grid;
+	_color_map = new std::vector<mVector3>();
+	_color_map->resize(_int_grid->resolution.x * _int_grid->resolution.y * _int_grid->resolution.z, HinaPE::Color::WHITE);
+	_init();
+}
 void Kasumi::ObjectGrid3D::track(HinaPE::Geom::DataGrid3<mVector3> *vector_grid)
 {
 	_vector_grid = vector_grid;
@@ -382,8 +389,34 @@ void Kasumi::ObjectGrid3D::UPDATE()
 		for (auto &pose: poses)
 			_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
 		_boxes->_opt.dirty = true;
-	}
+	} else if (_int_grid) {
+		std::vector<Pose> poses;
+		const auto resolution = _int_grid->resolution;
+		const auto spacing = _int_grid->spacing;
+		const auto origin = _int_grid->origin;
 
+		auto &data = _int_grid->data_center;
+		data.for_each_index(
+				[&](int i, int j, int k)
+				{
+					if (data(i, j, k) == 0)
+						return;
+
+					Pose pose;
+					pose.position = origin + spacing * mVector3(i, j, k);
+					pose.scale = spacing;
+					poses.push_back(pose);
+
+					mVector3 color = HinaPE::Color::WHITE;
+
+					(*_color_map)[i + j * resolution.x + k * resolution.x * resolution.y] = color;
+				});
+
+		_boxes->_opt.instance_matrices.clear();
+		for (auto &pose: poses)
+			_boxes->_opt.instance_matrices.push_back(pose.get_model_matrix());
+		_boxes->_opt.dirty = true;
+	}
 
 	if (_color_map != nullptr)
 	{

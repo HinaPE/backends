@@ -309,13 +309,13 @@ void Kasumi::Mesh::_load_primitive(const std::string &primitive_name, std::vecto
 			indices.emplace_back(mesh->mFaces[i].mIndices[j]);
 }
 
-void Kasumi::Mesh::voxelize()
+auto Kasumi::Mesh::voxelize() -> HinaPE::Geom::DataGrid3<int>
 {
 	// experimental: voxelize
 	std::vector<mVector3> vs;
 	for (auto v: _verts)
 		vs.push_back(v.position);
-	auto grid = HinaPE::Experimental::Voxelizer::voxelize(vs, _idxs, 0.1 * mVector3::One());
+	return HinaPE::Experimental::Voxelizer::voxelize(vs, _idxs, 0.1 * mVector3::One());
 }
 
 // ================================================== Private Methods ==================================================
