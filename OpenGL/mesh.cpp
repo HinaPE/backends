@@ -5,7 +5,7 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-#include "common/util/voxelizer.h"
+#include "common/util/legacy/voxelizer.h"
 
 #ifdef HINAPE_DOUBLE
 #define GL_REAL GL_DOUBLE
@@ -315,7 +315,7 @@ auto Kasumi::Mesh::voxelize() -> HinaPE::Geom::DataGrid3<int>
 	std::vector<mVector3> vs;
 	for (auto v: _verts)
 		vs.push_back(v.position);
-	return HinaPE::Util::Voxelizer::voxelize(vs, _idxs, 0.02 * mVector3::One());
+	return HinaPE::Util::Legacy::Voxelizer::voxelize(vs, _idxs, 0.02 * mVector3::One());
 }
 
 // ================================================== Private Methods ==================================================
