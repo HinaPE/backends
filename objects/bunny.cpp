@@ -6,7 +6,7 @@ Kasumi::BunnyObject::BunnyObject()
 {
 	NAME = "Bunny";
 	_shader = Shader::DefaultMeshShader;
-	_init("cylinder", "");
+	_init("bunny", "");
 	_mesh->centralize();
 	load_surface(this);
 
@@ -39,7 +39,7 @@ auto Kasumi::BunnyObject::generate_surface() const -> std::vector<mVector3>
 
 	HinaPE::Geom::TriangleMeshSurface m;
 	m.reload(vertices, indices);
-	auto normals = m.normals();
+	auto normals = m.normals_per_vertex();
 
 	cs224::Mesh mesh;
 	for (int i = 0; i < vertices.size(); ++i)
