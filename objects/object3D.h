@@ -21,8 +21,6 @@ class ObjectMesh3D :
 public:
 	auto ray_cast(const mRay3 & ray) const -> HinaPE::Geom::SurfaceRayIntersection3;
 	void set_color(const mVector3 &color);
-
-	// temp
 	auto voxelize() -> HinaPE::Geom::DataGrid3<int> { return _mesh->voxelize(); }
 
 protected:

@@ -81,6 +81,7 @@ private:
 private:
 	friend class ObjectMesh3D;
 	friend class ObjectParticles3D;
+	friend class BunnyObject;
 	Eigen::Matrix<real, Eigen::Dynamic, 3> _verts_eigen3;
 	Eigen::Matrix<real, Eigen::Dynamic, 4> _verts_eigen4;
 	Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> _idxs_eigen;
