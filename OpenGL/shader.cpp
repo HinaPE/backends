@@ -25,55 +25,82 @@ Kasumi::Shader::Shader(const std::string &vertex_path, const std::string &fragme
 	const char *fragment_shader_source = fragment_shader_src.c_str();
 
 	// TODO: enable geometry shader
+	unsigned int g;
+	const char *geometry_shader_source;
 	if (!geometry_path.empty())
 	{
 		std::ifstream geometry_shader_stream(geometry_path);
 		std::string geometry_shader_src((std::istreambuf_iterator<char>(geometry_shader_stream)), std::istreambuf_iterator<char>());
-		const char *geometry_shader_source = geometry_shader_src.c_str();
+		geometry_shader_source = geometry_shader_src.c_str();
 	}
 
 	auto v = glCreateShader(GL_VERTEX_SHADER);
 	auto f = glCreateShader(GL_FRAGMENT_SHADER);
+	if (!geometry_path.empty())
+		g = glCreateShader(GL_GEOMETRY_SHADER);
 	glShaderSource(v, 1, &vertex_shader_source, nullptr);
 	glShaderSource(f, 1, &fragment_shader_source, nullptr);
+	if (!geometry_path.empty())
+		glShaderSource(g, 1, &geometry_shader_source, nullptr);
 	glCompileShader(v);
 	glCompileShader(f);
+	if (!geometry_path.empty())
+		glCompileShader(g);
 
 	ID = glCreateProgram();
 	glAttachShader(ID, v);
 	glAttachShader(ID, f);
+	if (!geometry_path.empty())
+		glAttachShader(ID, g);
 	glLinkProgram(ID);
 
 	_validate(v, "VERTEX");
 	_validate(f, "FRAGMENT");
+	if (!geometry_path.empty())
+		_validate(ID, "GEOMETRY");
 	_validate(ID, "PROGRAM");
 
 	// to save GPU memory
 	glDeleteShader(v);
 	glDeleteShader(f);
+	if (!geometry_path.empty())
+		glDeleteShader(g);
 }
 Kasumi::Shader::Shader(const char *vertex_src, const char *fragment_src) : Shader(vertex_src, fragment_src, nullptr) {}
 Kasumi::Shader::Shader(const char *vertex_src, const char *fragment_src, const char *geometry_src)
 {
 	auto v = glCreateShader(GL_VERTEX_SHADER);
 	auto f = glCreateShader(GL_FRAGMENT_SHADER);
+	unsigned int g;
+	if (geometry_src != nullptr)
+		g = glCreateShader(GL_GEOMETRY_SHADER);
 	glShaderSource(v, 1, &vertex_src, nullptr);
 	glShaderSource(f, 1, &fragment_src, nullptr);
+	if (geometry_src != nullptr)
+		glShaderSource(g, 1, &geometry_src, nullptr);
 	glCompileShader(v);
 	glCompileShader(f);
+	if (geometry_src != nullptr)
+		glCompileShader(g);
 
 	ID = glCreateProgram();
 	glAttachShader(ID, v);
 	glAttachShader(ID, f);
+	if (geometry_src != nullptr)
+		glAttachShader(ID, g);
 	glLinkProgram(ID);
 
 	_validate(v, "VERTEX");
 	_validate(f, "FRAGMENT");
+	if (geometry_src != nullptr)
+		_validate(ID, "GEOMETRY");
 	_validate(ID, "PROGRAM");
 
 	// to save GPU memory
 	glDeleteShader(v);
 	glDeleteShader(f);
+	if (geometry_src != nullptr)
+		glDeleteShader(g);
 }
 
 Kasumi::Shader::~Shader()
