@@ -22,12 +22,6 @@ Kasumi::BunnyObject::BunnyObject()
 	_transform = mTransform3(POSE.position, mQuaternion(POSE.euler));
 }
 
-struct Boundary
-{
-	std::vector<cs224::Vector3f> positions;
-	std::vector<cs224::Vector3f> normals;
-};
-
 auto Kasumi::BunnyObject::generate_surface() const -> std::vector<mVector3>
 {
 	// igl impl
