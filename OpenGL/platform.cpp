@@ -171,6 +171,15 @@ Kasumi::Platform::~Platform()
 	glfwTerminate();
 }
 
+void Kasumi::Platform::launch(const std::function<void()> &update)
+{
+	while (!glfwWindowShouldClose(_current_window))
+	{
+		_begin_frame();
+		update();
+		_end_frame();
+	}
+}
 void Kasumi::Platform::launch(App &app)
 {
 	app.prepare();

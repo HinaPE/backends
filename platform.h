@@ -19,6 +19,7 @@ class App;
 class Platform
 {
 public:
+	void launch(const std::function<void()> &update);
 	void launch(App &app);
 	void save_image(const std::string &filename) const;
 

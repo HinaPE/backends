@@ -49,6 +49,12 @@ if (OpenGL)
             deps/imgui/ImZoomSlider.h
             deps/imgui/backends/imgui_impl_opengl3.h
             deps/imgui/backends/imgui_impl_glfw.h
+
+            deps/imterm/misc.hpp
+            deps/imterm/terminal.hpp
+            deps/imterm/terminal.tpp
+            deps/imterm/terminal_helpers.hpp
+            deps/imterm/utils.hpp
             )
     set(OPENGL_IMPL
             OpenGL/camera.cpp
@@ -128,7 +134,7 @@ set_property(TARGET IrrXML PROPERTY COMPILE_WARNING_AS_ERROR OFF)
             ${OpenGL_HEADER}
             )
     set_target_properties(Kasumi_Backends PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON)
-    target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb)
+    target_include_directories(Kasumi_Backends PUBLIC ${KASUMI_COMMON_DIR} deps deps/assimp/include deps/glfw3/include deps/imgui deps/stb deps/imterm)
     target_include_directories(Kasumi_Backends PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../)
     target_link_libraries(Kasumi_Backends PUBLIC assimp)
     target_link_libraries(Kasumi_Backends PUBLIC glad)
