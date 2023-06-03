@@ -16,6 +16,8 @@ struct Pose
 
 	explicit Pose(mVector3 position = {0, 0, 0}, mVector3 euler = {0, 0, 0}, mVector3 scale = {1, 1, 1}) : position(std::move(position)), euler(std::move(euler)), scale(std::move(scale)) {}
 	inline auto get_model_matrix() const -> mMatrix4x4 { return mMatrix4x4::make_translation_matrix(position) * mQuaternion(euler.x(), euler.y(), euler.z()).matrix4x4() * mMatrix4x4::make_scale_matrix(scale); }
+    inline auto get_rotation_matrix() const -> mMatrix4x4 { return mQuaternion(euler.x(), euler.y(), euler.z()).matrix4x4(); }
+    inline auto get_rotation_matrix_3() const -> mMatrix3x3 { return mQuaternion(euler.x(), euler.y(), euler.z()).matrix3x3(); }
 };
 
 struct Pose2D
