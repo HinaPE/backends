@@ -24,6 +24,7 @@
 #include <optional>
 #include <iterator>
 #include <algorithm>
+#include <cstring>
 #ifdef IMTERM_ENABLE_REGEX
 #include <regex>
 #endif
@@ -431,7 +432,7 @@ void terminal<TerminalHelper>::set_min_log_level(message::severity::severity_t l
 	m_lowest_log_level_val = level;
 	m_lowest_log_level = m_level_list_text.data();
 	for (int i = level ; i > 0 ; --i) {
-		m_lowest_log_level += std::strlen(m_lowest_log_level) + 1;
+		m_lowest_log_level += strlen(m_lowest_log_level) + 1;
 	}
 
 	m_longest_log_level = "";
@@ -439,8 +440,9 @@ void terminal<TerminalHelper>::set_min_log_level(message::severity::severity_t l
 	const char* current_str = m_lowest_log_level;
 
 	for (int i = level ; i < message::severity::critical + 2 ; ++i) {
-		auto length = std::strlen(current_str);
-		auto regular_len = get_length({current_str, length});
+		auto length = strlen(current_str);
+//		auto regular_len = get_length({current_str, length});
+		auto regular_len = length;
 		if (regular_len > longest_len) {
 			longest_len = regular_len;
 			m_longest_log_level = current_str;
