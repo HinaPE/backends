@@ -441,7 +441,7 @@ void terminal<TerminalHelper>::set_min_log_level(message::severity::severity_t l
 
 	for (int i = level ; i < message::severity::critical + 2 ; ++i) {
 		auto length = strlen(current_str);
-//		auto regular_len = get_length({current_str, length});
+//		auto regular_len = get_length({current_str, length}); Temporary disabled
 		auto regular_len = length;
 		if (regular_len > longest_len) {
 			longest_len = regular_len;
