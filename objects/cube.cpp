@@ -14,7 +14,7 @@ Kasumi::CubeObject::CubeObject()
 
 void add_wall(const mVector3 &minX, const mVector3 &maxX, real radius, std::vector<mVector3> *target_boundary)
 {
-	const real diam = 1.4 * radius;
+	const real diam = 0.5 * radius;
 	const int stepsX = (int) ((maxX.x() - minX.x()) / diam) + 1;
 	const int stepsY = (int) ((maxX.y() - minX.y()) / diam) + 1;
 	const int stepsZ = (int) ((maxX.z() - minX.z()) / diam) + 1;
